@@ -1,0 +1,35 @@
+[project]
+name = "vina-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Balasundaram Kadirvelu", email = "balasundaram.k@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "cloudinary>=1.44.1",
+    "elevenlabs>=2.33.1",
+    "fastapi[standard]>=0.128.0",
+    "llmlite>=0.0.4",
+    "moviepy>=2.2.1",
+    "opik>=1.10.1",
+    "pillow>=11.3.0",
+    "pydantic-settings>=2.12.0",
+    "python-dotenv>=1.2.1",
+    "sqlmodel>=0.0.31",
+]
+
+[project.scripts]
+vina-backend = "vina_backend:main"
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "ruff>=0.14.14",
+]
