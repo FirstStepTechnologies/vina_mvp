@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlmodel import Session, select
-from vina_backend.integrations.db.models.profile import UserProfile
+from vina_backend.integrations.db.models.user import UserProfile
 from vina_backend.domain.schemas.profile import UserProfileData
 
 class ProfileRepository:
@@ -50,7 +50,9 @@ class ProfileRepository:
             typical_outputs=profile_data.typical_outputs,
             professional_goals=profile_data.professional_goals,
             technical_comfort_level=profile_data.technical_comfort_level,
-            learning_style_notes=profile_data.learning_style_notes
+            learning_style_notes=profile_data.learning_style_notes,
+            safety_priorities=profile_data.safety_priorities,
+            high_stakes_areas=profile_data.high_stakes_areas
         )
         self.session.add(db_profile)
         self.session.commit()

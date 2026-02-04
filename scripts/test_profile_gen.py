@@ -39,8 +39,8 @@ def test_profile_generation(force: bool = False):
     ]
 
     test_cases = [
-        # ("Clinical Researcher", "Pharma/Biotech", "Intermediate"),
-        ("HR Manager", "Tech Company", "Beginner"),
+        ("Clinical Researcher", "Pharma/Biotech", "Intermediate"),
+        # ("HR Manager", "Tech Company", "Beginner"),
         # ("Project Manager", "Software/Tech", "Intermediate"),
         # ("Marketing Manager", "E-Commerce", "Intermediate"),
     ]

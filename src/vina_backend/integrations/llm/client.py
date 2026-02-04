@@ -4,7 +4,8 @@ Provides a unified interface for multiple LLM providers (Anthropic, OpenAI, Gemi
 """
 import json
 import logging
-from typing import Any, Dict, Optional, Literal
+import time
+from typing import Any, Dict, Optional, Literal, List
 from litellm import completion
 
 from vina_backend.core.config import get_settings
@@ -30,6 +31,24 @@ RECOMMENDED_MODELS = {
     "gemini-3-flash-preview", 
         "gemini-3-pro-preview",   
         "gemini-2.5-flash",       
+    ],
+}
+
+# Fallback models when primary model fails (in order of preference)
+FALLBACK_MODELS = {
+    "gemini": [
+        "gemini-3-flash",
+        "gemini-2.5-flash", 
+        "gemini-2.0-flash-exp",
+    ],
+    "openai": [
+        "gpt-5",
+        "gpt-4o",
+        "gpt-4o-mini",
+    ],
+    "anthropic": [
+        "claude-sonnet-4-20250514",
+        "claude-3-5-sonnet-20241022",
     ],
 }
 
@@ -130,52 +149,117 @@ class LLMClient:
         max_tokens: Optional[int] = None,
         temperature: Optional[float] = None,
         system: Optional[str] = None,
+        max_retries: int = 2,
+        retry_delay: float = 1.0,
     ) -> str:
         """
-        Generate text using the LLM.
+        Generate text using the LLM with automatic fallback on 503 errors.
         
         Args:
             prompt: The prompt to send
             max_tokens: Maximum tokens to generate (defaults to settings)
             temperature: Sampling temperature 0-1 (None for intelligent default)
             system: Optional system prompt
+            max_retries: Maximum number of retries for rate limit errors (default: 2)
+            retry_delay: Delay between retries in seconds for rate limits (default: 1.0)
         
         Returns:
             Generated text response
         
         Raises:
-            ValueError: If generation fails
+            ValueError: If generation fails after all model fallbacks
         """
         max_tokens = max_tokens or settings.llm_max_tokens
         safe_temp = self._get_safe_temperature(temperature)
         
-        try:
-            # Build messages for litellm
-            messages = []
-            if system:
-                messages.append({"role": "system", "content": system})
-            messages.append({"role": "user", "content": prompt})
-
-            formatted_model = self._get_litellm_model_name()
-            logger.info(f"Calling LLM ({formatted_model}) with {len(messages)} messages and temperature {safe_temp}")
-            
-            # litellm handles provider routing internally based on model name
-            response = completion(
-                model=formatted_model,
-                messages=messages,
-                max_tokens=max_tokens,
-                temperature=safe_temp,
-                api_key=self.api_key,
-            )
-            
-            logger.debug(f"LLM response received. Length: {len(response.choices[0].message.content)} chars")
-            return response.choices[0].message.content.strip()
+        # Build messages for litellm
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
         
-        except Exception as e:
-            logger.exception(f"LLM generation failed with {self.provider}/{self.model}")
-            raise ValueError(
-                f"LLM generation failed with {self.provider}/{self.model}: {str(e)}"
-            ) from e
+        # Try with primary model first, then fallback models
+        models_to_try = [self.model] + FALLBACK_MODELS.get(self.provider, [])
+        
+        last_error = None
+        for model_index, model in enumerate(models_to_try):
+            # Skip if this fallback model is the same as primary
+            if model_index > 0 and model == self.model:
+                continue
+            
+            # Try this model
+            for attempt in range(max_retries):
+                try:
+                    # Update model for this attempt
+                    current_model = model
+                    formatted_model = f"{self.provider}/{current_model}" if self.provider == "gemini" else current_model
+                    
+                    if model_index > 0 and attempt == 0:
+                        logger.warning(f"Falling back to model: {formatted_model}")
+                    
+                    if attempt > 0:
+                        logger.info(f"Retry {attempt}/{max_retries-1} for {formatted_model}")
+                    else:
+                        logger.info(f"Calling LLM ({formatted_model}) with {len(messages)} messages and temperature {safe_temp}")
+                    
+                    # Track call duration
+                    start_time = time.time()
+                    
+                    # litellm handles provider routing internally based on model name
+                    response = completion(
+                        model=formatted_model,
+                        messages=messages,
+                        max_tokens=max_tokens,
+                        temperature=safe_temp,
+                        api_key=self.api_key,
+                    )
+                    
+                    duration = time.time() - start_time
+                    logger.info(f"LLM call to {formatted_model} took {duration:.2f}s")
+                    
+                    logger.debug(f"LLM response received. Length: {len(response.choices[0].message.content)} chars")
+                    
+                    # Success! Update the instance model if we used a fallback
+                    if model != self.model:
+                        logger.info(f"Successfully switched from {self.model} to {model}")
+                        self.model = model
+                    
+                    return response.choices[0].message.content.strip()
+                
+                except Exception as e:
+                    last_error = e
+                    error_str = str(e)
+                    
+                    # Check error type
+                    is_overloaded = any(code in error_str for code in ["503", "UNAVAILABLE", "overloaded"])
+                    is_rate_limit = "429" in error_str
+                    is_server_error = "500" in error_str
+                    
+                    # For 503/overload errors, immediately try next model (no retries)
+                    if is_overloaded:
+                        logger.warning(f"Model {formatted_model} is overloaded (503). Switching to next model...")
+                        break  # Move to next model immediately
+                    
+                    # For rate limits (429), retry with backoff
+                    elif is_rate_limit and attempt < max_retries - 1:
+                        wait_time = retry_delay * (2 ** attempt)
+                        logger.warning(f"Rate limit hit with {formatted_model}. Retrying in {wait_time}s...")
+                        time.sleep(wait_time)
+                        continue
+                    
+                    # For other errors, try next model
+                    else:
+                        if is_rate_limit:
+                            logger.error(f"Model {formatted_model} rate limit persists after retries")
+                        else:
+                            logger.error(f"Error with {formatted_model}: {error_str}")
+                        break  # Move to next model
+        
+        # All models failed
+        logger.exception(f"All models failed for provider {self.provider}")
+        raise ValueError(
+            f"LLM generation failed with {self.provider} after trying models {models_to_try}: {str(last_error)}"
+        ) from last_error
     
     def generate_json(
         self,

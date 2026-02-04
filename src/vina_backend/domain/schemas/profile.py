@@ -32,6 +32,14 @@ class UserProfileData(BaseModel):
     professional_goals: List[str] = Field(
         ..., description="Career and skill development goals"
     )
+    safety_priorities: List[str] = Field(
+        ..., 
+        description="Critical safety, ethical, or compliance considerations for this role"
+    )
+    high_stakes_areas: List[str] = Field(
+        ..., 
+        description="Specific work outputs or decisions where errors have serious consequences"
+    )
 
 
 class UserProfileRequest(BaseModel):
