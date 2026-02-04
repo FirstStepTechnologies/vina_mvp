@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, SQLModel
+from sqlmodel import create_engine, SQLModel, Session
 from vina_backend.core.config import get_settings
 
 settings = get_settings()
@@ -18,3 +18,15 @@ def init_db():
     import vina_backend.integrations.db.models.quiz_attempt
     
     SQLModel.metadata.create_all(engine)
+
+
+def get_session():
+    """
+    Get a database session with automatic cleanup.
+    Use as a generator in a with statement or next().
+    """
+    session = Session(engine)
+    try:
+        yield session
+    finally:
+        session.close()
