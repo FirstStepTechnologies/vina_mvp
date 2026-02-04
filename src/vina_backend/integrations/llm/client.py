@@ -123,16 +123,29 @@ class LLMClient:
     def _get_safe_temperature(self, requested_temp: Optional[float] = None) -> float:
         """
         Calculate a safe temperature based on 2026 provider guidelines.
+        
+        Special handling for Gemini 3 models which require temperature=1.0
+        to avoid infinite loops and degraded reasoning performance.
         """
-        # 1. If explicitly provided by caller, respect it but warn for Gemini 3
+        # Check if this is a Gemini 3 model (gemini-3-* variants)
+        is_gemini_3 = self.provider == "gemini" and "gemini-3" in self.model.lower()
+        
+        # Force temperature=1.0 for Gemini 3 models (override requested temp)
+        if is_gemini_3:
+            if requested_temp is not None and requested_temp < 1.0:
+                logger.warning(
+                    f"Overriding temperature {requested_temp} → 1.0 for {self.model}. "
+                    f"Gemini 3 models require temp=1.0 to avoid infinite loops and degraded performance."
+                )
+            return 1.0
+        
+        # For non-Gemini-3 models, respect requested temperature if provided
         if requested_temp is not None:
-            if self.provider == "gemini" and requested_temp < 1.0:
-                logger.warning(f"Forcing temp {requested_temp} on Gemini 3. Use 1.0 to avoid loops.")
             return requested_temp
 
-        # 2. Use Provider-specific defaults
+        # Use provider-specific defaults when no temperature is requested
         if self.provider == "gemini":
-            return 1.0  # Safe default for Gemini 3 and 2.5
+            return 1.0  # Safe default for Gemini 2.5 and other Gemini models
         elif self.provider == "anthropic":
             return 0.3  # Precision focus for Claude 4.5 analytical tasks
         elif self.provider == "openai":

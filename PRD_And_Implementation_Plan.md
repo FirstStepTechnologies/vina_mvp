@@ -420,16 +420,35 @@ Verify difficulty adjusts correctly (3/3 → +1, 0-1/3 → -1, 2/3 → maintain)
 Verify adaptation tracking
 
 
-2.2 Lesson Generation Prompts
-Estimated Time: 2-3 hours
-Files to Create:
+2.2 Lesson Generation Prompts & Architecture
+**Estimated Time:** 3-4 hours  
+**Status:** Enhanced with graduated approval, caching, and retry logic
 
-src/vina_backend/prompts/lesson/generator_prompt.md
-src/vina_backend/prompts/lesson/reviewer_prompt.md
-src/vina_backend/prompts/lesson/rewriter_prompt.md
+### Design Decisions & Enhancements
 
-Generator Prompt Structure:
-markdownYou are an expert instructional designer creating personalized micro-lessons.
+**Key Improvements Over Initial Plan:**
+1. **Graduated Approval** - Quality scores (0-10) instead of binary pass/fail
+2. **Caching Layer** - Avoid regenerating identical lessons (70-90% cost savings)
+3. **Retry Limits** - Max 2 iterations to prevent infinite loops
+4. **JSON Validation** - Schema validation before reviewer step
+5. **Dynamic Slide Count** - Pulled from difficulty knobs (not hardcoded 3-6)
+6. **Enhanced Safety Checks** - Reviewer validates against `high_stakes_areas`
+7. **Constraint Preservation** - Rewriter receives original constraints to prevent violations
+
+### Files to Create
+
+- `src/vina_backend/prompts/lesson/generator_prompt.md` (Jinja2 template)
+- `src/vina_backend/prompts/lesson/reviewer_prompt.md` (Jinja2 template)
+- `src/vina_backend/prompts/lesson/rewriter_prompt.md` (Jinja2 template)
+- `src/vina_backend/services/lesson_cache.py` (Caching layer)
+- `src/vina_backend/domain/schemas/lesson.py` (Pydantic models for validation)
+
+---
+
+### Generator Prompt Structure
+
+```markdown
+You are an expert instructional designer creating personalized micro-lessons.
 
 LEARNER CONTEXT:
 - Profession: {profession}
@@ -447,10 +466,16 @@ LESSON TO CREATE:
 - Misconceptions to Address: {misconceptions_to_address}
 
 DIFFICULTY LEVEL: {difficulty_level} ({difficulty_label})
-{difficulty_knobs}
+Target Slide Count: {slide_count}  <!-- PULLED FROM DIFFICULTY KNOBS -->
+Words Per Slide: {words_per_slide}
+Analogies Per Concept: {analogies_per_concept}
+Examples Per Concept: {examples_per_concept}
+Jargon Density: {jargon_density}
+Sentence Structure: {sentence_structure}
 
 PEDAGOGICAL STAGE: {stage_name}
-{teaching_approach}
+Teaching Approach: {teaching_approach}
+Focus: {stage_focus}
 
 COURSE-SPECIFIC SAFETY:
 {course_specific_safety_rules}
@@ -459,8 +484,12 @@ CONTENT CONSTRAINTS:
 - Avoid: {content_constraints.avoid}
 - Emphasize: {content_constraints.emphasize}
 
+**CRITICAL SAFETY RULE:**
+Do NOT suggest automation or LLM use for these high-stakes areas without explicit human oversight:
+{high_stakes_areas}
+
 OUTPUT FORMAT:
-Generate a lesson with 3-6 slides in JSON:
+Generate a lesson with {slide_count} slides in JSON:
 {
   "lesson_title": "...",
   "slides": [
@@ -474,44 +503,248 @@ Generate a lesson with 3-6 slides in JSON:
   ],
   "references_to_previous_lessons": "..."
 }
-Reviewer Prompt Structure:
-markdownYou are a quality assurance expert evaluating lesson content.
+```
+
+---
+
+### Reviewer Prompt Structure (ENHANCED)
+
+```markdown
+You are a quality assurance expert evaluating lesson content.
 
 LESSON TO REVIEW:
 {generated_lesson_json}
 
-EVALUATION CRITERIA:
-1. Does it cover all learning objectives?
-2. Does it address all misconceptions?
-3. Is the difficulty level appropriate (check against difficulty knobs)?
-4. Are examples profession-specific (referencing typical_outputs)?
-5. Does it follow content constraints (avoid/emphasize)?
-6. Is it within the target duration?
-7. Does it respect safety priorities for this profession?
+ORIGINAL CONSTRAINTS (for reference):
+- Difficulty Level: {difficulty_level} ({difficulty_label})
+- Target Slide Count: {slide_count}
+- Safety Priorities: {safety_priorities}
+- High-Stakes Areas: {high_stakes_areas}
+- Content Constraints: {content_constraints}
 
-OUTPUT:
+EVALUATION CRITERIA:
+1. **Learning Objectives**: Does it cover all objectives from the lesson spec?
+2. **Misconceptions**: Does it address all listed misconceptions?
+3. **Difficulty Alignment**: Is the complexity appropriate for difficulty {difficulty_level}?
+   - Check: slide count, words per slide, analogies, jargon density
+4. **Profession-Specific Examples**: Are examples tied to {profession} and {typical_outputs}?
+5. **Content Constraints**: Does it avoid forbidden topics and emphasize required ones?
+6. **Duration**: Is it within {estimated_duration_minutes} minutes?
+7. **Safety Priorities**: Does it respect {safety_priorities}?
+8. **High-Stakes Areas**: Does it avoid suggesting automation for {high_stakes_areas} without human oversight?
+9. **Coherence**: Do slides flow logically (hook → concept → example → connection)?
+
+OUTPUT (JSON):
 {
-  "approved": true|false,
-  "issues": [
-    "Issue 1: ...",
-    "Issue 2: ..."
+  "quality_score": 8.5,  // 0-10 scale
+  "approval_status": "approved" | "approved_with_minor_fixes" | "needs_revision",
+  "critical_issues": [
+    "Critical issue 1 (MUST fix): ..."
+  ],
+  "minor_issues": [
+    "Minor issue 1 (nice to fix): ..."
   ],
   "suggested_fixes": [
     "Fix 1: ...",
     "Fix 2: ..."
+  ],
+  "strengths": [
+    "What the lesson does well..."
   ]
 }
-Rewriter Prompt Structure:
-markdownYou are fixing a lesson based on reviewer feedback.
+
+**Approval Logic:**
+- `approved`: quality_score >= 8 AND no critical_issues
+- `approved_with_minor_fixes`: quality_score >= 7 AND no critical_issues
+- `needs_revision`: quality_score < 7 OR critical_issues exist
+```
+
+---
+
+### Rewriter Prompt Structure (ENHANCED)
+
+```markdown
+You are fixing a lesson based on reviewer feedback.
 
 ORIGINAL LESSON:
 {generated_lesson_json}
 
 REVIEWER FEEDBACK:
-{reviewer_issues}
-{reviewer_suggested_fixes}
+Quality Score: {quality_score}/10
+Approval Status: {approval_status}
 
-Fix the lesson to address all issues. Return the corrected lesson in the same JSON format.
+Critical Issues (MUST FIX):
+{critical_issues}
+
+Minor Issues (if time permits):
+{minor_issues}
+
+Suggested Fixes:
+{suggested_fixes}
+
+ORIGINAL CONSTRAINTS (DO NOT VIOLATE THESE):
+- Difficulty Level: {difficulty_level} ({difficulty_label})
+- Target Slide Count: {slide_count}
+- Safety Priorities: {safety_priorities}
+- High-Stakes Areas: {high_stakes_areas}
+- Content Constraints: {content_constraints}
+- Learning Objectives: {what_learners_will_understand}
+- Misconceptions to Address: {misconceptions_to_address}
+
+**INSTRUCTIONS:**
+1. Fix ALL critical issues
+2. Fix minor issues if possible without violating constraints
+3. Preserve what the reviewer praised (see "strengths")
+4. Return the corrected lesson in the SAME JSON format
+
+OUTPUT (JSON):
+{
+  "lesson_title": "...",
+  "slides": [...],
+  "references_to_previous_lessons": "..."
+}
+```
+
+---
+
+### Caching Strategy
+
+**Cache Key:**
+```python
+cache_key = f"{course_id}:{lesson_id}:d{difficulty}:{profile_hash}"
+# Example: "c_llm_foundations:l01_what_llms_are:d3:a3f2b1c"
+```
+
+**Profile Hash:**
+```python
+profile_hash = hashlib.md5(
+    f"{profession}:{industry}:{experience_level}".encode()
+).hexdigest()[:7]
+```
+
+**Cache Storage:**
+- **Database Table:** `lesson_cache` (lesson_id, cache_key, lesson_json, created_at)
+- **Invalidation:** Only regenerate if:
+  - Cache miss
+  - Course config updated (check `course_config.updated_at`)
+  - User explicitly requests adaptation ("Simplify this", "Get to the point")
+
+**Expected Impact:**
+- First-time learners: Full generation (3-4 LLM calls)
+- Repeat learners (same profile): Cache hit (0 LLM calls)
+- Cost reduction: 70-90% for mature courses
+
+---
+
+### Generation Pipeline (Revised Architecture)
+
+```python
+def generate_lesson(
+    lesson_id: str,
+    course_id: str,
+    user_profile: UserProfileData,
+    difficulty_level: int,
+    adaptation_context: Optional[str] = None  # "simplify_this", "get_to_the_point", etc.
+) -> Dict:
+    """
+    Generate lesson with caching, validation, and retry logic.
+    
+    Returns:
+        {
+            "lesson_title": str,
+            "slides": List[Dict],
+            "references_to_previous_lessons": str,
+            "generation_metadata": {
+                "cache_hit": bool,
+                "llm_model": str,
+                "generation_time_seconds": float,
+                "review_passed_first_time": bool,
+                "rewrite_count": int,
+                "quality_score": float
+            }
+        }
+    """
+    
+    # 1. Check cache (skip if adaptation requested)
+    if not adaptation_context:
+        cached_lesson = lesson_cache.get(course_id, lesson_id, difficulty_level, user_profile)
+        if cached_lesson:
+            return {**cached_lesson, "generation_metadata": {"cache_hit": True}}
+    
+    # 2. Load context
+    course_config = load_course_config(course_id)
+    lesson_spec = get_lesson_config(course_id, lesson_id)
+    difficulty_knobs = get_difficulty_knobs(difficulty_level)
+    pedagogical_stage = get_pedagogical_stage(course_id, lesson_id)
+    
+    # 3. Generate initial lesson
+    generator_prompt = format_generator_prompt(
+        lesson_spec, user_profile, difficulty_level, difficulty_knobs, pedagogical_stage, course_config
+    )
+    
+    max_retries = 2
+    for attempt in range(max_retries):
+        try:
+            lesson_json = llm_client.generate_json(generator_prompt)
+            
+            # 4. Validate JSON schema
+            validated_lesson = LessonSchema(**lesson_json)  # Pydantic validation
+            break
+        except (JSONDecodeError, ValidationError) as e:
+            if attempt == max_retries - 1:
+                logger.error(f"Failed to generate valid lesson after {max_retries} attempts")
+                return fallback_lesson(lesson_id)  # Return generic lesson
+            continue
+    
+    # 5. Review lesson
+    reviewer_prompt = format_reviewer_prompt(lesson_json, lesson_spec, user_profile, difficulty_knobs)
+    review_result = llm_client.generate_json(reviewer_prompt)
+    
+    rewrite_count = 0
+    
+    # 6. Rewrite if needed (max 1 rewrite)
+    if review_result["approval_status"] == "needs_revision" and rewrite_count < 1:
+        rewriter_prompt = format_rewriter_prompt(
+            lesson_json, review_result, lesson_spec, difficulty_knobs, user_profile
+        )
+        lesson_json = llm_client.generate_json(rewriter_prompt)
+        rewrite_count += 1
+        
+        # 7. Re-review
+        review_result = llm_client.generate_json(
+            format_reviewer_prompt(lesson_json, lesson_spec, user_profile, difficulty_knobs)
+        )
+    
+    # 8. Cache if approved
+    if review_result["approval_status"] in ["approved", "approved_with_minor_fixes"]:
+        lesson_cache.set(course_id, lesson_id, difficulty_level, user_profile, lesson_json)
+    
+    # 9. Return with metadata
+    return {
+        **lesson_json,
+        "generation_metadata": {
+            "cache_hit": False,
+            "llm_model": llm_client.model,
+            "review_passed_first_time": rewrite_count == 0,
+            "rewrite_count": rewrite_count,
+            "quality_score": review_result["quality_score"]
+        }
+    }
+```
+
+---
+
+### Testing Checklist
+
+- [ ] Generate L01 for Clinical Researcher at difficulty 3
+- [ ] Verify slide count matches difficulty knobs (4-5 slides for d3)
+- [ ] Verify profession-specific examples present
+- [ ] Verify all learning objectives covered
+- [ ] Test cache: regenerate same lesson → should return cached version
+- [ ] Test adaptation: regenerate at difficulty 1 → verify 5-6 slides and more analogies
+- [ ] Test rewrite: inject failing review → verify rewriter fixes issues
+- [ ] Test fallback: simulate JSON parsing failure → verify generic lesson returned
+- [ ] Test safety: verify high-stakes areas not suggested for automation
 
 2.3 Lesson Generation Service
 Estimated Time: 3-4 hours

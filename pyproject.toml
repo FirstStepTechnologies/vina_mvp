@@ -11,6 +11,7 @@ dependencies = [
     "cloudinary>=1.44.1",
     "elevenlabs>=2.33.1",
     "fastapi[standard]>=0.128.0",
+    "jinja2>=3.1.6",
     "litellm>=1.59.7",
     "moviepy>=2.2.1",
     "opik>=1.10.1",

@@ -16,6 +16,7 @@ def init_db():
     import vina_backend.integrations.db.models.profile
     import vina_backend.integrations.db.models.session
     import vina_backend.integrations.db.models.quiz_attempt
+    from vina_backend.services.lesson_cache import LessonCache  # Import cache model
     
     SQLModel.metadata.create_all(engine)
 

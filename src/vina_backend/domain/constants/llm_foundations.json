@@ -4,7 +4,6 @@
   "course_tagline": "Learn the fundamentals of Large Language Models and how to use them effectively at work",
   "total_lessons": 17,
   "estimated_total_duration_minutes": 50,
-  
   "course_context": {
     "position_in_series": 1,
     "total_courses": 4,
@@ -26,7 +25,58 @@
       ]
     }
   },
-  
+  "pedagogical_progression": {
+    "stage_1_foundations": {
+      "lesson_range": [
+        "l01_what_llms_are",
+        "l02_tokens_context",
+        "l03_why_outputs_vary"
+      ],
+      "focus": "What and Why—Build foundational understanding of LLM mechanics",
+      "teaching_approach": "Concept introduction with minimal application. Heavy use of analogies.",
+      "difficulty_guidance": "Start all learners at difficulty 3. Use difficulty 1 only if they explicitly request 'Simplify this'."
+    },
+    "stage_2_application": {
+      "lesson_range": [
+        "l04_where_llms_excel",
+        "l05_hallucinations",
+        "l06_bias_in_llms",
+        "l07_safe_use_practices",
+        "l08_identifying_roi_tasks",
+        "l09_good_vs_poor_fit",
+        "l10_designing_workflows"
+      ],
+      "focus": "When and How—Apply concepts to real-world scenarios",
+      "teaching_approach": "Problem-solving and decision-making. Examples dominate over theory.",
+      "difficulty_guidance": "Adapt based on quiz performance and user feedback. Most learners settle at difficulty 3-4 by this stage."
+    },
+    "stage_3_mastery": {
+      "lesson_range": [
+        "l11_cloud_apis",
+        "l12_self_hosted",
+        "l13_choosing_setup",
+        "l14_prompt_anatomy",
+        "l15_few_shot_prompting",
+        "l16_iterating_prompts",
+        "l17_prompting_for_your_role"
+      ],
+      "focus": "How to do it well—Optimize and refine skills",
+      "teaching_approach": "Iteration, evaluation, and strategic choices. Nuance and trade-offs.",
+      "difficulty_guidance": "Learners who reach this stage typically prefer difficulty 4-5. Respect their preference."
+    }
+  },
+  "course_specific_safety_rules": [
+    "When discussing hallucinations, always explain why they happen (pattern prediction vs fact retrieval) and provide actionable mitigation strategies (verify facts, use human review)",
+    "When discussing bias, reference the learner's industry-specific regulations (e.g., EEOC for HR, FDA for clinical research) and ethical standards",
+    "When presenting use cases, explicitly address risks and require human-in-the-loop workflows—never suggest full automation without human oversight",
+    "When teaching prompting, emphasize that good prompts reduce but don't eliminate risks like hallucinations—verification is always required",
+    "Never suggest that LLMs 'know', 'understand', or 'think'—always use accurate language like 'predict', 'generate', or 'model patterns'"
+  ],
+  "cross_lesson_coherence_rules": {
+    "reference_previous_lessons": "When a lesson builds on prior concepts, explicitly reference the earlier lesson by name (e.g., 'Remember from L01: What LLMs Are that they predict patterns...'). This reinforces learning and shows progression.",
+    "respect_pedagogical_stage": "Tailor explanation depth to the stage: Stage 1 is patient and foundational, Stage 2 is practical and action-oriented, Stage 3 assumes competence and focuses on optimization.",
+    "maintain_terminology_consistency": "Use the same terms for concepts across all lessons. If L01 calls it 'context window,' don't switch to 'memory limit' in L05."
+  },
   "lessons": [
     {
       "lesson_id": "l01_what_llms_are",
@@ -35,20 +85,17 @@
       "topic_group": "The Foundations",
       "estimated_duration_minutes": 3,
       "prerequisites": [],
-      
       "what_learners_will_understand": [
         "LLMs are AI systems that predict the next word based on patterns in massive amounts of text",
         "They generate text that sounds human-like by learning statistical patterns, not by 'knowing' facts",
         "LLMs work by predicting what text is most likely to come next, similar to autocomplete on steroids",
         "Why this matters: LLMs can generate plausible-sounding text that's completely wrong"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'LLMs look up answers in a database' → ✅ They generate text by predicting patterns, not retrieving stored facts",
         "❌ 'LLMs understand what they're saying' → ✅ They model statistical word relationships, not meaning",
         "❌ 'LLMs are like search engines' → ✅ Search retrieves existing content; LLMs generate new text"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Technical explanations of neural networks, transformers, or attention mechanisms",
@@ -62,28 +109,26 @@
         ]
       }
     },
-    
     {
       "lesson_id": "l02_tokens_context",
       "lesson_number": 2,
       "lesson_name": "Tokens & Context Windows",
       "topic_group": "The Foundations",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l01_what_llms_are"],
-      
+      "prerequisites": [
+        "l01_what_llms_are"
+      ],
       "what_learners_will_understand": [
         "Tokens are the basic chunks of text an LLM processes (roughly 3/4 of a word per token)",
         "Context window is the amount of text an LLM can 'remember' in a single conversation (typically 8K-200K tokens)",
         "Why context windows matter: very long documents might exceed the limit and need to be chunked",
         "Longer conversations can eventually exceed the context window, causing the LLM to 'forget' earlier parts"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Context window = total knowledge of the LLM' → ✅ Context window = per-request working memory, not total knowledge",
         "❌ 'I can have infinite-length conversations' → ✅ Eventually, earlier parts get truncated or forgotten",
         "❌ 'Tokens are the same as words' → ✅ Common words are 1 token, longer words might be 2-3 tokens"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Deep technical details about tokenization algorithms (BPE, WordPiece)",
@@ -95,33 +140,30 @@
           "Rule of thumb: 1 token ≈ 3/4 of a word (so 100 words ≈ 75 tokens)"
         ]
       },
-      
       "references_previous_lessons": {
         "l01_what_llms_are": "Remind that LLMs process text in chunks (tokens) to make predictions, building on L01's concept of pattern prediction."
       }
     },
-    
     {
       "lesson_id": "l03_why_outputs_vary",
       "lesson_number": 3,
       "lesson_name": "Why Outputs Vary",
       "topic_group": "The Foundations",
       "estimated_duration_minutes": 2,
-      "prerequisites": ["l02_tokens_context"],
-      
+      "prerequisites": [
+        "l02_tokens_context"
+      ],
       "what_learners_will_understand": [
         "Temperature is a setting that controls output randomness (0 = very consistent, higher values = more creative/varied)",
         "LLMs introduce randomness by design to make outputs feel more natural and less robotic",
         "Asking the same question twice often yields different answers—this is intentional, not a bug",
         "For tasks needing consistency (data extraction, code), set temperature to 0; for creative tasks (brainstorming), use higher values"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'If I ask the same question twice, I should get the same answer' → ✅ Randomness is built-in for creativity; set temperature to 0 for consistency",
         "❌ 'Different answers mean the LLM is broken' → ✅ Variation is a feature, not a bug",
         "❌ 'Higher temperature is always better' → ✅ Match temperature to the task (low for precision, high for creativity)"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Technical explanations of sampling algorithms (top-p, top-k)",
@@ -133,33 +175,30 @@
           "Examples from the learner's work (e.g., consistent format for reports vs varied ideas for brainstorming)"
         ]
       },
-      
       "references_previous_lessons": {
         "l01_what_llms_are": "Temperature affects how the LLM chooses which word to predict next (from L01), adding controlled randomness to the prediction process."
       }
     },
-    
     {
       "lesson_id": "l04_where_llms_excel",
       "lesson_number": 4,
       "lesson_name": "Where LLMs Excel",
       "topic_group": "Capabilities & Risks",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l03_why_outputs_vary"],
-      
+      "prerequisites": [
+        "l03_why_outputs_vary"
+      ],
       "what_learners_will_understand": [
         "LLMs excel at: summarizing long documents, drafting emails/reports, brainstorming ideas, translating text, generating code snippets",
         "Common pattern: tasks involving text transformation, where speed and 'good enough' drafts are valuable",
         "LLMs are best when combined with human review—they provide the first draft, humans refine and verify",
         "Strength: rapid iteration and variation generation (e.g., 10 email subject lines in seconds)"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'LLMs can replace writers/analysts/experts' → ✅ They augment experts, don't replace judgment",
         "❌ 'LLMs are only useful for tech/coding tasks' → ✅ They're broadly applicable across professions",
         "❌ 'LLM output is always ready to use as-is' → ✅ Best used as drafts that humans review and improve"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Overstating capabilities ('LLMs will revolutionize everything')",
@@ -171,34 +210,31 @@
           "Time-saving potential: tasks that took hours might take 20 minutes with LLM assistance"
         ]
       },
-      
       "references_previous_lessons": {
         "l01_what_llms_are": "LLMs excel at these tasks because they're fundamentally text prediction engines (from L01), making them naturally good at text transformation."
       }
     },
-    
     {
       "lesson_id": "l05_hallucinations",
       "lesson_number": 5,
       "lesson_name": "Understanding Hallucinations",
       "topic_group": "Capabilities & Risks",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l04_where_llms_excel"],
-      
+      "prerequisites": [
+        "l04_where_llms_excel"
+      ],
       "what_learners_will_understand": [
         "Hallucinations: when LLMs confidently generate false or nonsensical information",
         "Most common with: factual claims, citations, statistics, dates, recent events, names",
         "Why hallucinations happen: LLMs predict plausible text, not factually correct text",
         "Even the best LLMs hallucinate—it's inherent to how they work, not a bug in cheap models"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'If it sounds confident, it's probably correct' → ✅ Confidence is stylistic, not evidential",
         "❌ 'Hallucinations only happen with small/cheap models' → ✅ All LLMs hallucinate, even the most advanced",
         "❌ 'If I don't see a hallucination, there isn't one' → ✅ Subtle factual errors are easy to miss without verification",
         "❌ 'Hallucinations are rare edge cases' → ✅ They're common enough that every output needs verification"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Fear-mongering about hallucinations ('LLMs are too dangerous to use')",
@@ -210,34 +246,31 @@
           "The solution: use LLMs for drafts, verify before finalizing"
         ]
       },
-      
       "references_previous_lessons": {
         "l01_what_llms_are": "Hallucinations happen because LLMs predict patterns (from L01), not facts. They generate what sounds right, not what is right.",
         "l04_where_llms_excel": "This is why human review (from L04) is critical—LLMs draft, humans verify."
       }
     },
-    
     {
       "lesson_id": "l06_bias_in_llms",
       "lesson_number": 6,
       "lesson_name": "Bias in LLMs",
       "topic_group": "Capabilities & Risks",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l05_hallucinations"],
-      
+      "prerequisites": [
+        "l05_hallucinations"
+      ],
       "what_learners_will_understand": [
         "LLMs reflect biases present in their training data (gender, racial, cultural stereotypes)",
         "Where bias comes from: patterns in human-generated text on the internet, books, etc.",
         "Why this matters: biased outputs can perpetuate stereotypes or lead to unfair decisions",
         "Bias can be subtle: word associations, assumptions about roles, or framing choices"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'LLMs are unbiased because they're machines' → ✅ They amplify patterns in human-generated text, including biases",
         "❌ 'Bias is easy to spot' → ✅ Subtle biases in framing or word choice are often missed",
         "❌ 'Only certain topics have bias concerns' → ✅ Bias can appear in any domain (hiring, healthcare, finance, etc.)"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Implying LLMs are intentionally biased or malicious",
@@ -249,20 +282,19 @@
           "Awareness is the first step: know that bias exists and actively look for it"
         ]
       },
-      
       "references_previous_lessons": {
         "l01_what_llms_are": "LLMs learn patterns from text (from L01), and those patterns include societal biases present in the training data."
       }
     },
-    
     {
       "lesson_id": "l07_safe_use_practices",
       "lesson_number": 7,
       "lesson_name": "Safe Use Practices",
       "topic_group": "Capabilities & Risks",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l06_bias_in_llms"],
-      
+      "prerequisites": [
+        "l06_bias_in_llms"
+      ],
       "what_learners_will_understand": [
         "Core safe-use rules: (1) Always verify facts, (2) Never input sensitive data, (3) Use human review for high-stakes decisions",
         "Why rule 1 matters: hallucinations are common, verification is mandatory",
@@ -270,13 +302,11 @@
         "Why rule 3 matters: LLMs draft, humans decide—never let an LLM make final decisions on its own",
         "The 'human-in-the-loop' pattern: LLM assists → Human reviews → Human approves"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'LLMs are secure because they're behind a login' → ✅ Treat LLM conversations as potentially visible to the provider",
         "❌ 'If I verify one output and it's correct, future outputs are safe' → ✅ Every output needs independent verification",
         "❌ 'Safe use means not using LLMs at all' → ✅ Safe use means using them correctly with proper safeguards"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Fear-mongering that discourages all LLM use",
@@ -288,34 +318,31 @@
           "Examples of high-stakes decisions that need human judgment (hiring, diagnosis, financial advice)"
         ]
       },
-      
       "references_previous_lessons": {
         "l05_hallucinations": "Verification (rule 1) is critical because of hallucinations (from L05).",
         "l06_bias_in_llms": "Human review (rule 3) catches bias (from L06) that automated systems would miss."
       }
     },
-    
     {
       "lesson_id": "l08_identifying_roi_tasks",
       "lesson_number": 8,
       "lesson_name": "Identifying High-ROI Tasks",
       "topic_group": "Business Use Cases",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l07_safe_use_practices"],
-      
+      "prerequisites": [
+        "l07_safe_use_practices"
+      ],
       "what_learners_will_understand": [
         "High-ROI tasks: repetitive writing (emails, reports), summarizing long documents, generating variations (ad copy, interview questions)",
         "Good fit criteria: tasks where 'good enough' drafts save significant time, even with human editing needed",
         "Characteristics of good tasks: high volume, text-based, tolerance for iteration",
         "How to spot opportunities: look for tasks you do repeatedly where the first draft takes the most time"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'LLMs should automate entire workflows end-to-end' → ✅ Best for specific subtasks within workflows",
         "❌ 'Only high-tech companies can find ROI' → ✅ Every profession has repetitive text tasks",
         "❌ 'ROI means eliminating jobs' → ✅ ROI means freeing up time for higher-value work"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Generic use cases not tied to the learner's profession",
@@ -327,34 +354,31 @@
           "The principle: automate the repetitive, reserve humans for the strategic"
         ]
       },
-      
       "references_previous_lessons": {
         "l04_where_llms_excel": "Focus on tasks that match LLM strengths (from L04): text transformation, drafting, variation generation.",
         "l07_safe_use_practices": "Good ROI tasks are those where safe-use practices (from L07) are easy to implement."
       }
     },
-    
     {
       "lesson_id": "l09_good_vs_poor_fit",
       "lesson_number": 9,
       "lesson_name": "Good Fit vs Poor Fit",
       "topic_group": "Business Use Cases",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l08_identifying_roi_tasks"],
-      
+      "prerequisites": [
+        "l08_identifying_roi_tasks"
+      ],
       "what_learners_will_understand": [
         "Good fit: tasks where errors are low-stakes and easily caught (initial drafts, brainstorming, summarization)",
         "Poor fit: tasks requiring real-time accuracy (stock prices), compliance sign-off (legal contracts), or irreplaceable expertise (medical diagnosis)",
         "The risk-benefit test: if an error could cause harm, cost significant money, or violate regulations, it's poor fit",
         "Industry-specific poor fits: patient care decisions in healthcare, hiring decisions in HR, financial advice in finance"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'If an LLM can do it, I should let it' → ✅ Evaluate risk, not just capability",
         "❌ 'Use cases that work in tech work everywhere' → ✅ Risk tolerance varies drastically by industry",
         "❌ 'Poor fit means never use LLMs for that domain' → ✅ It means use with extra safeguards or for sub-tasks only"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Suggesting regulated use cases without acknowledging compliance requirements",
@@ -366,34 +390,31 @@
           "When to say no: if you can't safely verify the output, it's poor fit"
         ]
       },
-      
       "references_previous_lessons": {
         "l05_hallucinations": "Poor fit tasks are those where hallucinations (from L05) would be catastrophic.",
         "l07_safe_use_practices": "Good fit tasks allow for robust human review (from L07); poor fit tasks make review impractical."
       }
     },
-    
     {
       "lesson_id": "l10_designing_workflows",
       "lesson_number": 10,
       "lesson_name": "Designing Safe Workflows",
       "topic_group": "Business Use Cases",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l09_good_vs_poor_fit"],
-      
+      "prerequisites": [
+        "l09_good_vs_poor_fit"
+      ],
       "what_learners_will_understand": [
         "Standard workflow pattern: Human defines task → LLM generates draft → Human reviews → Human approves final output",
         "Where to place checkpoints: before high-stakes actions (sending to clients, making decisions, publishing externally)",
         "How to iterate: if LLM output is off, refine the prompt rather than giving up",
         "Documentation: keep track of what the LLM generated vs what you approved (important for accountability)"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Adding human review defeats the purpose of automation' → ✅ Review is what makes automation safe and effective",
         "❌ 'Workflows are all-or-nothing (manual or fully automated)' → ✅ Hybrid workflows get the best of both",
         "❌ 'If the first LLM output is bad, LLMs can't help with this task' → ✅ Iterate the prompt, don't give up"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Suggesting workflows that skip human review for high-stakes decisions",
@@ -405,34 +426,31 @@
           "The mindset shift: LLMs as assistants that speed up the initial work, not replacements that make final decisions"
         ]
       },
-      
       "references_previous_lessons": {
         "l07_safe_use_practices": "Workflows must implement the safe-use rules (from L07): verification, no sensitive data, human review.",
         "l09_good_vs_poor_fit": "Use workflows from this lesson for good-fit tasks (from L09); poor-fit tasks need even more safeguards."
       }
     },
-    
     {
       "lesson_id": "l11_cloud_apis",
       "lesson_number": 11,
       "lesson_name": "Cloud APIs Explained",
       "topic_group": "The LLM Landscape",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l10_designing_workflows"],
-      
+      "prerequisites": [
+        "l10_designing_workflows"
+      ],
       "what_learners_will_understand": [
         "Cloud APIs (OpenAI, Anthropic, Google): you send text, they return generated text, charged per usage",
         "Advantages: easy to use, no setup required, always using the latest models, pay only for what you use",
         "Considerations: data leaves your organization, costs scale with usage, dependent on provider's availability",
         "When to use: testing new use cases, low-to-medium volume, speed to market is critical"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Cloud APIs are insecure' → ✅ Major providers have strong security, but data does leave your infrastructure",
         "❌ 'Cloud APIs are always cheaper' → ✅ They're cheaper to start, but costs scale with usage",
         "❌ 'I need to commit to one provider forever' → ✅ Many organizations start with cloud, then move some workloads later"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Vendor comparisons that go stale ('Claude is better at X than GPT-4')",
@@ -444,33 +462,30 @@
           "The pilot approach: start with cloud to test, decide later if you need to move"
         ]
       },
-      
       "references_previous_lessons": {
         "l09_good_vs_poor_fit": "Cloud APIs work well for good-fit tasks (from L09) where data sensitivity is low."
       }
     },
-    
     {
       "lesson_id": "l12_self_hosted",
       "lesson_number": 12,
       "lesson_name": "Self-Hosted Models",
       "topic_group": "The LLM Landscape",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l11_cloud_apis"],
-      
+      "prerequisites": [
+        "l11_cloud_apis"
+      ],
       "what_learners_will_understand": [
         "Self-hosted: you run open-source models on your own servers (on-premise or private cloud)",
         "Advantages: data stays internal, no per-use costs (just infrastructure), full control over the model",
         "Considerations: requires technical expertise, upfront infrastructure investment, you're responsible for updates and maintenance",
         "When to use: high-volume use cases, strict data privacy requirements, regulatory constraints"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Self-hosted is always more secure' → ✅ Security depends on your infrastructure; cloud providers have massive security teams",
         "❌ 'Self-hosted is always cheaper' → ✅ Cheaper at high volume, but expensive upfront",
         "❌ 'You need to build models from scratch' → ✅ You use open-source models; no training required"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Deep technical details about model deployment (Docker, Kubernetes, GPUs)",
@@ -482,33 +497,30 @@
           "Working with IT: questions to ask your infrastructure team"
         ]
       },
-      
       "references_previous_lessons": {
         "l11_cloud_apis": "Self-hosted trades the ease of cloud APIs (from L11) for control and data privacy."
       }
     },
-    
     {
       "lesson_id": "l13_choosing_setup",
       "lesson_number": 13,
       "lesson_name": "Choosing the Right Setup",
       "topic_group": "The LLM Landscape",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l12_self_hosted"],
-      
+      "prerequisites": [
+        "l12_self_hosted"
+      ],
       "what_learners_will_understand": [
         "Key decision factors: cost, data privacy, latency (speed), output quality, technical expertise",
         "Decision framework: (1) Identify your constraints, (2) Evaluate options against constraints, (3) Pilot before committing",
         "Common scenarios: Tight budget → cloud API with smaller models; Strict privacy → self-hosted; Need latest capabilities → cloud API",
         "Hybrid approach: use cloud APIs for most tasks, self-host for sensitive workloads"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'There's one best option for everyone' → ✅ The right choice depends on your specific constraints",
         "❌ 'You need to become an LLM expert to make this choice' → ✅ Ask the right questions to your IT/procurement team",
         "❌ 'The choice is permanent' → ✅ Many organizations adjust as needs evolve"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Implying one deployment option is universally 'best'",
@@ -520,22 +532,21 @@
           "Working with stakeholders: IT for technical feasibility, procurement for costs, legal for compliance"
         ]
       },
-      
       "references_previous_lessons": {
         "l11_cloud_apis": "Recap cloud API benefits (from L11): easy, fast to start, pay-per-use.",
         "l12_self_hosted": "Recap self-hosted benefits (from L12): data control, high-volume cost efficiency.",
         "l09_good_vs_poor_fit": "Match deployment choice to use case risk (from L09): sensitive use cases may require self-hosted."
       }
     },
-    
     {
       "lesson_id": "l14_prompt_anatomy",
       "lesson_number": 14,
       "lesson_name": "Anatomy of a Good Prompt",
       "topic_group": "Prompting Skills",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l13_choosing_setup"],
-      
+      "prerequisites": [
+        "l13_choosing_setup"
+      ],
       "what_learners_will_understand": [
         "Good prompts have four parts: (1) Clear task, (2) Relevant context, (3) Output format/constraints, (4) Examples (if needed)",
         "Part 1 (Task): What you want the LLM to do, stated clearly and specifically",
@@ -543,13 +554,11 @@
         "Part 3 (Constraints): Format requirements, length limits, tone, what to avoid",
         "Part 4 (Examples): Optional but powerful—show what you want to see"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Short prompts are better' → ✅ Clarity beats brevity; good prompts are often detailed",
         "❌ 'LLMs know what I need' → ✅ Explicit instructions always outperform assumptions",
         "❌ 'Prompts should sound natural/conversational' → ✅ Clear structure gets better results than casual language"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Overly complex prompt templates that intimidate beginners",
@@ -561,33 +570,30 @@
           "The principle: treat the LLM like a capable but uninformed assistant—give it all the context it needs"
         ]
       },
-      
       "references_previous_lessons": {
         "l08_identifying_roi_tasks": "Apply prompt structure to high-ROI tasks (from L08) the learner identified."
       }
     },
-    
     {
       "lesson_id": "l15_few_shot_prompting",
       "lesson_number": 15,
       "lesson_name": "Few-Shot Prompting",
       "topic_group": "Prompting Skills",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l14_prompt_anatomy"],
-      
+      "prerequisites": [
+        "l14_prompt_anatomy"
+      ],
       "what_learners_will_understand": [
         "Few-shot prompting: showing the LLM 1-3 examples of the output you want before asking it to generate",
         "Why it works: LLMs are pattern-matchers—examples give them a clear pattern to follow",
         "When to use: when you need a specific format (JSON, bullet points, tables) or tone (formal vs casual)",
         "How many examples: 1-3 is usually enough; more doesn't always help and uses up context window"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Examples make prompts too long' → ✅ A few good examples dramatically improve output quality",
         "❌ 'I need many examples' → ✅ 1-3 examples are usually enough; diminishing returns after that",
         "❌ 'Examples should be perfect' → ✅ Good examples are realistic, not idealized"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Overly complex examples that confuse rather than clarify",
@@ -599,33 +605,30 @@
           "The pattern: 'Here are 2 examples of what I want. Now generate 5 more like these.'"
         ]
       },
-      
       "references_previous_lessons": {
         "l14_prompt_anatomy": "Examples are part 4 of good prompt anatomy (from L14)—powerful but optional."
       }
     },
-    
     {
       "lesson_id": "l16_iterating_prompts",
       "lesson_number": 16,
       "lesson_name": "Iterating Your Prompts",
       "topic_group": "Prompting Skills",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l15_few_shot_prompting"],
-      
+      "prerequisites": [
+        "l15_few_shot_prompting"
+      ],
       "what_learners_will_understand": [
         "The iteration cycle: Write prompt → Generate output → Evaluate (is it what I wanted?) → Refine prompt → Repeat",
         "Common refinements: add constraints ('Don't use jargon'), provide examples, clarify ambiguous instructions, adjust tone",
         "When to stop iterating: when the output consistently meets your needs, or when further iteration yields diminishing returns",
         "Prompting is a skill: experts iterate too; you get better with practice"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'I should get a perfect prompt on the first try' → ✅ Experts iterate; prompting is an iterative skill",
         "❌ 'If the LLM doesn't understand, it's the LLM's fault' → ✅ Prompt clarity is your responsibility",
         "❌ 'Good prompts work identically across all models' → ✅ Different models respond differently; some iteration per model is normal"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Implying iteration is a sign of failure",
@@ -637,34 +640,31 @@
           "The mindset: iteration is refinement, not failure"
         ]
       },
-      
       "references_previous_lessons": {
         "l14_prompt_anatomy": "Use prompt anatomy (from L14) as your iteration framework—which part needs adjustment?",
         "l15_few_shot_prompting": "If format is wrong, add examples (from L15); if content is wrong, adjust task/context."
       }
     },
-    
     {
       "lesson_id": "l17_prompting_for_your_role",
       "lesson_number": 17,
       "lesson_name": "Prompting for Your Role",
       "topic_group": "Prompting Skills",
       "estimated_duration_minutes": 3,
-      "prerequisites": ["l16_iterating_prompts"],
-      
+      "prerequisites": [
+        "l16_iterating_prompts"
+      ],
       "what_learners_will_understand": [
         "Role-specific prompting: telling the LLM who it's helping and what domain it's working in",
         "Why it works: 'You're assisting a Clinical Researcher in pharma' activates relevant knowledge and tone",
         "How to incorporate your typical_outputs: reference the specific deliverables you create (protocols, reports, ads)",
         "Building a prompt library: save and reuse prompts that work well for your recurring tasks"
       ],
-      
       "misconceptions_to_address": [
         "❌ 'Role context is just fluff' → ✅ It significantly improves relevance and accuracy",
         "❌ 'I need different prompts for every single task' → ✅ Many tasks use the same base prompt with minor tweaks",
         "❌ 'Prompting is a one-time skill to learn' → ✅ It's an ongoing practice that improves as you discover what works for your role"
       ],
-      
       "content_constraints": {
         "avoid": [
           "Generic prompting advice not tied to the learner's profession",
@@ -676,7 +676,6 @@
           "The long-term value: good prompts become assets you reuse, not one-off experiments"
         ]
       },
-      
       "references_previous_lessons": {
         "l14_prompt_anatomy": "Role context is part of the 'context' section (from L14).",
         "l08_identifying_roi_tasks": "Create prompts for the high-ROI tasks (from L08) you identified earlier.",
