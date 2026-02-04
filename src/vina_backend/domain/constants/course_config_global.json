@@ -1,0 +1,292 @@
+{
+    "global_difficulty_framework": {
+        "1": {
+            "label": "Guided",
+            "description": "Maximum scaffolding for first-time encounters",
+            "target_audience": "Someone completely new to this topic",
+            "delivery_style": {
+                "tone": "Warm, conversational, reassuring",
+                "pacing": "Slow and deliberate",
+                "scaffolding": "Heavy use of analogies, 'imagine this...' scenarios, step-by-step breakdowns",
+                "terminology": "Everyday language first; technical terms introduced gently with definitions"
+            },
+            "delivery_metrics": {
+                "words_per_slide": "30-50 words (2-3 short sentences)",
+                "analogies_per_concept": "2 (one everyday, one profession-adjacent)",
+                "examples_per_concept": "2-3 (simple, unambiguous scenarios)",
+                "explanatory_padding": "High—include 'why this matters to you' framing at the start",
+                "slide_count_for_3min_lesson": "5-6 slides (slower pacing, more repetition)",
+                "jargon_density": "0-1 technical terms per slide, always defined immediately in simple language",
+                "sentence_structure": "Short sentences (8-12 words). Active voice. One idea per sentence"
+            },
+            "content_scope": "Core learning objectives only. No trade-offs, edge cases, or advanced considerations. Focus on building foundational understanding."
+        },
+        "3": {
+            "label": "Practical",
+            "description": "Balanced depth for workplace application",
+            "target_audience": "Someone familiar with the topic who wants to use it effectively",
+            "delivery_style": {
+                "tone": "Clear, professional, confident",
+                "pacing": "Moderate—explains reasoning but doesn't belabor points",
+                "scaffolding": "Some analogies; moves to concrete examples quickly",
+                "terminology": "Introduces key terms with brief definitions"
+            },
+            "delivery_metrics": {
+                "words_per_slide": "50-70 words (3-4 sentences)",
+                "analogies_per_concept": "1 (if concept is abstract or unfamiliar)",
+                "examples_per_concept": "1-2 (tied directly to learner's profession and typical_outputs)",
+                "explanatory_padding": "Moderate—brief 'why this matters' statements, no extended motivation",
+                "slide_count_for_3min_lesson": "4-5 slides (balanced pacing)",
+                "jargon_density": "2-3 technical terms per slide, defined on first use",
+                "sentence_structure": "Mix of short and medium sentences. Some subordinate clauses OK"
+            },
+            "content_scope": "Core learning objectives plus key trade-offs. Acknowledges limitations without deep-diving into edge cases."
+        },
+        "5": {
+            "label": "Direct",
+            "description": "Efficient delivery for confident learners",
+            "target_audience": "Someone who grasps concepts quickly and dislikes over-explanation",
+            "delivery_style": {
+                "tone": "Direct, matter-of-fact, respects the learner's time",
+                "pacing": "Brisk—states concepts without extended buildup",
+                "scaffolding": "Minimal. One strong example, no 'imagine this...' padding",
+                "terminology": "Uses terms directly; assumes learner will ask if confused"
+            },
+            "delivery_metrics": {
+                "words_per_slide": "70-90 words (4-5 sentences, denser information)",
+                "analogies_per_concept": "0-1 (only if absolutely necessary for clarity)",
+                "examples_per_concept": "1 (profession-specific, no fluff)",
+                "explanatory_padding": "Minimal—state concept, show example, done. No motivational framing",
+                "slide_count_for_3min_lesson": "3-4 slides (fast pacing, information-rich)",
+                "jargon_density": "4-5 technical terms per slide, minimal definitions (assumed known from context)",
+                "sentence_structure": "Dense, information-rich sentences. Complex structures OK"
+            },
+            "content_scope": "Same learning objectives as level 3. Does NOT add advanced content, metrics, or topics beyond the lesson's scope. Only delivery density changes."
+        }
+    },
+    "global_adaptation_rules": {
+        "simplify_this": {
+            "trigger": "User finds content confusing or overwhelming",
+            "user_facing_label": "Simplify this",
+            "action": "Regenerate lesson at difficulty level 1",
+            "difficulty_adjustment": "Set to level 1 (Guided) regardless of current level",
+            "content_adjustments": [
+                "Add a relatable analogy before introducing each concept",
+                "Break complex ideas into smaller, sequential chunks (2-3 sub-points per concept)",
+                "Use everyday language; define any technical terminology immediately when introduced",
+                "Add reassuring phrasing ('This can feel tricky at first, but...', 'Let's break this down...')",
+                "Increase use of 'imagine this...' scenarios to ground abstract concepts",
+                "Add explicit 'why this matters to you' framing at the lesson start"
+            ],
+            "learning_objectives": "Unchanged—same outcomes, gentler path to understanding",
+            "next_lesson_default_difficulty": "Start next lesson at difficulty 1 (carry forward the signal that learner needs more support)"
+        },
+        "get_to_the_point": {
+            "trigger": "User finds pacing too slow or explanations excessive",
+            "user_facing_label": "Get to the point",
+            "action": "Regenerate lesson at difficulty level 5",
+            "difficulty_adjustment": "Set to level 5 (Direct) regardless of current level",
+            "content_adjustments": [
+                "Remove extended analogies and 'imagine this...' scaffolding",
+                "State concepts directly without lengthy buildup or motivational framing",
+                "Assume familiarity with basic professional context from earlier lessons",
+                "Keep one strong, profession-specific example per concept (not multiple)",
+                "Trim reassuring or motivational phrasing entirely",
+                "Deliver the same learning objectives in approximately 40% fewer words",
+                "Reduce slide count by 1-2 slides (condense information)"
+            ],
+            "learning_objectives": "Unchanged—same outcomes, faster delivery",
+            "what_this_is_NOT": "This is not about adding advanced content, edge cases, metrics, or topics beyond the lesson's scope. Content scope stays identical to level 3; only delivery density and pacing change.",
+            "next_lesson_default_difficulty": "Start next lesson at difficulty 5 (carry forward the signal that learner prefers efficient delivery)"
+        },
+        "i_know_this_already": {
+            "trigger": "User believes they already understand this material and wants to skip",
+            "user_facing_label": "I know this already",
+            "action": "Present checkpoint quiz to validate knowledge, then enable skip if passed",
+            "quiz_design": {
+                "num_questions": 3,
+                "question_sources": [
+                    "2 questions testing current lesson's core learning objectives",
+                    "1 question previewing the next lesson's prerequisites to ensure readiness"
+                ],
+                "question_styles": [
+                    "scenario_judgement: Present a work situation, ask what action to take",
+                    "spot_the_issue: Show an output or use case, ask what's problematic",
+                    "choose_best_approach: Show multiple options, ask which is most effective and why"
+                ],
+                "difficulty_level": "Practical (level 3 equivalent)—test application, not just recall"
+            },
+            "skip_logic": {
+                "all_correct_3_of_3": {
+                    "action": "Skip current lesson entirely",
+                    "next_step": "Show success message, then offer: 'Want to skip further? Test your knowledge of the next 2 lessons.'",
+                    "ui_flow": "Default: proceed to next lesson. Optional link: 'Skip further' (low-key, not aggressive)"
+                },
+                "mostly_correct_2_of_3": {
+                    "action": "Skip current lesson",
+                    "next_step": "Begin next lesson at current difficulty level (maintain, don't adjust)",
+                    "message": "Good! You've validated your knowledge of this lesson. Moving ahead."
+                },
+                "mostly_incorrect_0_or_1_of_3": {
+                    "action": "Do NOT skip—surface the knowledge gap gently",
+                    "next_step": "Offer choice: 'It looks like there are a few concepts worth reviewing. Would you like to: (A) Watch this lesson, or (B) Continue anyway and come back later?'",
+                    "message": "No judgment—this is a teaching moment, not a penalty"
+                }
+            },
+            "combined_skip_quiz": {
+                "description": "If user opts to skip further after passing first quiz",
+                "num_questions": 6,
+                "structure": "2-3 questions per lesson for the next 2 lessons",
+                "pass_threshold": "5 out of 6 correct to skip both lessons",
+                "fail_outcome": "If <5 correct, proceed to the first of the two lessons (don't skip either)"
+            },
+            "learning_objectives": "Validated via quiz performance, not re-taught through lesson",
+            "next_lesson_default_difficulty": "Maintain current difficulty level (skipping doesn't change difficulty preference)"
+        },
+        "more_examples": {
+            "trigger": "User understands the concept but wants to see it applied in their specific context",
+            "user_facing_label": "More examples",
+            "action": "Serve pre-rendered 'More Examples' content (2 minutes, 2 profession-specific examples)",
+            "content_requirements": {
+                "num_examples": 2,
+                "example_characteristics": [
+                    "Directly reference the learner's typical_outputs from their user profile",
+                    "Show before/after comparisons where applicable",
+                    "Include one 'common mistake in your field' example with correction",
+                    "Tie examples explicitly to the lesson's core concepts (not tangential)"
+                ],
+                "format": "Pre-rendered video segment or text-based examples (implementation choice)",
+                "delivery_style": "Match the difficulty level of the main lesson (if difficulty 1, use simpler language; if difficulty 5, be more concise)"
+            },
+            "content_adjustments": [
+                "Reference the learner's daily_responsibilities and typical_outputs explicitly",
+                "Use industry-specific terminology and scenarios",
+                "Focus on application, not re-explanation of theory",
+                "Keep difficulty level unchanged from the lesson they just watched"
+            ],
+            "learning_objectives": "Unchanged—examples reinforce and illustrate, they don't expand scope",
+            "implementation_note": "For efficiency, 'More Examples' content can be pre-rendered (one per lesson per profession/industry combo) and served instantly. They are profession-specific but NOT difficulty-specific (examples work at any difficulty level).",
+            "next_lesson_default_difficulty": "Maintain current difficulty level (requesting examples doesn't signal difficulty preference)"
+        }
+    },
+    "global_content_guidelines": {
+        "tone": "Conversational but authoritative. Practical, not hype-driven. Honest about limitations.",
+        "structure_per_lesson": [
+            "Hook: Start with a relatable problem from the learner's work (1 slide)",
+            "Explain: Clarify the core concept in clear language (1-2 slides depending on difficulty)",
+            "Example: Show a concrete application tied to the learner's profession (1-2 slides)",
+            "Connect: Link back to their goals or pain points, or preview what's next (final slide)"
+        ],
+        "example_types_to_use": [
+            "Real-world workplace scenarios from the learner's industry",
+            "Before/after comparisons (manual process vs tool-assisted workflow)",
+            "Common mistakes in the learner's field and how to avoid them",
+            "Quick wins: small, immediate applications they can try today"
+        ],
+        "example_selection_criteria": {
+            "must_be": [
+                "Specific to the learner's profession and industry (reference their typical_outputs explicitly)",
+                "Realistic and immediately applicable in their current role",
+                "Observable in outcome (learner can verify success—'you'll know it worked when...')"
+            ],
+            "avoid": [
+                "Hypothetical 'imagine you work at...' scenarios when the learner actually works in that field",
+                "Examples requiring tools, data, or access the learner doesn't have",
+                "Examples with unclear success criteria or feedback loops that take weeks to close",
+                "Generic examples that could apply to any profession without context"
+            ]
+        },
+        "language_to_avoid": [
+            "Overly technical jargon without clear, immediate definitions",
+            "Listing tool features or capabilities without explaining benefits to the learner",
+            "Abstract theory without practical grounding in the learner's work",
+            "Hype language ('revolutionary', 'game-changing', 'transform everything') without evidence",
+            "Passive voice or vague phrasing ('it is believed that...', 'some experts say...')"
+        ],
+        "accessibility_requirements": [
+            "Use active voice wherever possible",
+            "Define acronyms on first use, even if common in the industry",
+            "Avoid idioms or culturally-specific references that may not translate across regions",
+            "Use concrete nouns and strong verbs; minimize abstract or vague language"
+        ]
+    },
+    "global_quiz_framework": {
+        "num_questions_per_lesson": 3,
+        "pass_threshold": 2,
+        "question_format": "multiple_choice_single_answer",
+        "num_options_per_question": 4,
+        "question_structure_requirements": {
+            "must_include": [
+                "question_text: Clear, specific scenario or problem statement from the learner's profession",
+                "options: 4 distinct choices labeled A, B, C, D",
+                "correct_answer: Letter of the correct choice (A, B, C, or D)",
+                "explanation: Why the correct answer is right, in 2-3 sentences",
+                "objective_id: Which learning objective from the lesson this question tests"
+            ],
+            "optional_for_future": [
+                "wrong_answer_explanations: Why each incorrect choice is wrong (post-MVP enhancement)"
+            ]
+        },
+        "question_types": {
+            "scenario_judgement": "Present a work situation from the learner's profession, ask what action they should take or what decision to make",
+            "choose_best_approach": "Show 4 different approaches, strategies, or methods, ask which is most effective and why",
+            "spot_the_issue": "Show an output, use case, or workflow and ask what's problematic, risky, or could be improved"
+        },
+        "coverage_rules": [
+            "Each of the 3 questions must test a different learning objective from the lesson (no redundant questions)",
+            "At least one question must use a scenario from the learner's specific industry (not generic)",
+            "Avoid questions that can be answered without watching the lesson (no pure trivia or common sense)",
+            "All 4 options should be plausible—avoid 'obviously wrong' distractors that make guessing easy"
+        ],
+        "difficulty_alignment": "Quiz questions test learning objectives at a consistent 'Practical' (level 3) application level, regardless of which difficulty level the learner watched the lesson at. This creates a fair, consistent success bar.",
+        "feedback_rules": {
+            "perfect_score_3_of_3": "Increase difficulty by 1 level for the next lesson (current_difficulty + 1, max 5). Message: 'Great work! We'll pick up the pace a bit for the next lesson.'",
+            "failing_score_0_or_1_of_3": "Decrease difficulty by 1 level for the next lesson (current_difficulty - 1, min 1). Message: 'Let's take a closer look at the next topic together.'",
+            "passing_score_2_of_3": "Maintain current difficulty level for the next lesson. Message: 'You're on track. Let's keep going.'"
+        },
+        "timing": "Quiz appears immediately after the lesson content ends (before 'Next Lesson' button). User must complete quiz to proceed (no skipping unless they use 'I know this already' before starting the lesson)."
+    },
+    "global_safety_rules": [
+        "Do not request, include, or imply the use of personal identifiable information (PII) in examples or exercises",
+        "Avoid providing medical, legal, or financial advice—acknowledge that professionals should consult domain experts for high-stakes decisions",
+        "If uncertain or if a concept is actively debated in the field, label the uncertainty explicitly and suggest verification sources",
+        "When discussing risks or limitations of the topic, be specific to the learner's industry and role",
+        "Never suggest use cases that would violate regulations in the learner's industry without explicitly acknowledging the compliance requirement",
+        "Emphasize human oversight consistently—tools assist, humans decide and remain accountable for final outcomes"
+    ],
+    "cross_lesson_coherence_rules": {
+        "reference_previous_lessons": "When a lesson builds on prior concepts, explicitly reference the earlier lesson by name (e.g., 'Remember from Lesson 1 that...'). This reinforces learning and shows progression.",
+        "preview_upcoming_lessons": "When introducing a concept that will be explored in depth later, acknowledge it briefly (e.g., 'We'll dive deeper into this in Lesson 14, but for now, know that...'). This sets expectations and reduces confusion.",
+        "maintain_terminology_consistency": "Use the same terms for the same concepts across all lessons. Consistency aids retention.",
+        "respect_course_structure": "Follow the pedagogical progression defined in the course-specific configuration (if present). Honor the intended learning sequence."
+    },
+    "metadata_tracking_for_observability": {
+        "log_on_every_lesson_generation": [
+            "lesson_id",
+            "profession and industry of learner",
+            "difficulty_level used",
+            "adaptation_trigger (if any): null, simplify_this, get_to_the_point, more_examples",
+            "generation_timestamp",
+            "llm_model_used",
+            "total_tokens_consumed",
+            "generation_latency_seconds",
+            "reviewer_flagged_issues (if any)",
+            "rewriter_invoked (true/false)"
+        ],
+        "log_on_every_quiz_completion": [
+            "lesson_id",
+            "quiz_score (0-3)",
+            "questions_answered_correctly (array of question indices)",
+            "time_to_complete_seconds",
+            "difficulty_adjustment_applied (none, increase, decrease)"
+        ],
+        "log_on_every_adaptation": [
+            "lesson_id",
+            "adaptation_type (simplify_this, get_to_the_point, i_know_this_already, more_examples)",
+            "previous_difficulty_level",
+            "new_difficulty_level",
+            "was_served_from_cache (true/false)",
+            "user_waited_for_generation (true/false)"
+        ]
+    }
+}

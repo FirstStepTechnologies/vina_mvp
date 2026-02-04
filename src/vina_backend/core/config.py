@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     llm_model: str = "gemini-3-flash"
     llm_reasoning_model: Optional[str] = None
     llm_max_tokens: int = 2000
-    llm_temperature: float = 0.3
+    llm_temperature: float = 1.0
     
     # Provider-specific API Keys
     anthropic_api_key: Optional[str] = None

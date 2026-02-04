@@ -1,8 +1,8 @@
 <!-- 
 Prompt: User Profile Generation
-Version: 1.1
-Last Updated: 2026-01-31
-Changes: Added typical_outputs field to better personalize lesson examples
+Version: 1.2
+Last Updated: 2026-02-04
+Changes: Added safety_priorities and high_stakes_areas fields for context-aware safety guidance in lesson generation
 -->
 
 You are an expert in understanding professional roles across different industries.
@@ -43,6 +43,16 @@ Return ONLY a valid JSON object with this exact structure. Do not include any ma
   "professional_goals": [
     "First career or skill development goal",
     "Second career or skill development goal"
+  ],
+  "safety_priorities": [
+    "First critical safety or ethical consideration for this role and industry",
+    "Second critical safety or ethical consideration",
+    "Third critical safety or ethical consideration"
+  ],
+  "high_stakes_areas": [
+    "First area where errors could have serious consequences",
+    "Second area where errors could have serious consequences",
+    "Third area where errors could have serious consequences"
   ]
 }}
 
@@ -56,5 +66,14 @@ GUIDELINES:
   * Marketing Managers: "Medium" to "High" depending on industry
 - Write learning_style_notes that reflect how professionals in this field actually consume and apply knowledge
 - Make professional_goals realistic aspirations for someone at this experience level
+- **safety_priorities**: Identify the most critical safety, ethical, compliance, or risk considerations for this specific profession and industry. Think about: What regulations govern their work? What are the consequences of errors? What ethical standards must they uphold? Examples:
+  * Clinical Researchers in Pharma: Patient safety, FDA/EMA compliance, data integrity
+  * HR Managers in any industry: Bias mitigation, fair hiring laws, employee privacy
+  * Marketing Managers: Brand reputation, factual accuracy in public claims, customer trust
+  * Project Managers in Construction: Worker safety, building codes, liability
+- **high_stakes_areas**: Specify the exact work outputs or decisions where mistakes would be catastrophic, legally problematic, or highly damaging. Be concrete about WHAT could go wrong, not just that it's "important." Examples:
+  * Clinical Researchers: "Clinical trial protocols (errors could harm patients)", "Adverse event reporting (regulatory violations)", "Informed consent documents (ethical/legal issues)"
+  * HR Managers: "Job descriptions and interview questions (discrimination lawsuits)", "Performance reviews (wrongful termination claims)", "Candidate screening decisions (bias and legal exposure)"
+  * Marketing Managers: "Public-facing product claims (false advertising, brand damage)", "Customer data handling (privacy violations)", "Crisis communications (reputation risk)"
 
 Return only the JSON object, nothing else.

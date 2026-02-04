@@ -1,31 +1,62 @@
-from datetime import datetime
-from typing import List, Optional
-from sqlmodel import SQLModel, Field, Column, JSON
-from pydantic import validator
+"""
+Pydantic schemas for user profiles.
+"""
+from typing import List, Literal
+from pydantic import BaseModel, Field
 
-class UserProfile(SQLModel, table=True):
-    """Database model for user profiles."""
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    
-    # Selection criteria (used for lookup)
-    profession: str = Field(index=True)
-    industry: str = Field(index=True)
-    experience_level: str = Field(index=True)
-    
-    # Generated profile data
-    # We use Column(JSON) to store lists in SQLite
-    daily_responsibilities: List[str] = Field(sa_column=Column(JSON))
-    pain_points: List[str] = Field(sa_column=Column(JSON))
-    typical_outputs: List[str] = Field(sa_column=Column(JSON))
-    professional_goals: List[str] = Field(sa_column=Column(JSON))
-    
-    technical_comfort_level: str
-    learning_style_notes: str
-    
-    # Metadata
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        arbitrary_types_allowed = True
+class UserProfileData(BaseModel):
+    """User profile data structure."""
+    
+    profession: str = Field(..., description="User's profession")
+    industry: str = Field(..., description="User's industry sector")
+    experience_level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
+        ..., description="Experience level"
+    )
+    daily_responsibilities: List[str] = Field(
+        ..., description="Day-to-day responsibilities"
+    )
+    pain_points: List[str] = Field(
+        ..., description="Professional pain points and challenges"
+    )
+    typical_outputs: List[str] = Field(
+        ..., 
+        description="Documents, deliverables, or artifacts this person creates in their work"
+    )
+    technical_comfort_level: Literal["Low", "Medium", "High"] = Field(
+        ..., description="Technical proficiency level"
+    )
+    learning_style_notes: str = Field(
+        ..., description="How this person prefers to learn"
+    )
+    professional_goals: List[str] = Field(
+        ..., description="Career and skill development goals"
+    )
+    safety_priorities: List[str] = Field(
+        ..., 
+        description="Critical safety, ethical, or compliance considerations for this role"
+    )
+    high_stakes_areas: List[str] = Field(
+        ..., 
+        description="Specific work outputs or decisions where errors have serious consequences"
+    )
+
+
+class UserProfileRequest(BaseModel):
+    """Request to generate a user profile."""
+    
+    profession: str = Field(..., example="Clinical Researcher")
+    industry: str = Field(..., example="Pharma/Biotech")
+    experience_level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
+        ..., example="Intermediate"
+    )
+
+
+class UserProfileResponse(BaseModel):
+    """Response containing a generated user profile."""
+    
+    profile: UserProfileData
+    generated_from_cache: bool = Field(
+        default=False,
+        description="Whether this profile was retrieved from cache/database"
+    )

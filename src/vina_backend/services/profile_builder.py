@@ -55,8 +55,9 @@ def generate_user_profile(
     try:
         profile_data = llm_client.generate_json(
             prompt=prompt,
-            max_tokens=1500,
+            max_tokens=2000,  # Increased for safety_priorities and high_stakes_areas
             # temperature will be automatically set to safest default (1.0 for Gemini 3)
+            
         )
         
         # Validate and parse into Pydantic model
@@ -71,6 +72,7 @@ def generate_user_profile(
             f"Failed to generate profile for {profession} in {industry}: {str(e)}"
         ) from e
 
+
 def get_or_create_user_profile(
     profession: str,
     industry: str,
@@ -79,6 +81,15 @@ def get_or_create_user_profile(
 ) -> UserProfileData:
     """
     Get a user profile from the database, or generate it if it doesn't exist.
+    
+    Args:
+        profession: User's profession
+        industry: User's industry
+        experience_level: Experience level
+        force_refresh: If True, regenerate profile even if it exists in DB
+    
+    Returns:
+        User profile data
     """
     # Use the session generator
     session_gen = get_session()
@@ -101,9 +112,11 @@ def get_or_create_user_profile(
                     daily_responsibilities=db_profile.daily_responsibilities,
                     pain_points=db_profile.pain_points,
                     typical_outputs=db_profile.typical_outputs,
-                    professional_goals=db_profile.professional_goals,
                     technical_comfort_level=db_profile.technical_comfort_level,
-                    learning_style_notes=db_profile.learning_style_notes
+                    learning_style_notes=db_profile.learning_style_notes,
+                    professional_goals=db_profile.professional_goals,
+                    safety_priorities=db_profile.safety_priorities,
+                    high_stakes_areas=db_profile.high_stakes_areas
                 )
         else:
             logger.info(f"Force refresh requested for {profession}. Ignoring DB.")
@@ -116,6 +129,8 @@ def get_or_create_user_profile(
         
         # 3. Save it for next time (Repo will overwrite if force_refresh was used)
         repo.save_profile(profile_data)
+        
+        logger.info(f"Saved profile for {profession} to database")
         
         return profile_data
         
@@ -138,15 +153,28 @@ def validate_profile(profile_data: Dict[str, Any]) -> bool:
         # Try to parse as Pydantic model (will raise if invalid)
         UserProfileData(**profile_data)
         
-        # Additional validation: check that lists aren't empty
+        # Additional validation: check that lists aren't empty or too short
         if len(profile_data.get("daily_responsibilities", [])) < 2:
+            logger.warning("Profile validation failed: insufficient daily_responsibilities")
             return False
         if len(profile_data.get("pain_points", [])) < 2:
+            logger.warning("Profile validation failed: insufficient pain_points")
             return False
         if len(profile_data.get("professional_goals", [])) < 1:
+            logger.warning("Profile validation failed: insufficient professional_goals")
+            return False
+        if len(profile_data.get("typical_outputs", [])) < 2:
+            logger.warning("Profile validation failed: insufficient typical_outputs")
+            return False
+        if len(profile_data.get("safety_priorities", [])) < 2:
+            logger.warning("Profile validation failed: insufficient safety_priorities")
+            return False
+        if len(profile_data.get("high_stakes_areas", [])) < 2:
+            logger.warning("Profile validation failed: insufficient high_stakes_areas")
             return False
         
         return True
     
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Profile validation failed: {str(e)}")
         return False
