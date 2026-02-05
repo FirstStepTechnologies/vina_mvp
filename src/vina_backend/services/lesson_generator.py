@@ -25,7 +25,7 @@ from vina_backend.services.course_loader import (
     get_pedagogical_stage
 )
 from vina_backend.services.lesson_cache import LessonCacheService
-from vina_backend.integrations.llm.client import get_llm_client
+from vina_backend.integrations.llm.client import get_llm_client, LLMClient
 
 logger = logging.getLogger(__name__)
 
@@ -38,15 +38,20 @@ class LessonGenerator:
     Service for generating personalized lessons using a 3-agent pipeline.
     """
     
-    def __init__(self, cache_service: Optional[LessonCacheService] = None):
+    def __init__(
+        self, 
+        cache_service: Optional[LessonCacheService] = None,
+        llm_client: Optional[LLMClient] = None
+    ):
         """
         Initialize lesson generator.
         
         Args:
             cache_service: Optional caching service (if None, caching is disabled)
+            llm_client: Optional custom LLM client
         """
         self.cache_service = cache_service
-        self.llm_client = get_llm_client()
+        self.llm_client = llm_client or get_llm_client()
         
         # Load prompt templates
         self.generator_template = self._load_template("generator_prompt.md")
@@ -67,7 +72,8 @@ class LessonGenerator:
         course_id: str,
         user_profile: UserProfileData,
         difficulty_level: int,
-        adaptation_context: Optional[str] = None
+        adaptation_context: Optional[str] = None,
+        bypass_cache: bool = False
     ) -> GeneratedLesson:
         """
         Generate a personalized lesson with caching, validation, and quality control.
@@ -85,14 +91,15 @@ class LessonGenerator:
             user_profile: User profile data
             difficulty_level: Difficulty level (1, 3, or 5)
             adaptation_context: Optional adaptation type ("simplify_this", "get_to_the_point", etc.)
+            bypass_cache: If True, force regeneration even if cached
         
         Returns:
             GeneratedLesson with content and metadata
         """
         start_time = time.time()
         
-        # 1. Check cache (skip if adaptation requested)
-        if self.cache_service and not adaptation_context:
+        # 1. Check cache (skip if adaptation requested or bypass_cache is True)
+        if self.cache_service and not adaptation_context and not bypass_cache:
             cached_lesson = self.cache_service.get(
                 course_id, lesson_id, difficulty_level, user_profile
             )

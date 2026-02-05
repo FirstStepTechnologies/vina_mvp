@@ -28,7 +28,7 @@ RECOMMENDED_MODELS = {
         "gpt-4-turbo",
     ],
     "gemini": [
-    "gemini-3-flash-preview", 
+        "gemini-3-flash-preview", 
         "gemini-3-pro-preview",   
         "gemini-2.5-flash",       
     ],
@@ -38,16 +38,20 @@ RECOMMENDED_MODELS = {
 # Format: (provider, model) tuples in order of preference
 FALLBACK_MODELS = {
     "gemini": [
+        ("openai", "gpt-5.2-mini"),
         ("gemini", "gemini-2.5-flash"),          # Same provider, newer model
         ("openai", "gpt-4o-mini"),                # Cross-provider: Fast & cheap
         ("anthropic", "claude-haiku-4-5-20251001"),  # Cross-provider: Fast & cheap
     ],
     "openai": [
+        ("gemini", "gemini-3-flash-preview"),  
         ("openai", "gpt-4o-mini"),                # Same provider, cheaper model
         ("gemini", "gemini-2.5-flash"),          # Cross-provider: Fast & cheap
         ("anthropic", "claude-haiku-4-5-20251001"),  # Cross-provider: Fast & cheap
     ],
     "anthropic": [
+        ("gemini", "gemini-3-flash-preview"),
+        ("openai", "gpt-5.2-mini"),
         ("anthropic", "claude-haiku-4-5-20251001"),  # Same provider, faster model
         ("openai", "gpt-4o-mini"),                # Cross-provider: Fast & cheap
         ("gemini", "gemini-2.5-flash"),          # Cross-provider: Fast & cheap
@@ -75,11 +79,23 @@ class LLMClient:
         self.provider = provider or settings.llm_provider
         self.model = model or settings.llm_model
         
-        # Get API key for the active provider
+        # Get API key for the specified provider (not the default one)
         if api_key:
             self.api_key = api_key
         else:
-            self.api_key = settings.get_active_api_key()
+            # Get the key for THIS provider, not the default provider
+            key_map = {
+                "anthropic": settings.anthropic_api_key,
+                "openai": settings.openai_api_key,
+                "gemini": settings.gemini_api_key,
+            }
+            self.api_key = key_map.get(self.provider)
+            
+            if not self.api_key:
+                raise ValueError(
+                    f"No API key configured for provider '{self.provider}'. "
+                    f"Please set {self.provider.upper()}_API_KEY in your .env file."
+                )
         
         # Validate model matches provider
         self._validate_model()
