@@ -1,11 +1,13 @@
 """
-Gemini 2.5 Flash Image generation client using litellm.
+Gemini 2.5 Flash Image generation client using native Google Gemini API.
+Supports true 9:16 aspect ratio for vertical TikTok-style videos.
 """
 import asyncio
 import logging
 from pathlib import Path
 from typing import List, Optional
-import litellm
+from google import genai
+from google.genai import types
 from tenacity import (
     retry,
     stop_after_attempt,
@@ -21,20 +23,20 @@ settings = get_settings()
 
 class ImagenClient:
     """
-    Client for Gemini 2.5 Flash Image generation via litellm.
+    Client for Gemini 2.5 Flash Image generation via native Google API.
     
     Features:
-    - Async image generation using litellm
+    - Async image generation using Google Gemini API
     - Concurrency limiting (prevent rate limits)
     - Automatic retries with exponential backoff
-    - 9:16 aspect ratio support (vertical TikTok format)
+    - True 9:16 aspect ratio support (vertical TikTok format)
     - Professional style presets
     """
     
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "gemini/gemini-2.5-flash-image",
+        model: str = "gemini-2.5-flash-image",
         max_concurrent: int = 3,
         aspect_ratio: str = "9:16"
     ):
@@ -43,7 +45,7 @@ class ImagenClient:
         
         Args:
             api_key: Gemini API key (defaults to settings)
-            model: litellm model name (default: gemini/gemini-2.5-flash-image)
+            model: Gemini model name (default: gemini-2.5-flash-image)
             max_concurrent: Max parallel image generation requests
             aspect_ratio: Image aspect ratio (default: 9:16 for vertical video)
         """
@@ -56,7 +58,10 @@ class ImagenClient:
         self.aspect_ratio = aspect_ratio
         self.semaphore = asyncio.Semaphore(max_concurrent)
         
-        logger.info(f"Imagen client initialized (model={model}, max_concurrent={max_concurrent})")
+        # Initialize Google Gemini client
+        self.client = genai.Client(api_key=self.api_key)
+        
+        logger.info(f"Imagen client initialized (model={model}, aspect_ratio={aspect_ratio}, max_concurrent={max_concurrent})")
     
     @retry(
         stop=stop_after_attempt(3),
@@ -68,8 +73,7 @@ class ImagenClient:
         self,
         prompt: str,
         output_path: Path,
-        style: str = "professional",
-        size: str = "1080x1920"  # Vertical format
+        style: str = "professional"
     ) -> Path:
         """
         Generate a single image asynchronously with retry logic.
@@ -78,7 +82,6 @@ class ImagenClient:
             prompt: Image generation prompt
             output_path: Where to save the generated PNG
             style: Style preset ("professional", "minimalist", "vibrant")
-            size: Image size (default: 1080x1920 for 9:16 vertical)
         
         Returns:
             Path to the generated image
@@ -92,39 +95,47 @@ class ImagenClient:
             # Enhance prompt with style
             enhanced_prompt = self._enhance_prompt(prompt, style)
             
-            # Run litellm in thread pool (it's synchronous)
+            # Run Gemini API in thread pool (it's synchronous)
             loop = asyncio.get_event_loop()
             response = await loop.run_in_executor(
                 None,
-                lambda: litellm.image_generation(
+                lambda: self.client.models.generate_content(
                     model=self.model,
-                    prompt=enhanced_prompt,
-                    api_key=self.api_key
-                    # Note: Gemini doesn't support size parameter
-                    # It generates images based on the prompt
+                    contents=[enhanced_prompt],
+                    config=types.GenerateContentConfig(
+                        response_modalities=["IMAGE"],
+                        image_config=types.ImageConfig(
+                            aspect_ratio=self.aspect_ratio,
+                        ),
+                    ),
                 )
             )
             
             # Extract image from response
-            # Response format: {"data": [{"b64_json": "base64_encoded_image"}]}
-            if not response or "data" not in response or not response["data"]:
-                raise ValueError(f"No image generated. Response: {response}")
+            image_found = False
+            for part in response.parts:
+                # Call as_image() on parts that have inline_data
+                if getattr(part, "inline_data", None) is not None:
+                    img = part.as_image()  # Returns a Pillow Image object
+                    
+                    # Save to file
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+                    img.save(output_path)
+                    image_found = True
+                    
+                    # Get file size for logging
+                    file_size = output_path.stat().st_size
+                    logger.info(f"Image saved to {output_path} ({file_size / 1024:.1f} KB)")
+                    return output_path
+                
+                # Log any text parts (usually empty for image generation)
+                if getattr(part, "text", None):
+                    logger.debug(f"Text part from model: {part.text}")
             
-            item = response["data"][0]
-            if not item.get("b64_json"):
-                raise ValueError(f"No b64_json in response: {item}")
-            
-            # Decode base64 image
-            import base64
-            image_bytes = base64.b64decode(item["b64_json"])
-            
-            # Save to file
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(output_path, 'wb') as f:
-                f.write(image_bytes)
-            
-            logger.info(f"Image saved to {output_path} ({len(image_bytes)} bytes)")
-            return output_path
+            if not image_found:
+                raise ValueError("No image part returned by Gemini model")
+
+
     
     def generate_image(
         self,
@@ -225,3 +236,4 @@ def get_imagen_client() -> ImagenClient:
     if '_imagen_client' not in globals():
         _imagen_client = ImagenClient()
     return _imagen_client
+

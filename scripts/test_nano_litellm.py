@@ -3,10 +3,14 @@ import base64
 from pathlib import Path
 from litellm import image_generation
 
-# 1. Set your API Key
-# It is better to set this as an environment variable, but you can set it here:
-os.environ["GEMINI_API_KEY"] = "XXXXXXX"
 
+from dotenv import load_dotenv
+
+# This looks for a .env file and loads the variables
+load_dotenv()
+
+# Now you can access it like a normal environment variable
+os.environ["GEMINI_API_KEY"] = os.getenv("GEMINI_API_KEY")
 
 
 def generate_and_save_image():
