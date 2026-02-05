@@ -28,17 +28,11 @@ def test_fallback_generator():
     init_db()
     
     # Get user profile
-    session_gen = get_session()
-    session = next(session_gen)
-    
-    try:
-        profile = get_or_create_user_profile(
-            session=session,
-            profession="Clinical Researcher",
-            industry="Pharma/Biotech"
-        )
-    finally:
-        session_gen.close()
+    profile = get_or_create_user_profile(
+        profession="Clinical Researcher",
+        industry="Pharma/Biotech",
+        experience_level="Intermediate"
+    )
     
     print(f"\n📋 User Profile:")
     print(f"   Profession: {profile.profession}")
@@ -182,17 +176,11 @@ def test_different_difficulties():
     
     init_db()
     
-    session_gen = get_session()
-    session = next(session_gen)
-    
-    try:
-        profile = get_or_create_user_profile(
-            session=session,
-            profession="HR Manager",
-            industry="Technology"
-        )
-    finally:
-        session_gen.close()
+    profile = get_or_create_user_profile(
+        profession="HR Manager",
+        industry="Technology",
+        experience_level="Intermediate"
+    )
     
     lesson_id = "l01_what_llms_are"
     course_id = "c_llm_foundations"
