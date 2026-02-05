@@ -26,10 +26,10 @@ from vina_backend.services.profile_builder import get_or_create_user_profile
 
 # Configuration
 TEST_MODELS = [
-    {"provider": "gemini", "model": "gemini-3-flash-preview", "name": "Gemini 3 Flash"},
+    # {"provider": "gemini", "model": "gemini-3-flash-preview", "name": "Gemini 3 Flash"},
     # {"provider": "gemini", "model": "gemini-2.5-flash", "name": "Gemini 2.5 Flash"},
-    {"provider": "openai", "model": "gpt-4o-mini", "name": "GPT-4o Mini"},
-    # {"provider": "anthropic", "model": "claude-3-5-sonnet-20241022", "name": "Claude 3.5 Sonnet"},
+    {"provider": "openai", "model": "gpt-5.2-mini", "name": "GPT-5.2 Mini"},
+    {"provider": "anthropic", "model": "claude-haiku-5", "name": "Claude Haiku 5"},
 ]
 
 JUDGE_MODEL = {"provider": "anthropic", "model": "claude-3-5-sonnet-20241022"}
