@@ -14,8 +14,7 @@ from vina_backend.services.lesson_generator import LessonGenerator
 from vina_backend.services.profile_builder import get_or_create_user_profile
 from vina_backend.utils.logging import setup_logging
 from vina_backend.integrations.db.engine import init_db, get_session
-from vina_backend.config.lesson_config import get_lesson_config, get_difficulty_knobs
-from vina_backend.config.course_config import load_course_config
+from vina_backend.services.course_loader import get_lesson_config, get_difficulty_knobs, load_course_config
 
 def test_fallback_generator():
     """Test the fallback generator directly."""
@@ -29,12 +28,17 @@ def test_fallback_generator():
     init_db()
     
     # Get user profile
-    with get_session() as session:
+    session_gen = get_session()
+    session = next(session_gen)
+    
+    try:
         profile = get_or_create_user_profile(
             session=session,
             profession="Clinical Researcher",
             industry="Pharma/Biotech"
         )
+    finally:
+        session_gen.close()
     
     print(f"\n📋 User Profile:")
     print(f"   Profession: {profile.profession}")
@@ -178,12 +182,17 @@ def test_different_difficulties():
     
     init_db()
     
-    with get_session() as session:
+    session_gen = get_session()
+    session = next(session_gen)
+    
+    try:
         profile = get_or_create_user_profile(
             session=session,
             profession="HR Manager",
             industry="Technology"
         )
+    finally:
+        session_gen.close()
     
     lesson_id = "l01_what_llms_are"
     course_id = "c_llm_foundations"
