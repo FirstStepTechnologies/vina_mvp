@@ -71,9 +71,12 @@ def test_lesson_generation():
         
         for slide in generated_lesson.lesson_content.slides:
             print(f"\n     Slide {slide.slide_number} ({slide.slide_type}):")
-            print(f"       Heading: {slide.heading}")
-            print(f"       Bullets: {len(slide.content)}")
-            print(f"       Speaker Notes: {len(slide.speaker_notes)} chars")
+            print(f"       Title: {slide.title}")
+            print(f"       Items: {len(slide.items)}")
+            for i, item in enumerate(slide.items, 1):
+                print(f"         Item {i} ({item.type}): {item.bullet[:50]}...")
+            if slide.duration_seconds:
+                print(f"       Duration: {slide.duration_seconds}s")
         
         return generated_lesson, profile
         

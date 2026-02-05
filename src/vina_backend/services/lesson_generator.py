@@ -71,6 +71,13 @@ class LessonGenerator:
         """
         Generate a personalized lesson with caching, validation, and quality control.
         
+        Workflow:
+        1. Generate lesson
+        2. Review lesson
+        3. If approved: return lesson
+        4. If fix_in_place: rewrite and return lesson
+        5. If regenerate_from_scratch: return fallback (for hackathon speed)
+        
         Args:
             lesson_id: Lesson identifier (e.g., "l01_what_llms_are")
             course_id: Course identifier (e.g., "c_llm_foundations")
@@ -109,7 +116,7 @@ class LessonGenerator:
         # 3. Generate initial lesson
         lesson_json, generation_success = self._generate_with_retry(
             lesson_spec, user_profile, difficulty_level, difficulty_knobs, 
-            pedagogical_stage, course_config
+            pedagogical_stage, course_config, adaptation_context
         )
         
         if not generation_success:
@@ -118,25 +125,32 @@ class LessonGenerator:
         
         # 4. Review lesson
         review_result = self._review_lesson(
-            lesson_json, lesson_spec, user_profile, difficulty_knobs, course_config
+            lesson_json, lesson_spec, user_profile, difficulty_level, difficulty_knobs, course_config
         )
+        
+        logger.info(f"Review decision: {review_result.decision} - {review_result.summary}")
         
         rewrite_count = 0
         
-        # 5. Rewrite if needed (max 1 rewrite)
-        if review_result.approval_status == "needs_revision" and rewrite_count < 1:
-            logger.info(f"Lesson needs revision (quality score: {review_result.quality_score})")
+        # 5. Handle review decision
+        if review_result.decision == "approved":
+            # Lesson is good to go
+            logger.info("Lesson approved on first attempt")
+            
+        elif review_result.decision == "fix_in_place":
+            # Apply targeted fixes
+            logger.info(f"Applying targeted fixes ({len(review_result.fixable_issues)} issues)")
             
             lesson_json = self._rewrite_lesson(
                 lesson_json, review_result, lesson_spec, user_profile, 
                 difficulty_knobs, course_config
             )
-            rewrite_count += 1
+            rewrite_count = 1
             
-            # Re-review
-            review_result = self._review_lesson(
-                lesson_json, lesson_spec, user_profile, difficulty_knobs, course_config
-            )
+        elif review_result.decision == "regenerate_from_scratch":
+            # For hackathon: return fallback instead of regenerating
+            logger.warning(f"Lesson needs regeneration ({len(review_result.blocking_issues)} blocking issues). Returning fallback.")
+            return self._fallback_lesson(lesson_id, course_id, difficulty_level)
         
         # 6. Validate final lesson
         try:
@@ -145,8 +159,8 @@ class LessonGenerator:
             logger.error(f"Final lesson validation failed: {e}")
             return self._fallback_lesson(lesson_id, course_id, difficulty_level)
         
-        # 7. Cache if approved
-        if self.cache_service and review_result.approval_status in ["approved", "approved_with_minor_fixes"]:
+        # 7. Cache if approved or fixed
+        if self.cache_service and review_result.decision in ["approved", "fix_in_place"]:
             self.cache_service.set(
                 course_id, lesson_id, difficulty_level, user_profile, lesson_json
             )
@@ -165,7 +179,7 @@ class LessonGenerator:
                 generation_time_seconds=round(generation_time, 2),
                 review_passed_first_time=(rewrite_count == 0),
                 rewrite_count=rewrite_count,
-                quality_score=review_result.quality_score
+                quality_score=None  # New review format doesn't have quality_score
             )
         )
     
@@ -177,6 +191,7 @@ class LessonGenerator:
         difficulty_knobs: Dict,
         pedagogical_stage: Optional[Dict],
         course_config: Dict,
+        adaptation_context: Optional[str] = None,
         max_retries: int = 2
     ) -> tuple[Dict, bool]:
         """
@@ -187,7 +202,7 @@ class LessonGenerator:
         """
         generator_prompt = self._format_generator_prompt(
             lesson_spec, user_profile, difficulty_level, difficulty_knobs,
-            pedagogical_stage, course_config
+            pedagogical_stage, course_config, adaptation_context
         )
         
         for attempt in range(max_retries):
@@ -218,12 +233,13 @@ class LessonGenerator:
         lesson_json: Dict,
         lesson_spec: Dict,
         user_profile: UserProfileData,
+        difficulty_level: int,
         difficulty_knobs: Dict,
         course_config: Dict
     ) -> ReviewResult:
         """Review generated lesson for quality."""
         reviewer_prompt = self._format_reviewer_prompt(
-            lesson_json, lesson_spec, user_profile, difficulty_knobs, course_config
+            lesson_json, lesson_spec, user_profile, difficulty_level, difficulty_knobs, course_config
         )
         
         try:
@@ -234,21 +250,35 @@ class LessonGenerator:
             review_result = ReviewResult(**review_json)
             
             logger.info(
-                f"Review complete: {review_result.approval_status} "
-                f"(score: {review_result.quality_score}/10)"
+                f"Review complete: {review_result.decision} "
+                f"({len(review_result.blocking_issues)} blocking, {len(review_result.fixable_issues)} fixable issues)"
             )
             
             return review_result
             
         except (JSONDecodeError, ValidationError) as e:
-            logger.error(f"Review failed: {e}. Defaulting to needs_revision")
+            logger.error(f"Review failed: {e}. Defaulting to regenerate_from_scratch")
+            # Return a fallback review result that triggers regeneration
             return ReviewResult(
-                quality_score=5.0,
-                approval_status="needs_revision",
-                critical_issues=["Review agent failed to produce valid output"],
-                minor_issues=[],
-                suggested_fixes=["Regenerate the lesson"],
-                strengths=[]
+                decision="regenerate_from_scratch",
+                rewrite_strategy="complete_regeneration",
+                blocking_issues=[
+                    {
+                        "type": "json_error",
+                        "severity": "critical",
+                        "description": "Review agent failed to produce valid output",
+                        "action_required": "Regenerate the lesson"
+                    }
+                ],
+                fixable_issues=[],
+                preserve_elements=[],
+                duration_analysis={
+                    "total_estimated_seconds": 0,
+                    "target_seconds": lesson_spec.get("estimated_duration_minutes", 3) * 60,
+                    "status": "on_target",
+                    "slides_over_target": []
+                },
+                summary="Review agent error - regeneration required"
             )
     
     def _rewrite_lesson(
@@ -289,11 +319,24 @@ class LessonGenerator:
         difficulty_level: int,
         difficulty_knobs: Dict,
         pedagogical_stage: Optional[Dict],
-        course_config: Dict
+        course_config: Dict,
+        adaptation_context: Optional[str] = None
     ) -> str:
         """Format the generator prompt with all context."""
         # Extract difficulty metrics
         delivery_metrics = difficulty_knobs.get("delivery_metrics", {})
+        
+        # Parse slide count range
+        slide_count_str = delivery_metrics.get("slide_count_for_3min_lesson", "4-5 slides")
+        if "-" in slide_count_str:
+            parts = slide_count_str.split()[0].split("-")
+            min_slides = int(parts[0])
+            max_slides = int(parts[1])
+            target_slide_count = min_slides
+        else:
+            target_slide_count = int(slide_count_str.split()[0])
+            min_slides = target_slide_count
+            max_slides = target_slide_count
         
         # Prepare template variables
         context = {
@@ -319,7 +362,9 @@ class LessonGenerator:
             # Difficulty level
             "difficulty_level": difficulty_level,
             "difficulty_label": difficulty_knobs.get("label", "Practical"),
-            "slide_count": delivery_metrics.get("slide_count_for_3min_lesson", "4-5 slides").split()[0],  # Extract number
+            "target_slide_count": target_slide_count,
+            "min_slides": min_slides,
+            "max_slides": max_slides,
             "words_per_slide": delivery_metrics.get("words_per_slide", "50-70 words"),
             "analogies_per_concept": delivery_metrics.get("analogies_per_concept", "1"),
             "examples_per_concept": delivery_metrics.get("examples_per_concept", "1-2"),
@@ -327,6 +372,7 @@ class LessonGenerator:
             "sentence_structure": delivery_metrics.get("sentence_structure", "Mix of short and medium sentences"),
             "content_scope": difficulty_knobs.get("content_scope", ""),
             "tone": difficulty_knobs.get("delivery_style", {}).get("tone", "Clear, professional"),
+            "tone_description": difficulty_knobs.get("delivery_style", {}).get("tone", "Clear, professional"),
             
             # Pedagogical stage
             "stage_name": pedagogical_stage.get("stage_name", "N/A") if pedagogical_stage else "N/A",
@@ -342,7 +388,10 @@ class LessonGenerator:
             "content_constraints_emphasize": lesson_spec.get("content_constraints", {}).get("emphasize", []),
             
             # References to previous lessons
-            "references_previous_lessons": lesson_spec.get("references_previous_lessons", {})
+            "references_previous_lessons": lesson_spec.get("references_previous_lessons", {}),
+            
+            # Adaptation context (for regeneration with user feedback)
+            "adaptation_context": adaptation_context
         }
         
         return self.generator_template.render(**context)
@@ -352,33 +401,51 @@ class LessonGenerator:
         lesson_json: Dict,
         lesson_spec: Dict,
         user_profile: UserProfileData,
+        difficulty_level: int,
         difficulty_knobs: Dict,
         course_config: Dict
     ) -> str:
         """Format the reviewer prompt."""
         delivery_metrics = difficulty_knobs.get("delivery_metrics", {})
         
+        # Extract slide count info
+        slide_count_str = delivery_metrics.get("slide_count_for_3min_lesson", "4-5 slides")
+        # Parse "4-5 slides" -> target=4, min=4, max=5
+        if "-" in slide_count_str:
+            parts = slide_count_str.split()[0].split("-")
+            min_slides = int(parts[0])
+            max_slides = int(parts[1])
+            target_slide_count = min_slides
+        else:
+            target_slide_count = int(slide_count_str.split()[0])
+            min_slides = target_slide_count
+            max_slides = target_slide_count
+        
         context = {
             "generated_lesson_json": json.dumps(lesson_json, indent=2),
+            
+            # Learner context
             "profession": user_profile.profession,
             "industry": user_profile.industry,
+            "technical_comfort_level": user_profile.technical_comfort_level,
             "typical_outputs": user_profile.typical_outputs,
-            "safety_priorities": user_profile.safety_priorities,
             "high_stakes_areas": user_profile.high_stakes_areas,
+            
+            # Lesson details
+            "lesson_id": lesson_spec["lesson_id"],
             "lesson_name": lesson_spec["lesson_name"],
             "what_learners_will_understand": lesson_spec["what_learners_will_understand"],
             "misconceptions_to_address": lesson_spec["misconceptions_to_address"],
-            "difficulty_level": difficulty_knobs.get("label", "Practical"),
+            "estimated_duration_minutes": lesson_spec["estimated_duration_minutes"],
+            
+            # Difficulty requirements
+            "difficulty_level": difficulty_level,
             "difficulty_label": difficulty_knobs.get("label", "Practical"),
-            "slide_count": delivery_metrics.get("slide_count_for_3min_lesson", "4-5 slides").split()[0],
-            "words_per_slide": delivery_metrics.get("words_per_slide", "50-70 words"),
+            "target_slide_count": target_slide_count,
+            "min_slides": min_slides,
+            "max_slides": max_slides,
             "analogies_per_concept": delivery_metrics.get("analogies_per_concept", "1"),
-            "examples_per_concept": delivery_metrics.get("examples_per_concept", "1-2"),
             "jargon_density": delivery_metrics.get("jargon_density", "2-3 technical terms per slide"),
-            "tone": difficulty_knobs.get("delivery_style", {}).get("tone", "Clear, professional"),
-            "content_constraints_avoid": lesson_spec.get("content_constraints", {}).get("avoid", []),
-            "content_constraints_emphasize": lesson_spec.get("content_constraints", {}).get("emphasize", []),
-            "estimated_duration_minutes": lesson_spec["estimated_duration_minutes"]
         }
         
         return self.reviewer_template.render(**context)
@@ -393,32 +460,12 @@ class LessonGenerator:
         course_config: Dict
     ) -> str:
         """Format the rewriter prompt."""
-        delivery_metrics = difficulty_knobs.get("delivery_metrics", {})
+        # Convert review_result to dict for the template
+        review_json_dict = review_result.model_dump()
         
         context = {
             "generated_lesson_json": json.dumps(lesson_json, indent=2),
-            "quality_score": review_result.quality_score,
-            "approval_status": review_result.approval_status,
-            "critical_issues": review_result.critical_issues,
-            "minor_issues": review_result.minor_issues,
-            "suggested_fixes": review_result.suggested_fixes,
-            "strengths": review_result.strengths,
-            "profession": user_profile.profession,
-            "industry": user_profile.industry,
-            "typical_outputs": user_profile.typical_outputs,
-            "safety_priorities": user_profile.safety_priorities,
-            "high_stakes_areas": user_profile.high_stakes_areas,
-            "difficulty_level": difficulty_knobs.get("label", "Practical"),
-            "difficulty_label": difficulty_knobs.get("label", "Practical"),
-            "slide_count": delivery_metrics.get("slide_count_for_3min_lesson", "4-5 slides").split()[0],
-            "words_per_slide": delivery_metrics.get("words_per_slide", "50-70 words"),
-            "analogies_per_concept": delivery_metrics.get("analogies_per_concept", "1"),
-            "jargon_density": delivery_metrics.get("jargon_density", "2-3 technical terms per slide"),
-            "tone": difficulty_knobs.get("delivery_style", {}).get("tone", "Clear, professional"),
-            "what_learners_will_understand": lesson_spec["what_learners_will_understand"],
-            "misconceptions_to_address": lesson_spec["misconceptions_to_address"],
-            "content_constraints_avoid": lesson_spec.get("content_constraints", {}).get("avoid", []),
-            "content_constraints_emphasize": lesson_spec.get("content_constraints", {}).get("emphasize", [])
+            "review_json": json.dumps(review_json_dict, indent=2)
         }
         
         return self.rewriter_template.render(**context)
@@ -433,18 +480,51 @@ class LessonGenerator:
         logger.warning(f"Returning fallback lesson for {lesson_id}")
         
         fallback_content = LessonContent(
+            lesson_id=lesson_id,
+            course_id=course_id,
+            difficulty_level=difficulty_level,
             lesson_title="Lesson Temporarily Unavailable",
+            total_slides=3,
+            estimated_duration_minutes=1,
             slides=[
                 {
                     "slide_number": 1,
                     "slide_type": "hook",
-                    "heading": "We're Working on This Lesson",
-                    "content": [
-                        "This lesson is currently being generated",
-                        "Please try again in a few moments",
-                        "We apologize for the inconvenience"
+                    "title": "We're Working on This Lesson",
+                    "items": [
+                        {
+                            "type": "text",
+                            "bullet": "This lesson is currently being generated",
+                            "talk": "We're currently generating this lesson content for you. This should only take a moment."
+                        }
                     ],
-                    "speaker_notes": "We're currently generating this lesson content. Please refresh and try again."
+                    "duration_seconds": 20
+                },
+                {
+                    "slide_number": 2,
+                    "slide_type": "concept",
+                    "title": "Please Try Again",
+                    "items": [
+                        {
+                            "type": "text",
+                            "bullet": "Refresh and try again in a few moments",
+                            "talk": "Please refresh your browser and try accessing this lesson again. The generation process should complete shortly."
+                        }
+                    ],
+                    "duration_seconds": 20
+                },
+                {
+                    "slide_number": 3,
+                    "slide_type": "connection",
+                    "title": "Thank You for Your Patience",
+                    "items": [
+                        {
+                            "type": "text",
+                            "bullet": "We apologize for the inconvenience",
+                            "talk": "Thank You for your patience. We're working to provide you with high-quality, personalized lesson content."
+                        }
+                    ],
+                    "duration_seconds": 20
                 }
             ],
             references_to_previous_lessons=None
@@ -461,6 +541,7 @@ class LessonGenerator:
                 generation_time_seconds=0,
                 review_passed_first_time=False,
                 rewrite_count=0,
-                quality_score=0
+                quality_score=None
             )
         )
+

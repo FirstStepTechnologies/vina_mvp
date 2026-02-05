@@ -37,18 +37,16 @@ RECOMMENDED_MODELS = {
 # Fallback models when primary model fails (in order of preference)
 FALLBACK_MODELS = {
     "gemini": [
-        "gemini-3-flash",
-        "gemini-2.5-flash", 
-        "gemini-2.0-flash-exp",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
     ],
     "openai": [
-        "gpt-5",
-        "gpt-4o",
+        "gpt-4.1-mini",
         "gpt-4o-mini",
     ],
     "anthropic": [
-        "claude-sonnet-4-20250514",
-        "claude-3-5-sonnet-20241022",
+        "claude-haiku-4-5-20251001",
+        "claude-sonnet-5-20260203",
     ],
 }
 
