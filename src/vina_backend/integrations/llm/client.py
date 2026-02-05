@@ -34,19 +34,23 @@ RECOMMENDED_MODELS = {
     ],
 }
 
-# Fallback models when primary model fails (in order of preference)
+# Fallback models when primary model fails (cross-provider for reliability)
+# Format: (provider, model) tuples in order of preference
 FALLBACK_MODELS = {
     "gemini": [
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
+        ("gemini", "gemini-2.5-flash"),          # Same provider, newer model
+        ("openai", "gpt-4o-mini"),                # Cross-provider: Fast & cheap
+        ("anthropic", "claude-haiku-4-5-20251001"),  # Cross-provider: Fast & cheap
     ],
     "openai": [
-        "gpt-4.1-mini",
-        "gpt-4o-mini",
+        ("openai", "gpt-4o-mini"),                # Same provider, cheaper model
+        ("gemini", "gemini-2.5-flash"),          # Cross-provider: Fast & cheap
+        ("anthropic", "claude-haiku-4-5-20251001"),  # Cross-provider: Fast & cheap
     ],
     "anthropic": [
-        "claude-haiku-4-5-20251001",
-        "claude-sonnet-5-20260203",
+        ("anthropic", "claude-haiku-4-5-20251001"),  # Same provider, faster model
+        ("openai", "gpt-4o-mini"),                # Cross-provider: Fast & cheap
+        ("gemini", "gemini-2.5-flash"),          # Cross-provider: Fast & cheap
     ],
 }
 
@@ -190,23 +194,45 @@ class LLMClient:
         messages.append({"role": "user", "content": prompt})
         
         # Try with primary model first, then fallback models
-        models_to_try = [self.model] + FALLBACK_MODELS.get(self.provider, [])
+        # Primary model as tuple for consistent handling
+        models_to_try = [(self.provider, self.model)] + FALLBACK_MODELS.get(self.provider, [])
         
         last_error = None
-        for model_index, model in enumerate(models_to_try):
+        for model_index, (provider, model) in enumerate(models_to_try):
             # Skip if this fallback model is the same as primary
-            if model_index > 0 and model == self.model:
+            if model_index > 0 and provider == self.provider and model == self.model:
                 continue
+            
+            # Get API key for this provider
+            if provider != self.provider:
+                # Cross-provider fallback - need different API key
+                if provider == "anthropic":
+                    api_key = settings.anthropic_api_key
+                elif provider == "openai":
+                    api_key = settings.openai_api_key
+                elif provider == "gemini":
+                    api_key = settings.gemini_api_key
+                else:
+                    logger.error(f"Unknown provider: {provider}")
+                    continue
+                
+                if not api_key:
+                    logger.warning(f"No API key for fallback provider {provider}, skipping...")
+                    continue
+            else:
+                api_key = self.api_key
             
             # Try this model
             for attempt in range(max_retries):
                 try:
-                    # Update model for this attempt
-                    current_model = model
-                    formatted_model = f"{self.provider}/{current_model}" if self.provider == "gemini" else current_model
+                    # Format model name for litellm
+                    if provider == "gemini" and not model.startswith("gemini/"):
+                        formatted_model = f"gemini/{model}"
+                    else:
+                        formatted_model = model
                     
                     if model_index > 0 and attempt == 0:
-                        logger.warning(f"Falling back to model: {formatted_model}")
+                        logger.warning(f"Falling back to model: {provider}/{model}")
                     
                     if attempt > 0:
                         logger.info(f"Retry {attempt}/{max_retries-1} for {formatted_model}")
@@ -222,7 +248,7 @@ class LLMClient:
                         messages=messages,
                         max_tokens=max_tokens,
                         temperature=safe_temp,
-                        api_key=self.api_key,
+                        api_key=api_key,
                     )
                     
                     duration = time.time() - start_time
@@ -230,10 +256,12 @@ class LLMClient:
                     
                     logger.debug(f"LLM response received. Length: {len(response.choices[0].message.content)} chars")
                     
-                    # Success! Update the instance model if we used a fallback
-                    if model != self.model:
-                        logger.info(f"Successfully switched from {self.model} to {model}")
+                    # Success! Update the instance model and provider if we used a fallback
+                    if provider != self.provider or model != self.model:
+                        logger.info(f"Successfully switched from {self.provider}/{self.model} to {provider}/{model}")
+                        self.provider = provider
                         self.model = model
+                        self.api_key = api_key
                     
                     return response.choices[0].message.content.strip()
                 
@@ -267,9 +295,9 @@ class LLMClient:
                         break  # Move to next model
         
         # All models failed
-        logger.exception(f"All models failed for provider {self.provider}")
+        logger.exception(f"All models failed across providers")
         raise ValueError(
-            f"LLM generation failed with {self.provider} after trying models {models_to_try}: {str(last_error)}"
+            f"LLM generation failed after trying {len(models_to_try)} models: {str(last_error)}"
         ) from last_error
     
     def generate_json(
