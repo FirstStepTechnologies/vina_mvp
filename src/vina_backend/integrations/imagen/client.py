@@ -38,7 +38,7 @@ class ImagenClient:
         api_key: Optional[str] = None,
         model: str = "gemini-2.5-flash-image",
         max_concurrent: int = 3,
-        aspect_ratio: str = "9:16"
+        aspect_ratio: str = "1:1"  # Square images for card-based layouts
     ):
         """
         Initialize Imagen client.
@@ -47,7 +47,8 @@ class ImagenClient:
             api_key: Gemini API key (defaults to settings)
             model: Gemini model name (default: gemini-2.5-flash-image)
             max_concurrent: Max parallel image generation requests
-            aspect_ratio: Image aspect ratio (default: 9:16 for vertical video)
+            aspect_ratio: Image aspect ratio (default: 1:1 for square images)
+                         Options: "1:1" (square), "9:16" (vertical), "16:9" (horizontal)
         """
         self.api_key = api_key or settings.gemini_api_key
         if not self.api_key:
