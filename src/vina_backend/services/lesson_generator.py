@@ -52,6 +52,7 @@ class LessonGenerator:
         self.generator_template = self._load_template("generator_prompt.md")
         self.reviewer_template = self._load_template("reviewer_prompt.md")
         self.rewriter_template = self._load_template("rewriter_prompt.md")
+        self.fallback_template = self._load_template("fallback_generator.md")
     
     @staticmethod
     def _load_template(filename: str) -> Template:
@@ -121,7 +122,10 @@ class LessonGenerator:
         
         if not generation_success:
             logger.error(f"Failed to generate valid lesson for {lesson_id}")
-            return self._fallback_lesson(lesson_id, course_id, difficulty_level)
+            return self._fallback_lesson(
+                lesson_id, course_id, difficulty_level,
+                lesson_spec, user_profile, difficulty_knobs, course_config
+            )
         
         # 4. Review lesson
         review_result = self._review_lesson(
@@ -148,16 +152,22 @@ class LessonGenerator:
             rewrite_count = 1
             
         elif review_result.decision == "regenerate_from_scratch":
-            # For hackathon: return fallback instead of regenerating
-            logger.warning(f"Lesson needs regeneration ({len(review_result.blocking_issues)} blocking issues). Returning fallback.")
-            return self._fallback_lesson(lesson_id, course_id, difficulty_level)
+            # Use fallback generator for fast, safe lesson
+            logger.warning(f"Lesson needs regeneration ({len(review_result.blocking_issues)} blocking issues). Using fallback generator.")
+            return self._fallback_lesson(
+                lesson_id, course_id, difficulty_level,
+                lesson_spec, user_profile, difficulty_knobs, course_config
+            )
         
         # 6. Validate final lesson
         try:
             lesson_content = LessonContent(**lesson_json)
         except ValidationError as e:
             logger.error(f"Final lesson validation failed: {e}")
-            return self._fallback_lesson(lesson_id, course_id, difficulty_level)
+            return self._fallback_lesson(
+                lesson_id, course_id, difficulty_level,
+                lesson_spec, user_profile, difficulty_knobs, course_config
+            )
         
         # 7. Cache if approved or fixed
         if self.cache_service and review_result.decision in ["approved", "fix_in_place"]:
@@ -474,10 +484,76 @@ class LessonGenerator:
         self,
         lesson_id: str,
         course_id: str,
+        difficulty_level: int,
+        lesson_spec: Dict,
+        user_profile: UserProfileData,
+        difficulty_knobs: Dict,
+        course_config: Dict
+    ) -> GeneratedLesson:
+        """
+        Generate a simple, safe fallback lesson using LLM with strict constraints.
+        
+        This is called when:
+        - Primary generation fails validation
+        - Review returns 'regenerate_from_scratch'
+        - Final validation fails
+        
+        The fallback generator uses a simplified prompt with:
+        - No figures (text-only)
+        - Adaptive slide count based on difficulty
+        - Guaranteed to pass validation
+        - Personalized to user profile
+        """
+        logger.warning(f"Generating fallback lesson for {lesson_id} using LLM")
+        
+        try:
+            # Format fallback prompt
+            fallback_prompt = self._format_fallback_prompt(
+                lesson_spec, user_profile, difficulty_level, difficulty_knobs, course_config
+            )
+            
+            # Generate with LLM (single attempt, no retry)
+            lesson_json = self.llm_client.generate_json(
+                fallback_prompt,
+                temperature=0.7  # Balanced creativity for fallback
+            )
+            
+            # Validate
+            lesson_content = LessonContent(**lesson_json)
+            
+            logger.info(f"Fallback lesson generated successfully with {len(lesson_content.slides)} slides")
+            
+            return GeneratedLesson(
+                lesson_id=lesson_id,
+                course_id=course_id,
+                difficulty_level=difficulty_level,
+                lesson_content=lesson_content,
+                generation_metadata=GenerationMetadata(
+                    cache_hit=False,
+                    llm_model=self.llm_client.model,
+                    generation_time_seconds=0,  # Not tracked for fallback
+                    review_passed_first_time=None,  # Fallback skips review
+                    rewrite_count=0,
+                    quality_score=None
+                )
+            )
+            
+        except Exception as e:
+            # If even fallback generation fails, return minimal hardcoded lesson
+            logger.error(f"Fallback generation failed: {e}. Returning minimal hardcoded lesson.")
+            return self._minimal_hardcoded_lesson(lesson_id, course_id, difficulty_level)
+    
+    def _minimal_hardcoded_lesson(
+        self,
+        lesson_id: str,
+        course_id: str,
         difficulty_level: int
     ) -> GeneratedLesson:
-        """Return a generic fallback lesson when generation fails."""
-        logger.warning(f"Returning fallback lesson for {lesson_id}")
+        """
+        Last resort: Return a minimal hardcoded lesson when even LLM fallback fails.
+        This should rarely be needed.
+        """
+        logger.warning(f"Returning minimal hardcoded lesson for {lesson_id}")
         
         fallback_content = LessonContent(
             lesson_id=lesson_id,
@@ -498,7 +574,7 @@ class LessonGenerator:
                             "talk": "We're currently generating this lesson content for you. This should only take a moment."
                         }
                     ],
-                    "duration_seconds": 20
+                    "duration_seconds": None
                 },
                 {
                     "slide_number": 2,
@@ -511,7 +587,7 @@ class LessonGenerator:
                             "talk": "Please refresh your browser and try accessing this lesson again. The generation process should complete shortly."
                         }
                     ],
-                    "duration_seconds": 20
+                    "duration_seconds": None
                 },
                 {
                     "slide_number": 3,
@@ -521,10 +597,10 @@ class LessonGenerator:
                         {
                             "type": "text",
                             "bullet": "We apologize for the inconvenience",
-                            "talk": "Thank You for your patience. We're working to provide you with high-quality, personalized lesson content."
+                            "talk": "Thank you for your patience. We're working to provide you with high-quality, personalized lesson content."
                         }
                     ],
-                    "duration_seconds": 20
+                    "duration_seconds": None
                 }
             ],
             references_to_previous_lessons=None
@@ -539,9 +615,45 @@ class LessonGenerator:
                 cache_hit=False,
                 llm_model=None,
                 generation_time_seconds=0,
-                review_passed_first_time=False,
+                review_passed_first_time=None,
                 rewrite_count=0,
                 quality_score=None
             )
         )
+
+    def _format_fallback_prompt(
+        self,
+        lesson_spec: Dict,
+        user_profile: UserProfileData,
+        difficulty_level: int,
+        difficulty_knobs: Dict,
+        course_config: Dict
+    ) -> str:
+        """Format the fallback generator prompt with all context."""
+        context = {
+            # Learner context
+            "profession": user_profile.profession,
+            "industry": user_profile.industry,
+            "experience_level": user_profile.experience_level,
+            "technical_comfort_level": user_profile.technical_comfort_level,
+            "typical_outputs": user_profile.typical_outputs,
+            "daily_responsibilities": user_profile.daily_responsibilities,
+            "pain_points": user_profile.pain_points,
+            "safety_priorities": user_profile.safety_priorities,
+            "high_stakes_areas": user_profile.high_stakes_areas,
+            
+            # Lesson details
+            "lesson_id": lesson_spec["lesson_id"],
+            "course_id": lesson_spec.get("course_id", "unknown"),
+            "lesson_name": lesson_spec["lesson_name"],
+            "topic_group": lesson_spec["topic_group"],
+            "estimated_duration_minutes": lesson_spec["estimated_duration_minutes"],
+            "what_learners_will_understand": lesson_spec["what_learners_will_understand"],
+            "misconceptions_to_address": lesson_spec["misconceptions_to_address"],
+            
+            # Difficulty level
+            "difficulty_level": difficulty_level,
+        }
+        
+        return self.fallback_template.render(**context)
 
