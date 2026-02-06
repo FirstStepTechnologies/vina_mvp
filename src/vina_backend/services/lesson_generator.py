@@ -5,6 +5,7 @@ Includes caching, validation, and retry logic.
 import json
 import logging
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional
 from json import JSONDecodeError
@@ -16,7 +17,8 @@ from vina_backend.domain.schemas.lesson import (
     LessonContent,
     ReviewResult,
     GeneratedLesson,
-    GenerationMetadata
+    GenerationMetadata,
+    AuditTrail
 )
 from vina_backend.services.course_loader import (
     load_course_config,
@@ -54,9 +56,9 @@ class LessonGenerator:
         self.llm_client = llm_client or get_llm_client()
         
         # Load prompt templates
-        self.generator_template = self._load_template("generator_prompt.md")
-        self.reviewer_template = self._load_template("reviewer_prompt.md")
-        self.rewriter_template = self._load_template("rewriter_prompt.md")
+        self.generator_template = self._load_template("lesson_generator_prompt.md")
+        self.reviewer_template = self._load_template("lesson_reviewer_prompt.md")
+        self.rewriter_template = self._load_template("lesson_rewriter_prompt.md")
         self.fallback_template = self._load_template("fallback_generator.md")
     
     @staticmethod
@@ -99,18 +101,20 @@ class LessonGenerator:
         start_time = time.time()
         
         # 1. Check cache (skip if adaptation requested or bypass_cache is True)
+        model_name = self.llm_client.model if self.llm_client else "unknown"
         if self.cache_service and not adaptation_context and not bypass_cache:
             cached_lesson = self.cache_service.get(
-                course_id, lesson_id, difficulty_level, user_profile
+                course_id, lesson_id, difficulty_level, user_profile, model_name
             )
             if cached_lesson:
-                logger.info(f"Returning cached lesson for {lesson_id}")
+                logger.info(f"Returning CACHED lesson for {lesson_id} (Model: {model_name})")
                 return GeneratedLesson(
                     lesson_id=lesson_id,
                     course_id=course_id,
                     difficulty_level=difficulty_level,
-                    lesson_content=LessonContent(**cached_lesson),
-                    generation_metadata=GenerationMetadata(cache_hit=True)
+                    lesson_content=LessonContent(**cached_lesson["lesson_content"]),
+                    generation_metadata=GenerationMetadata(cache_hit=True, llm_model=model_name),
+                    audit_trail=AuditTrail(**cached_lesson["audit_trail"])
                 )
         
         # 2. Load context
@@ -122,10 +126,12 @@ class LessonGenerator:
         pedagogical_stage = get_pedagogical_stage(course_id, lesson_id)
         
         # 3. Generate initial lesson
-        lesson_json, generation_success = self._generate_with_retry(
+        gen_start = time.time()
+        lesson_json, generation_success, generator_prompt = self._generate_with_retry(
             lesson_spec, user_profile, difficulty_level, difficulty_knobs, 
             pedagogical_stage, course_config, adaptation_context
         )
+        gen_duration = time.time() - gen_start
         
         if not generation_success:
             logger.error(f"Failed to generate valid lesson for {lesson_id}")
@@ -135,13 +141,21 @@ class LessonGenerator:
             )
         
         # 4. Review lesson
-        review_result = self._review_lesson(
+        rev_start = time.time()
+        review_result, reviewer_prompt = self._review_lesson(
             lesson_json, lesson_spec, user_profile, difficulty_level, difficulty_knobs, course_config
         )
+        rev_duration = time.time() - rev_start
+        
+        initial_lesson = lesson_json.copy()  # Snapshot for QA
+        review_snapshot = review_result.model_dump() # Snapshot for QA
+        
+        rewriter_prompt = None
         
         logger.info(f"Review decision: {review_result.decision} - {review_result.summary}")
         
         rewrite_count = 0
+        rewrite_duration = 0.0
         
         # 5. Handle review decision
         if review_result.decision == "approved":
@@ -152,10 +166,12 @@ class LessonGenerator:
             # Apply targeted fixes
             logger.info(f"Applying targeted fixes ({len(review_result.fixable_issues)} issues)")
             
-            lesson_json = self._rewrite_lesson(
+            rew_start = time.time()
+            lesson_json, rewriter_prompt = self._rewrite_lesson(
                 lesson_json, review_result, lesson_spec, user_profile, 
                 difficulty_knobs, course_config
             )
+            rewrite_duration = time.time() - rew_start
             rewrite_count = 1
             
         elif review_result.decision == "regenerate_from_scratch":
@@ -176,14 +192,24 @@ class LessonGenerator:
                 lesson_spec, user_profile, difficulty_knobs, course_config
             )
         
-        # 7. Cache if approved or fixed
+        # 7. Cache if approved or fixed (including QA snapshots)
         if self.cache_service and review_result.decision in ["approved", "fix_in_place"]:
             self.cache_service.set(
-                course_id, lesson_id, difficulty_level, user_profile, lesson_json
+                course_id=course_id,
+                lesson_id=lesson_id,
+                difficulty_level=difficulty_level,
+                user_profile=user_profile,
+                llm_model=model_name,
+                lesson_content=lesson_json,
+                initial_lesson=initial_lesson,
+                review_result=review_snapshot,
+                gen_prompt=generator_prompt,
+                rev_prompt=reviewer_prompt,
+                rew_prompt=rewriter_prompt
             )
         
         # 8. Return with metadata
-        generation_time = time.time() - start_time
+        total_time = time.time() - start_time
         
         return GeneratedLesson(
             lesson_id=lesson_id,
@@ -192,11 +218,24 @@ class LessonGenerator:
             lesson_content=lesson_content,
             generation_metadata=GenerationMetadata(
                 cache_hit=False,
-                llm_model=self.llm_client.model,
-                generation_time_seconds=round(generation_time, 2),
+                llm_model=self.llm_client.model if self.llm_client else "unknown",
+                generation_time_seconds=round(total_time, 2),
+                phase_durations={
+                    "generation": round(gen_duration, 2),
+                    "review": round(rev_duration, 2),
+                    "rewrite": round(rewrite_duration, 2)
+                },
                 review_passed_first_time=(rewrite_count == 0),
                 rewrite_count=rewrite_count,
-                quality_score=None  # New review format doesn't have quality_score
+                quality_score=None
+            ),
+            audit_trail=AuditTrail(
+                gen_prompt=generator_prompt,
+                gen_output=initial_lesson,
+                rev_prompt=reviewer_prompt,
+                rev_output=review_snapshot,
+                rew_prompt=rewriter_prompt,
+                rew_output=lesson_json if rewrite_count > 0 else None
             )
         )
     
@@ -210,12 +249,12 @@ class LessonGenerator:
         course_config: Dict,
         adaptation_context: Optional[str] = None,
         max_retries: int = 2
-    ) -> tuple[Dict, bool]:
+    ) -> tuple[Dict, bool, str]:
         """
         Generate lesson with retry logic for JSON parsing failures.
         
         Returns:
-            (lesson_json, success)
+            (lesson_json, success, prompt_used)
         """
         generator_prompt = self._format_generator_prompt(
             lesson_spec, user_profile, difficulty_level, difficulty_knobs,
@@ -234,16 +273,16 @@ class LessonGenerator:
                 LessonContent(**lesson_json)
                 
                 logger.info("Lesson generated and validated successfully")
-                return lesson_json, True
+                return lesson_json, True, generator_prompt
                 
             except (JSONDecodeError, ValidationError) as e:
                 logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
                 if attempt == max_retries - 1:
                     logger.error(f"All {max_retries} generation attempts failed")
-                    return {}, False
+                    return {}, False, generator_prompt
                 continue
         
-        return {}, False
+        return {}, False, generator_prompt
     
     def _review_lesson(
         self,
@@ -253,7 +292,7 @@ class LessonGenerator:
         difficulty_level: int,
         difficulty_knobs: Dict,
         course_config: Dict
-    ) -> ReviewResult:
+    ) -> tuple[ReviewResult, str]:
         """Review generated lesson for quality."""
         reviewer_prompt = self._format_reviewer_prompt(
             lesson_json, lesson_spec, user_profile, difficulty_level, difficulty_knobs, course_config
@@ -271,7 +310,7 @@ class LessonGenerator:
                 f"({len(review_result.blocking_issues)} blocking, {len(review_result.fixable_issues)} fixable issues)"
             )
             
-            return review_result
+            return review_result, reviewer_prompt
             
         except (JSONDecodeError, ValidationError) as e:
             logger.error(f"Review failed: {e}. Defaulting to regenerate_from_scratch")
@@ -296,7 +335,7 @@ class LessonGenerator:
                     "slides_over_target": []
                 },
                 summary="Review agent error - regeneration required"
-            )
+            ), reviewer_prompt
     
     def _rewrite_lesson(
         self,
@@ -306,7 +345,7 @@ class LessonGenerator:
         user_profile: UserProfileData,
         difficulty_knobs: Dict,
         course_config: Dict
-    ) -> Dict:
+    ) -> tuple[Dict, str]:
         """Rewrite lesson based on review feedback."""
         rewriter_prompt = self._format_rewriter_prompt(
             lesson_json, review_result, lesson_spec, user_profile,
@@ -323,11 +362,11 @@ class LessonGenerator:
             LessonContent(**rewritten_json)
             
             logger.info("Lesson rewritten successfully")
-            return rewritten_json
+            return rewritten_json, rewriter_prompt
             
         except (JSONDecodeError, ValidationError) as e:
             logger.error(f"Rewrite failed: {e}. Returning original lesson")
-            return lesson_json
+            return lesson_json, rewriter_prompt
     
     def _format_generator_prompt(
         self,
@@ -664,3 +703,88 @@ class LessonGenerator:
         
         return self.fallback_template.render(**context)
 
+    def export_generation_report(self, lesson: GeneratedLesson, output_dir: Path, user_profile: UserProfileData):
+        """
+        Exports a comprehensive Audit Folder for this generation run.
+        Includes prompts, intermediate outputs, and the final report.
+        """
+        # Create a unique slug for this run
+        prof_slug = user_profile.profession.lower().replace(' ', '_').replace('/', '_')
+        diff_label = f"d{lesson.difficulty_level}"
+        model_name = lesson.generation_metadata.llm_model or "unknown"
+        
+        # Ensure model name is safe for path
+        model_safe = model_name.replace("/", "_")
+        
+        folder_name = f"{lesson.course_id}_{lesson.lesson_id}_{prof_slug}_{diff_label}_{model_safe}"
+        report_dir = output_dir / folder_name
+        report_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 1. Export Audit Trail (Prompts and Stage Outputs)
+        if lesson.audit_trail:
+            audit = lesson.audit_trail
+            
+            # Generator
+            if audit.gen_prompt:
+                with open(report_dir / "01_generator_prompt.md", "w") as f:
+                    f.write(audit.gen_prompt)
+            if audit.gen_output:
+                with open(report_dir / "01_generator_output.json", "w") as f:
+                    json.dump(audit.gen_output, f, indent=2)
+            
+            # Reviewer
+            if audit.rev_prompt:
+                with open(report_dir / "02_reviewer_prompt.md", "w") as f:
+                    f.write(audit.rev_prompt)
+            if audit.rev_output:
+                with open(report_dir / "02_reviewer_output.json", "w") as f:
+                    json.dump(audit.rev_output, f, indent=2)
+            
+            # Rewriter
+            if audit.rew_prompt:
+                with open(report_dir / "03_rewriter_prompt.md", "w") as f:
+                    f.write(audit.rew_prompt)
+            if audit.rew_output:
+                with open(report_dir / "03_rewriter_output.json", "w") as f:
+                    json.dump(audit.rew_output, f, indent=2)
+                    
+        # 2. Export Final Lesson Content
+        with open(report_dir / "final_lesson.json", "w") as f:
+            f.write(lesson.lesson_content.model_dump_json(indent=2))
+            
+        # 3. Export Summary Markdown Report
+        summary_path = report_dir / "summary_report.md"
+        with open(summary_path, "w") as f:
+            f.write(f"# VINA Lesson Generation Report\n")
+            f.write(f"**Target Audience:** {user_profile.profession} ({user_profile.experience_level})\n")
+            f.write(f"**Course/Lesson:** {lesson.course_id} / {lesson.lesson_id}\n")
+            f.write(f"**Difficulty:** {lesson.difficulty_level} ({diff_label})\n")
+            f.write(f"**Generated at:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"**Model:** {model_name}\n")
+            f.write(f"**Total Generation Time:** {lesson.generation_metadata.generation_time_seconds}s\n")
+            f.write(f"**Phase Durations:** {lesson.generation_metadata.phase_durations}\n")
+            f.write(f"**Cache Hit:** {lesson.generation_metadata.cache_hit}\n\n")
+            
+            f.write(f"## 📋 Final Lesson Content\n")
+            f.write(f"### Title: {lesson.lesson_content.lesson_title}\n\n")
+            
+            for i, slide in enumerate(lesson.lesson_content.slides):
+                f.write(f"--- \n")
+                f.write(f"### 🛝 Slide {i+1}: {slide.title}\n")
+                f.write(f"**Type:** {slide.slide_type}\n\n")
+                
+                for j, item in enumerate(slide.items):
+                    item_type = item.type.upper()
+                    if item_type == "FIGURE" and item.figure:
+                        f.write(f"**[{item_type}]** Prompt: *\"{item.figure.image_prompt}\"*\n")
+                        f.write(f"**Talk Track:** {item.talk}\n\n")
+                    else:
+                        f.write(f"**[TEXT]** Bullet: \"{item.bullet}\"\n")
+                        f.write(f"**Talk Track:** {item.talk}\n\n")
+            
+            f.write(f"\n--- \n")
+            f.write(f"**End of Report**\n")
+            
+        return report_dir
+
+from datetime import datetime

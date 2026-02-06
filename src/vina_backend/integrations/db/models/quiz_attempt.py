@@ -6,7 +6,7 @@ class QuizAttempt(SQLModel, table=True):
     """Database model for tracking quiz results."""
     
     id: Optional[int] = Field(default=None, primary_key=True)
-    session_id: int = Field(foreign_key="session.id")
+    session_id: int = Field(foreign_key="learner_sessions.id")
     lesson_id: str  # ID or slug of the lesson
     
     score: float

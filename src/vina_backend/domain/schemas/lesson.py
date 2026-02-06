@@ -123,12 +123,22 @@ class ReviewResult(BaseModel):
     summary: str
 
 
+class AuditTrail(BaseModel):
+    """Full audit trail of the generation process for QA."""
+    gen_prompt: Optional[str] = None
+    gen_output: Optional[Dict] = None
+    rev_prompt: Optional[str] = None
+    rev_output: Optional[Dict] = None
+    rew_prompt: Optional[str] = None
+    rew_output: Optional[Dict] = None
+
 class GenerationMetadata(BaseModel):
     """Metadata about lesson generation process."""
     
     cache_hit: bool = Field(default=False)
     llm_model: Optional[str] = None
     generation_time_seconds: Optional[float] = None
+    phase_durations: Dict[str, float] = Field(default_factory=dict)
     review_passed_first_time: Optional[bool] = None
     rewrite_count: int = Field(default=0)
     quality_score: Optional[float] = None
@@ -142,6 +152,7 @@ class GeneratedLesson(BaseModel):
     difficulty_level: int
     lesson_content: LessonContent
     generation_metadata: GenerationMetadata
+    audit_trail: Optional[AuditTrail] = None
     
     class Config:
         json_schema_extra = {

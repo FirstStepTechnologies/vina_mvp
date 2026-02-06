@@ -1,306 +1,306 @@
 """
-COMPLETE END-TO-END DEMO SCRIPT
-================================
-Simulates the full VINA pipeline:
-1. User inputs: profession, difficulty, lesson topic
-2. LLM generates lesson content (simplified for demo)
-3. Video pipeline creates professional video
-4. Returns video path
+VINA HACKATHON: FULL END-TO-END SYSTEM DEMO
+==========================================
+This script simulates the entire VINA stack as built:
+1.  IDENTITY: Load/Create the User Profile (Persists to SQLite Database).
+2.  CURRICULUM: Load global and course-specific configurations.
+3.  INTELLECTUAL PROPERTY: Generate a reviewed, personalized lesson (multi-agent Generator/Reviewer/Refiner).
+4.  AUDIO/VISUAL: Orchestrate AI image generation (Gemini) and TTS (ElevenLabs).
+5.  ASSEMBLY: Render professional vertical video for TikTok/Instagram format.
 
-This is the HACKATHON DEMO script!
+Features:
+- Full timing breakdown per phase.
+- Deep personalization based on professional challenges and safety priorities.
+- Real-world personas: Clinical Researcher, HR Manager, Project Manager, Marketing Manager.
 """
+
 import sys
 import asyncio
+import time
+import logging
 from pathlib import Path
 from datetime import datetime
+from typing import Dict, Any, List
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from vina_backend.integrations.llm.client import get_llm_client
+# Domains & Schemas
+from vina_backend.domain.schemas.profile import UserProfileData
+from vina_backend.domain.schemas.lesson import GeneratedLesson
+
+# Services
+from vina_backend.services.profile_builder import get_or_create_user_profile
+from vina_backend.services.lesson_generator import LessonGenerator
 from vina_backend.services.video_pipeline import VideoPipeline, PipelineConfig
+from vina_backend.services.lesson_cache import LessonCacheService
+from vina_backend.services.course_loader import load_course_config
 
+# Core
+from vina_backend.utils.logging import setup_logging
+from vina_backend.integrations.db.engine import init_db, engine
+from sqlmodel import Session
 
-async def generate_lesson_with_llm(
-    topic: str,
-    profession: str,
-    difficulty: str,
-    num_slides: int = 3
-) -> dict:
-    """
-    Generate lesson content using LLM (simplified for demo).
-    
-    Args:
-        topic: Lesson topic
-        profession: User's profession
-        difficulty: Difficulty level
-        num_slides: Number of slides to generate
-    
-    Returns:
-        Lesson content dict with slides
-    """
-    llm_client = get_llm_client()
-    
-    # Create prompt for lesson generation
-    prompt = f"""Generate a {num_slides}-slide educational lesson on "{topic}" for a {profession} at {difficulty} level.
+# Setup basic logging to see the pipeline's progress
+setup_logging("INFO")
+logger = logging.getLogger("VINA_DEMO")
 
-Return ONLY valid JSON in this exact format (no markdown, no code blocks):
-{{
-    "title": "Lesson Title",
-    "topic": "{topic}",
-    "slides": [
-        {{
-            "title": "Slide Title",
-            "bullets": ["Bullet point 1", "Bullet point 2"],
-            "narration": "Full narration text for this slide (2-3 sentences)",
-            "has_figure": true,
-            "image_prompt": "Detailed image generation prompt"
-        }}
-    ]
-}}
+# Constants
+COURSE_ID = "c_llm_foundations"
+DEFAULT_LESSON_ID = "l01_what_llms_are"
+# Difficulty mapping is now explicit in TEST_CASES or via --diff flag
 
-Requirements:
-- Exactly {num_slides} slides
-- Each slide must have 2-4 bullet points
-- Narration should be 2-3 sentences (conversational, educational tone)
-- For slides with has_figure=true, provide detailed image_prompt
-- Alternate between slides with and without figures
-- Make content relevant to {profession}
-- Adjust complexity for {difficulty} level
+TEST_CASES = [
+    # Format: (Profession, Industry, Experience_Level_String, Difficulty_Int)
+    ("HR Manager", "Tech Company", "Beginner", 1),
+    ("HR Manager", "Tech Company", "Beginner", 3),
+    ("HR Manager", "Tech Company", "Beginner", 5),
+    ("Project Manager", "Software/Tech", "Beginner", 1),
+    # ("Project Manager", "Software/Tech", "Beginner", 3),
+    # ("Project Manager", "Software/Tech", "Beginner", 5),
+    # ("Marketing Manager", "E-Commerce", "Beginner", 1),
+    # ("Marketing Manager", "E-Commerce", "Intermediate", 3),
+    # ("Marketing Manager", "E-Commerce", "Advanced", 5),
+    # ("Clinical Researcher", "Pharma/Biotech", "Beginner", 1),
+    # ("Clinical Researcher", "Pharma/Biotech", "Intermediate", 3),
+    # ("Clinical Researcher", "Pharma/Biotech", "Advanced", 5),
+]
 
-Return ONLY the JSON, nothing else."""
-
-    # Call LLM (run in thread pool since it's synchronous)
-    import json
-    loop = asyncio.get_event_loop()
+async def run_full_pipeline(profession: str, industry: str, level_str: str, difficulty_level: int, lesson_idx: int = 1, skip_media: bool = False):
+    """Run every single module of the VINA platform."""
+    # Ensure database is initialized before any phase starts
+    init_db()
     
-    response = await loop.run_in_executor(
-        None,
-        lambda: llm_client.generate(
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=2000
-        )
-    )
-    
-    # Parse response
-    content = response.strip()
-    
-    # Remove markdown code blocks if present
-    if content.startswith("```"):
-        content = content.split("```")[1]
-        if content.startswith("json"):
-            content = content[4:]
-        content = content.strip()
-    
-    lesson_data = json.loads(content)
-    return lesson_data
-
-
-async def generate_complete_lesson_video(
-    profession: str,
-    difficulty: str,
-    lesson_topic: str,
-    output_dir: Path = Path("cache/demo_videos")
-):
-    """
-    Complete end-to-end pipeline: Generate lesson + Create video.
-    
-    Args:
-        profession: User's profession (e.g., "Software Engineer")
-        difficulty: Difficulty level ("beginner", "intermediate", "advanced")
-        lesson_topic: Topic to teach (e.g., "Introduction to LLMs")
-        output_dir: Where to save the final video
-    
-    Returns:
-        Path to the generated video
-    """
-    print("\n" + "="*70)
-    print("🎓 VINA - Complete Lesson Video Generation")
-    print("="*70)
-    
-    print(f"\n📋 Input Parameters:")
-    print(f"   Profession: {profession}")
-    print(f"   Difficulty: {difficulty}")
-    print(f"   Topic: {lesson_topic}")
-    
-    # ========================================
-    # STEP 1: Generate Lesson Content with LLM
-    # ========================================
-    print("\n" + "="*70)
-    print("STEP 1/2: Generating Lesson Content with LLM")
-    print("="*70)
-    
-    print(f"\n🤖 Calling LLM to generate lesson...")
-    print(f"   This may take 30-60 seconds...")
-    
+    # Determine Lesson ID dynamically
     try:
-        lesson_content = await generate_lesson_with_llm(
-            topic=lesson_topic,
+        config = load_course_config(COURSE_ID)
+        lessons = config.get("lessons", [])
+        if 1 <= lesson_idx <= len(lessons):
+            target_lesson = lessons[lesson_idx - 1]
+            lesson_id = target_lesson["lesson_id"]
+            lesson_name = target_lesson.get("lesson_name", "Unknown")
+            print(f"📚 Selected Lesson {lesson_idx}: {lesson_name} ({lesson_id})")
+        else:
+            print(f"⚠️ Invalid lesson index {lesson_idx}, defaulting to Lesson 1")
+            lesson_id = lessons[0]["lesson_id"]
+    except Exception as e:
+        print(f"⚠️ Error loading course config: {e}. Using default.")
+        lesson_id = DEFAULT_LESSON_ID
+    
+    print("\n" + "#"*80)
+    print(f"🎬 STARTING VINA PIPELINE FOR: {profession} ({level_str})")
+    print("#"*80)
+    
+    metrics = {}
+    master_start = time.time()
+
+    # --- PHASE 1: IDENTITY (User Profiling) ---
+    print("\n[PHASE 1: IDENTITY] Fetching or Generating Persona...")
+    s1 = time.time()
+    try:
+        user_profile = get_or_create_user_profile(
             profession=profession,
-            difficulty=difficulty,
-            num_slides=3  # Keep it short for demo
+            industry=industry,
+            experience_level=level_str
         )
-        
-        print(f"\n✅ Lesson generated successfully!")
-        print(f"   Title: {lesson_content.get('title', 'N/A')}")
-        print(f"   Slides: {len(lesson_content.get('slides', []))}")
-        
-        # Show slide titles
-        for i, slide in enumerate(lesson_content.get('slides', []), 1):
-            has_img = "🖼️ " if slide.get('has_figure') else "📝 "
-            print(f"   {has_img}Slide {i}: {slide.get('title', 'N/A')}")
-        
+        e1 = time.time()
+        metrics["1. Identity (DB/LLM)"] = e1 - s1
+        print(f"✅ Persona Created: {user_profile.profession}")
+        print(f"   Key Goal: {user_profile.professional_goals[0]}")
     except Exception as e:
-        print(f"\n❌ Lesson generation failed: {e}")
-        import traceback
-        traceback.print_exc()
-        return None
-    
-    # ========================================
-    # STEP 2: Generate Video from Lesson
-    # ========================================
-    print("\n" + "="*70)
-    print("STEP 2/2: Creating Professional Video")
-    print("="*70)
-    
-    # Create unique filename
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    safe_topic = lesson_topic.lower().replace(" ", "_")[:30]
-    video_filename = f"{safe_topic}_{difficulty}_{timestamp}.mp4"
-    
-    output_path = output_dir / video_filename
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Initialize video pipeline
-    pipeline_config = PipelineConfig(
-        cache_dir=Path(f"cache/demo_pipeline_{timestamp}"),
-        brand_name="VINA",
-        course_label=f"{profession} - {difficulty.title()}"
-    )
-    
-    pipeline = VideoPipeline(pipeline_config)
-    
-    print(f"\n🎬 Generating video...")
-    print(f"   Steps: Image Gen → TTS → Slide Composition → Video Rendering")
-    print(f"   This will take 2-5 minutes depending on slide count...")
-    
+        print(f"❌ Identity Phase failed: {e}")
+        return
+
+    # --- PHASE 2: INTELLECTUAL PROPERTY (Lesson Content) ---
+    print("\n[PHASE 2: INTELLECTUAL PROPERTY] Multi-Agent Lesson Generation...")
+    s2 = time.time()
     try:
-        video_path = await pipeline.generate_video_async(
-            lesson_data=lesson_content,
-            output_path=output_path,
-            course_label=f"{profession} - {difficulty.title()}"
+        with Session(engine) as session:
+            # Initialize Cache Service & Generator
+            cache_service = LessonCacheService(db_session=session)
+            lesson_generator = LessonGenerator(cache_service=cache_service)
+            
+            # generate_lesson handles the Generator -> Reviewer -> Refiner loop
+            generated_lesson = await asyncio.to_thread(
+                lesson_generator.generate_lesson,
+                lesson_id=lesson_id,
+                course_id=COURSE_ID,
+                user_profile=user_profile,
+                difficulty_level=difficulty_level,
+                bypass_cache=False
+            )
+        
+        e2 = time.time()
+        metrics["2. Lesson Gen (3-Agent)"] = e2 - s2
+        print(f"✅ Lesson Refined: \"{generated_lesson.lesson_content.lesson_title}\"")
+        print(f"   Metadata: Cached={generated_lesson.generation_metadata.cache_hit}, Model={generated_lesson.generation_metadata.llm_model}")
+        
+        # Expert Systems Engineer Utility: Export Audit Trail
+        report_path = lesson_generator.export_generation_report(
+            generated_lesson, 
+            Path("cache/reports"),
+            user_profile
         )
-        
-        size_mb = video_path.stat().st_size / (1024 * 1024)
-        
-        print(f"\n✅ Video created successfully!")
-        print(f"   Path: {video_path}")
-        print(f"   Size: {size_mb:.2f} MB")
-        
-        return video_path
-        
+        print(f"📄 Audit Report saved: {report_path}")
     except Exception as e:
-        print(f"\n❌ Video generation failed: {e}")
+        print(f"❌ IP Phase failed: {e}")
         import traceback
         traceback.print_exc()
-        return None
+        return
 
+    if skip_media:
+        print("\n" + "="*80)
+        print("⏩ SKIPPING AUDIO/VIDEO GENERATION (--text-only flag detected)")
+        print(f"   Review the report at: {report_path}")
+        print("="*80 + "\n")
+        return
 
-async def run_demo():
-    """Run the complete demo with sample inputs."""
-    
-    # ========================================
-    # Demo Scenarios
-    # ========================================
-    
-    scenarios = [
-        {
-            "profession": "Software Engineer",
-            "difficulty": "beginner",
-            "topic": "Introduction to Large Language Models"
-        },
-        # Uncomment to test more scenarios:
-        # {
-        #     "profession": "Data Scientist",
-        #     "difficulty": "intermediate",
-        #     "topic": "Fine-tuning LLMs for Specific Tasks"
-        # },
-        # {
-        #     "profession": "Product Manager",
-        #     "difficulty": "beginner",
-        #     "topic": "How AI Agents Work"
-        # }
-    ]
-    
-    print("\n" + "="*70)
-    print("🚀 VINA HACKATHON DEMO")
-    print("="*70)
-    print(f"\nRunning {len(scenarios)} demo scenario(s)...")
-    
-    results = []
-    
-    for i, scenario in enumerate(scenarios, 1):
-        print(f"\n{'='*70}")
-        print(f"Demo Scenario {i}/{len(scenarios)}")
-        print(f"{'='*70}")
+    # --- PHASE 3: AUDIO/VISUAL ORCHESTRATION ---
+    print("\n[PHASE 3: AUDIO/VISUAL] Generating AI Image Prompts & TTS...")
+    s3 = time.time()
+    try:
+        # Prepare Deterministic Pipeline ID
+        # Format: profession_industry_difficulty_lessonid (safe for filenames)
+        slug = f"{profession}_{industry}_{level_str}_{COURSE_ID}_{LESSON_ID}".lower().replace(' ', '_').replace('/', '_')
+        run_name = slug
         
-        video_path = await generate_complete_lesson_video(
-            profession=scenario["profession"],
-            difficulty=scenario["difficulty"],
-            lesson_topic=scenario["topic"]
+        config = PipelineConfig(
+            cache_dir=Path(f"cache/runs/{run_name}"),
+            brand_name="VINA",
+            course_label=f"{profession} Masterclass"
         )
         
-        results.append({
-            "scenario": scenario,
-            "video_path": video_path,
-            "success": video_path is not None
-        })
-    
-    # ========================================
-    # Summary
-    # ========================================
-    print("\n" + "="*70)
-    print("📊 DEMO SUMMARY")
-    print("="*70)
-    
-    successful = sum(1 for r in results if r["success"])
-    
-    print(f"\nCompleted: {successful}/{len(results)} scenarios")
-    
-    for i, result in enumerate(results, 1):
-        status = "✅" if result["success"] else "❌"
-        scenario = result["scenario"]
-        print(f"\n{status} Scenario {i}:")
-        print(f"   Topic: {scenario['topic']}")
-        print(f"   Profession: {scenario['profession']}")
-        print(f"   Difficulty: {scenario['difficulty']}")
-        if result["video_path"]:
-            print(f"   Video: {result['video_path']}")
-    
-    if successful == len(results):
-        print("\n" + "="*70)
-        print("🎉 ALL DEMOS SUCCESSFUL!")
-        print("="*70)
-        print("\n✨ Complete VINA Pipeline Working:")
-        print("   1. ✅ User profiling (profession + difficulty)")
-        print("   2. ✅ LLM-based lesson generation")
-        print("   3. ✅ AI image generation (Gemini)")
-        print("   4. ✅ Text-to-speech (ElevenLabs)")
-        print("   5. ✅ Professional slide composition")
-        print("   6. ✅ Video rendering (FFmpeg)")
-        print("\n🚀 READY FOR HACKATHON PRESENTATION!")
-        return True
-    else:
-        print("\n⚠️  Some demos failed. Check logs above.")
-        return False
+        pipeline = VideoPipeline(config)
+        
+        # Convert LessonContent to Dict
+        slides_adapted = []
+        for s in generated_lesson.lesson_content.slides:
+            bullets = [item.bullet for item in s.items]
+            narration = " ".join([item.talk for item in s.items])
+            
+            image_prompt = None
+            has_figure = False
+            for item in s.items:
+                if item.type == "figure" and item.figure:
+                    image_prompt = item.figure.image_prompt
+                    has_figure = True
+                    break
+            
+            slides_adapted.append({
+                "title": s.title,
+                "bullets": bullets,
+                "narration": narration,
+                "has_figure": has_figure,
+                "image_prompt": image_prompt
+            })
 
+        lesson_data = {
+            "title": generated_lesson.lesson_content.lesson_title,
+            "topic": generated_lesson.lesson_content.lesson_id or "General Knowledge",
+            "slides": slides_adapted
+        }
+        
+        output_video_path = Path(f"cache/demo_videos/{run_name}.mp4")
+        output_video_path.parent.mkdir(parents=True, exist_ok=True)
 
-def main():
-    """Main entry point."""
-    success = asyncio.run(run_demo())
-    sys.exit(0 if success else 1)
+        pipeline_result = await pipeline.generate_video_async(
+            lesson_data=lesson_data,
+            output_path=output_video_path,
+            course_label=user_profile.profession
+        )
+        
+        e3 = time.time()
+        metrics["3. Asset Generation & Assembly"] = e3 - s3
+        
+        # Add detailed sub-metrics
+        # Lesson Gen sub-metrics
+        ldm = generated_lesson.generation_metadata.phase_durations
+        metrics["   ↳ LLM Generation"] = ldm.get("generation", 0)
+        metrics["   ↳ LLM Review"] = ldm.get("review", 0)
+        metrics["   ↳ LLM Rewrite/Fix"] = ldm.get("rewrite", 0)
+        
+        # Video Pipeline sub-metrics
+        vpm = pipeline_result.metrics
+        metrics["   ↳ Image Generation"] = vpm.get("image_generation", 0)
+        metrics["   ↳ Audio (TTS)"] = vpm.get("audio_generation", 0)
+        metrics["   ↳ Slide Composition"] = vpm.get("slide_composition", 0)
+        metrics["   ↳ Video Rendering"] = vpm.get("video_rendering", 0)
 
+        print(f"✅ Video Assembled: {pipeline_result.video_path}")
+        print(f"   File Size: {pipeline_result.video_path.stat().st_size / 1024 / 1024:.2f} MB")
+        
+    except Exception as e:
+        print(f"❌ Video Phase failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return
+
+    # --- FINAL REPORT ---
+    master_end = time.time()
+    print("\n" + "="*80)
+    print("📋 PERFORMANCE ANALYSIS REPORT")
+    print("="*80)
+    for step, duration in metrics.items():
+        if "↳" in step:
+            print(f"     {step:<25} {duration:>8.2f} seconds")
+        else:
+            print(f"   • {step:<25} {duration:>8.2f} seconds")
+    print("-" * 80)
+    print(f"   TOTAL PROCESSING TIME:      {master_end - master_start:>8.2f} seconds")
+    print("="*80 + "\n")
+
+async def main():
+    """Run all demo test cases."""
+    print("VINA End-to-End Pipeline Demo Starting...")
+    
+    # Check for CLI flags
+    skip_media = "--text-only" in sys.argv
+    override_diff = None
+    for arg in sys.argv:
+        if arg.startswith("--diff="):
+            try:
+                override_diff = int(arg.split("=")[1])
+            except ValueError:
+                print(f"⚠️ Invalid difficulty override: {arg}")
+
+    # Filter out flags from args for positional parsing
+    args = [arg for arg in sys.argv if not arg.startswith("--")]
+
+    # Parse parameters
+    target_indices = range(len(TEST_CASES))
+    target_lesson_idx = 1
+    
+    if len(args) > 1:
+        try:
+            val = args[1]
+            if val.lower() == "all":
+                target_indices = range(len(TEST_CASES))
+            else:
+                target_indices = [int(val)]
+        except ValueError:
+            pass
+            
+    if len(args) > 2:
+        try:
+            target_lesson_idx = int(args[2])
+        except ValueError:
+            print("⚠️ Invalid lesson index provided, using default (1)")
+
+    for i in target_indices:
+        case = list(TEST_CASES[i])
+        # If difficulty override is provided via CLI, use it
+        if override_diff is not None:
+            case[3] = override_diff
+            
+        await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media)
+        # Short pause between demos
+        if len(target_indices) > 1:
+            await asyncio.sleep(2)
 
 if __name__ == "__main__":
-    main()
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nDemo stopped by user.")
+    except Exception as e:
+        print(f"\nFATAL ERROR: {e}")

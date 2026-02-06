@@ -47,22 +47,11 @@ def view_lesson(
     difficulty: int = 3
 ):
     """
-    View a complete lesson with all content.
-    
-    Args:
-        profession: User profession
-        industry: User industry
-        experience: Experience level
-        lesson_id: Lesson to view
-        course_id: Course ID
-        difficulty: Difficulty level (1, 3, or 5)
+    View a complete lesson and export its markdown report.
     """
-    print(f"\n🔍 Retrieving lesson for:")
-    print(f"   Profession: {profession}")
-    print(f"   Industry: {industry}")
-    print(f"   Experience: {experience}")
+    print(f"\n🔍 Processing lesson for:")
+    print(f"   Target: {profession} ({experience})")
     print(f"   Lesson: {lesson_id}")
-    print(f"   Difficulty: {difficulty}\n")
     
     session_gen = get_session()
     db_session = next(session_gen)
@@ -83,27 +72,93 @@ def view_lesson(
             difficulty_level=difficulty
         )
         
-        # Display full content
-        print_lesson_full_content(generated_lesson)
+        # Export the Markdown Report (The Audit Trail)
+        report_path = generator.export_generation_report(
+            generated_lesson,
+            Path("cache/reports"),
+            profile
+        )
+        
+        print_separator("-")
+        print(f"✅ Lesson Title: {generated_lesson.lesson_content.lesson_title}")
+        print(f"✅ Metadata: Model={generated_lesson.generation_metadata.llm_model}, Cached={generated_lesson.generation_metadata.cache_hit}")
+        print(f"📄 Markdown Audit Report saved to: {report_path}")
+        print_separator("-")
+        
+        # Optionally show small preview or full content
+        # print_lesson_full_content(generated_lesson)
         
     finally:
         db_session.close()
 
 
 if __name__ == "__main__":
-    setup_logging()
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="VINA Lesson Content Viewer & Report Generator")
+    parser.add_argument("--prof", default=None, help="Profession name")
+    parser.add_argument("--prof-num", type=int, choices=[1, 2, 3, 4], help="Profession Code (1:HR, 2:PM, 3:Marketing, 4:Clinical)")
+    parser.add_argument("--ind", default=None, help="Industry (Auto-mapped if omitted)")
+    parser.add_argument("--exp", default="Beginner", choices=["Beginner", "Intermediate", "Advanced"], help="Experience level (default: Beginner)")
+    parser.add_argument("--lesson", default="l01_what_llms_are", help="Lesson ID")
+    parser.add_argument("--lesson-num", type=int, help="Lesson Number (overrides --lesson)")
+    parser.add_argument("--diff", type=int, default=3, help="Difficulty level 1, 3, or 5 (default: 3)")
+    
+    args = parser.parse_args()
+
+    # 1. Resolve Profession and Industry
+    prof_map = {
+        1: ("HR Manager", "Tech Company"),
+        2: ("Project Manager", "Software/Tech"),
+        3: ("Marketing Manager", "E-Commerce"),
+        4: ("Clinical Researcher", "Pharma/Biotech")
+    }
+    
+    # Reverse map for string-to-industry lookups
+    reverse_prof_map = {name: ind for code, (name, ind) in prof_map.items()}
+
+    final_prof = args.prof
+    final_ind = args.ind
+
+    # If code is provided, it takes priority
+    if args.prof_num:
+        final_prof, auto_ind = prof_map[args.prof_num]
+        if not final_ind:
+            final_ind = auto_ind
+    
+    # If prof string is provided but no industry, try to auto-map it
+    if final_prof and not final_ind:
+        final_ind = reverse_prof_map.get(final_prof)
+
+    # Final Fallback
+    if not final_prof:
+        final_prof = "HR Manager"
+    if not final_ind:
+        final_ind = "Tech Company"
+
+    # 2. Resolve Lesson ID
+    final_lesson_id = args.lesson
+    if args.lesson_num:
+        try:
+            from vina_backend.services.course_loader import load_course_config
+            config = load_course_config("c_llm_foundations")
+            lessons = config.get("lessons", [])
+            if 1 <= args.lesson_num <= len(lessons):
+                final_lesson_id = lessons[args.lesson_num - 1]["lesson_id"]
+        except:
+            pass
+    
+    setup_logging("WARNING")
     init_db()
     
     print_separator("=")
-    print("📖 LESSON CONTENT VIEWER")
+    print("📖 VINA LESSON REPORT GENERATOR")
     print_separator("=")
     
-    # You can modify these parameters to view different lessons
     view_lesson(
-        profession="Clinical Researcher",
-        industry="Pharma/Biotech",
-        experience="Intermediate",
-        lesson_id="l01_what_llms_are",
-        course_id="c_llm_foundations",
-        difficulty=3
+        profession=final_prof,
+        industry=final_ind,
+        experience=args.exp,
+        lesson_id=final_lesson_id,
+        difficulty=args.diff
     )

@@ -23,9 +23,20 @@ class LessonCache(SQLModel, table=True):
     cache_key: str = Field(unique=True, index=True)
     course_id: str = Field(index=True)
     lesson_id: str = Field(index=True)
+    llm_model: str = Field(index=True)  # Added to compare models
     difficulty_level: int
     profile_hash: str
-    lesson_json: str  # JSON string of LessonContent
+    
+    # Traceability for QA - Snapshots
+    initial_lesson_json: Optional[str] = None  # Snapshot after Agent 1
+    review_json: Optional[str] = None         # Snapshot after Agent 2
+    lesson_json: str                           # Final JSON string
+    
+    # Traceability for QA - Prompts
+    gen_prompt: Optional[str] = None
+    rev_prompt: Optional[str] = None
+    rew_prompt: Optional[str] = None
+    
     created_at: datetime = Field(default_factory=datetime.utcnow)
     accessed_at: datetime = Field(default_factory=datetime.utcnow)
     access_count: int = Field(default=0)
@@ -39,15 +50,7 @@ class LessonCacheService:
     
     @staticmethod
     def generate_profile_hash(user_profile: UserProfileData) -> str:
-        """
-        Generate a hash from user profile for cache key.
-        
-        Args:
-            user_profile: User profile data
-        
-        Returns:
-            7-character hash
-        """
+        """7-character hash of profile."""
         profile_string = f"{user_profile.profession}:{user_profile.industry}:{user_profile.experience_level}"
         return hashlib.md5(profile_string.encode()).hexdigest()[:7]
     
@@ -56,61 +59,45 @@ class LessonCacheService:
         course_id: str,
         lesson_id: str,
         difficulty_level: int,
-        profile_hash: str
+        profile_hash: str,
+        llm_model: str
     ) -> str:
-        """
-        Generate cache key for a lesson.
-        
-        Args:
-            course_id: Course identifier
-            lesson_id: Lesson identifier
-            difficulty_level: Difficulty level (1, 3, or 5)
-            profile_hash: Hash of user profile
-        
-        Returns:
-            Cache key string
-        """
-        return f"{course_id}:{lesson_id}:d{difficulty_level}:{profile_hash}"
+        """Cache key including model for QA comparison."""
+        return f"{course_id}:{lesson_id}:d{difficulty_level}:{llm_model}:{profile_hash}"
     
     def get(
         self,
         course_id: str,
         lesson_id: str,
         difficulty_level: int,
-        user_profile: UserProfileData
+        user_profile: UserProfileData,
+        llm_model: str
     ) -> Optional[Dict]:
-        """
-        Retrieve cached lesson if it exists.
-        
-        Args:
-            course_id: Course identifier
-            lesson_id: Lesson identifier
-            difficulty_level: Difficulty level
-            user_profile: User profile
-        
-        Returns:
-            Lesson content dict if cached, None otherwise
-        """
+        """Retrieve cached lesson for a specific model."""
         profile_hash = self.generate_profile_hash(user_profile)
-        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash)
+        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash, llm_model)
         
         statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
         cached_entry = self.db_session.exec(statement).first()
         
         if cached_entry:
-            # Update access metadata
             cached_entry.accessed_at = datetime.utcnow()
             cached_entry.access_count += 1
             self.db_session.add(cached_entry)
             self.db_session.commit()
             
-            logger.info(
-                f"Cache HIT for {cache_key} (accessed {cached_entry.access_count} times)"
-            )
-            
-            return json.loads(cached_entry.lesson_json)
+            return {
+                "lesson_content": json.loads(cached_entry.lesson_json),
+                "audit_trail": {
+                    "gen_prompt": cached_entry.gen_prompt,
+                    "gen_output": json.loads(cached_entry.initial_lesson_json) if cached_entry.initial_lesson_json else None,
+                    "rev_prompt": cached_entry.rev_prompt,
+                    "rev_output": json.loads(cached_entry.review_json) if cached_entry.review_json else None,
+                    "rew_prompt": cached_entry.rew_prompt,
+                    "rew_output": json.loads(cached_entry.lesson_json) if cached_entry.rew_prompt else None
+                }
+            }
         
-        logger.info(f"Cache MISS for {cache_key}")
         return None
     
     def set(
@@ -119,47 +106,59 @@ class LessonCacheService:
         lesson_id: str,
         difficulty_level: int,
         user_profile: UserProfileData,
-        lesson_content: Dict
+        llm_model: str,
+        lesson_content: Dict,
+        initial_lesson: Optional[Dict] = None,
+        review_result: Optional[Dict] = None,
+        gen_prompt: Optional[str] = None,
+        rev_prompt: Optional[str] = None,
+        rew_prompt: Optional[str] = None
     ) -> None:
-        """
-        Cache a generated lesson.
-        
-        Args:
-            course_id: Course identifier
-            lesson_id: Lesson identifier
-            difficulty_level: Difficulty level
-            user_profile: User profile
-            lesson_content: Lesson content to cache
-        """
+        """Cache a lesson with intermediate snapshots for QA."""
         profile_hash = self.generate_profile_hash(user_profile)
-        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash)
+        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash, llm_model)
         
-        # Check if already exists
         statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
         existing = self.db_session.exec(statement).first()
         
+        lesson_json = json.dumps(lesson_content)
+        initial_json = json.dumps(initial_lesson) if initial_lesson else None
+        rev_json = json.dumps(review_result) if review_result else None
+        
         if existing:
-            # Update existing entry
-            existing.lesson_json = json.dumps(lesson_content)
-            existing.created_at = datetime.utcnow()
+            existing.lesson_json = lesson_json
+            existing.initial_lesson_json = initial_json
+            existing.review_json = rev_json
+            existing.gen_prompt = gen_prompt
+            existing.rev_prompt = rev_prompt
+            existing.rew_prompt = rew_prompt
             existing.accessed_at = datetime.utcnow()
-            existing.access_count = 0
             self.db_session.add(existing)
-            logger.info(f"Updated cache entry for {cache_key}")
         else:
-            # Create new entry
             cache_entry = LessonCache(
                 cache_key=cache_key,
                 course_id=course_id,
                 lesson_id=lesson_id,
+                llm_model=llm_model,
                 difficulty_level=difficulty_level,
                 profile_hash=profile_hash,
-                lesson_json=json.dumps(lesson_content)
+                lesson_json=lesson_json,
+                initial_lesson_json=initial_json,
+                review_json=rev_json,
+                gen_prompt=gen_prompt,
+                rev_prompt=rev_prompt,
+                rew_prompt=rew_prompt
             )
             self.db_session.add(cache_entry)
-            logger.info(f"Created cache entry for {cache_key}")
         
         self.db_session.commit()
+        
+        # Ensure it's persisted for immediate subsequent reads
+        if existing:
+            self.db_session.refresh(existing)
+        else:
+            # We don't strictly need to refresh cache_entry here but it's good practice
+            pass
     
     def invalidate(
         self,
