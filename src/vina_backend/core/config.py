@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     
     # Text-to-Speech (ElevenLabs)
     elevenlabs_api_key: str = ""
-    elevenlabs_voice_id: str = ""
+    elevenlabs_voice_id: str = "pFZP5JQG7iQjIQuC4Bku"  # Default: Narrator voice
     
     # Cloudinary (Video Storage)
     cloudinary_cloud_name: str = ""

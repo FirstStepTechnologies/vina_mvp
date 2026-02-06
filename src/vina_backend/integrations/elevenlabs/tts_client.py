@@ -51,11 +51,8 @@ class TTSClient:
         if not self.api_key:
             raise ValueError("ELEVENLABS_API_KEY must be set in .env")
         
-        self.voice_id = voice_id or getattr(settings, 'elevenlabs_voice_id', None)
-        if not self.voice_id:
-            # Default to a professional voice
-            self.voice_id = "21m00Tcm4TlvDq8ikWAM"  # Rachel - professional female
-            logger.warning(f"No ELEVENLABS_VOICE_ID set, using default: {self.voice_id}")
+        self.voice_id = voice_id or settings.elevenlabs_voice_id
+        logger.info(f"Using ElevenLabs voice ID: {self.voice_id}")
         
         self.model = model
         self.max_concurrent = max_concurrent
