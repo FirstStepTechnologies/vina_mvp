@@ -25,6 +25,14 @@ class TechnicalComfort(str, Enum):
     HIGH = "High"
 
 
+class Profession(str, Enum):
+    """Supported professions."""
+    CLINICAL_RESEARCHER = "Clinical Researcher"
+    HR_MANAGER = "HR Manager"
+    PROJECT_MANAGER = "Project Manager"
+    MARKETING_MANAGER = "Marketing Manager"
+
+
 # Profession options for the hackathon
 SUPPORTED_PROFESSIONS = [
     "Clinical Researcher",

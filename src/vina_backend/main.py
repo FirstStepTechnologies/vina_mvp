@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from vina_backend.api.routers import health, debug
+from vina_backend.api.routers import health, debug, onboarding
 from vina_backend.core.config import get_settings
 from vina_backend.utils.logging import setup_logging
 
@@ -30,6 +30,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router, tags=["General"])
 app.include_router(debug.router, prefix="/api/v1/debug", tags=["Debug"])
+app.include_router(onboarding.router, prefix="/api/v1", tags=["Onboarding"])
 
 @app.get("/")
 async def root():
