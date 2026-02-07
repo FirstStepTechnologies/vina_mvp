@@ -41,3 +41,7 @@ cache/demo_pipeline_*/
 # Exception: Keep one demo video for documentation (optional)
 # Uncomment if you want to keep a specific demo video:
 # !cache/demo_videos/demo_sample.mp4
+
+# Extra generated folders
+assets/
+cache/reports/

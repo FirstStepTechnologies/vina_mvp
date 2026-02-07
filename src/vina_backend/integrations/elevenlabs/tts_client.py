@@ -92,7 +92,11 @@ class TTSClient:
             Exception: If API call fails after retries
         """
         async with self.semaphore:  # Limit concurrent requests
-            logger.info(f"Generating audio: {text[:50]}... ({len(text)} chars)")
+            # Preprocess text to increase pauses (experimental)
+            # Adding an ellipsis after commas and periods to force ElevenLabs to pause longer
+            processed_text = text.replace(",", ", ...").replace(".", ". ...")
+            
+            logger.info(f"Generating audio: {processed_text[:50]}... ({len(processed_text)} chars)")
             
             # Run ElevenLabs in thread pool (it's synchronous)
             loop = asyncio.get_event_loop()
@@ -100,10 +104,10 @@ class TTSClient:
                 None,
                 lambda: self.client.text_to_speech.convert(
                     voice_id=self.voice_id,
-                    text=text,
+                    text=processed_text,
                     model_id=self.model,
                     voice_settings={
-                        "stability": stability,
+                        "stability": 0.65,  # Slightly higher for more deliberate speech
                         "similarity_boost": similarity_boost
                     }
                 )

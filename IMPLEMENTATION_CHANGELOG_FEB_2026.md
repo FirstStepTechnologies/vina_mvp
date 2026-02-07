@@ -100,6 +100,26 @@ Lessons are cached based on a hash of the **Learner Profile** (Profession + Indu
 
 ---
 
+## 🎨 Visual Polish & Pipeline Robustness (February 6-7, 2026)
+
+**Status:** Phase 3 (Video Composition) Refinements
+
+### 1. Slide Composition Improvements
+- **Canonical Headers:** Switched slide top-right label from user profession to the official `lesson_name` (e.g., "What LLMs Are") to ensure consistent course branding.
+- **Layout Optimization:** Increased bullet point capacity on `Text+Image` slides from 2 to 3. This resolves truncation issues where valid content was generated but not displayed.
+
+### 2. Pipeline Architecture
+- **Collision-Proof Filenames:** Video output filenames now include both `difficulty_level` (e.g., `d3`) and `model_name` (e.g., `gemini-3`). This enables:
+    - Parallel A/B testing of different models.
+    - Generating multiple difficulty variations for the same user without overwriting assets.
+    - Easier QA of model performance side-by-side.
+
+### 3. Developer Experience
+- **Documentation:** Added clear usage examples to `demo_complete_pipeline.py`.
+- **CLI Enhancements:** Simplified command-line arguments for targeting specific personas and difficulties.
+
+---
+
 **Prepared By:** AI Coding Assistant  
 **Date:** February 5, 2026  
 **Consolidated From:** `WORKFLOW_UPDATE_SUMMARY.md`, `GENERATOR_PROMPT_V2.4_IMPROVEMENTS.md`, `FALLBACK_GENERATOR_IMPLEMENTATION.md`, `CROSS_PROVIDER_FALLBACK_SUMMARY.md`, and `LESSON_GENERATION_SUMMARY.md`.

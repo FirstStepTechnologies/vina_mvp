@@ -4,6 +4,7 @@ Useful after major prompt updates to ensure all cached lessons
 conform to the new structure.
 """
 import logging
+from pathlib import Path
 from sqlmodel import Session, select, delete
 from vina_backend.integrations.db.engine import engine
 from vina_backend.services.lesson_cache import LessonCache
@@ -34,10 +35,29 @@ def clear_cache(keep_last: bool = True):
             session.commit()
             logger.info(f"Cleanup complete. Removed all {result.rowcount} lessons.")
 
+def clear_assets():
+    import shutil
+    import os
+    dirs = [
+        Path("cache/global_assets/videos"),
+        Path("cache/global_assets/images"),
+        Path("cache/global_assets/audio"),
+        Path("cache/runs")
+    ]
+    for d in dirs:
+        if d.exists():
+            logger.info(f"Clearing assets in: {d}")
+            shutil.rmtree(d)
+            d.mkdir(parents=True, exist_ok=True)
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--all", action="store_true", help="Delete ALL lessons (don't keep the last one)")
+    parser.add_argument("--videos", action="store_true", help="Clear all cached video files and assets")
     args = parser.parse_args()
+    
+    if args.videos:
+        clear_assets()
     
     clear_cache(keep_last=not args.all)

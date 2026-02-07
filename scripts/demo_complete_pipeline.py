@@ -12,6 +12,9 @@ Features:
 - Full timing breakdown per phase.
 - Deep personalization based on professional challenges and safety priorities.
 - Real-world personas: Clinical Researcher, HR Manager, Project Manager, Marketing Manager.
+
+Usage Example:
+python scripts/demo_complete_pipeline.py --prof "HR Manager" --diff 3 --lesson-num 1
 """
 
 import sys
@@ -20,7 +23,7 @@ import time
 import logging
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -52,26 +55,19 @@ DEFAULT_LESSON_ID = "l01_what_llms_are"
 
 TEST_CASES = [
     # Format: (Profession, Industry, Experience_Level_String, Difficulty_Int)
-    ("HR Manager", "Tech Company", "Beginner", 1),
     ("HR Manager", "Tech Company", "Beginner", 3),
-    ("HR Manager", "Tech Company", "Beginner", 5),
-    ("Project Manager", "Software/Tech", "Beginner", 1),
-    # ("Project Manager", "Software/Tech", "Beginner", 3),
-    # ("Project Manager", "Software/Tech", "Beginner", 5),
-    # ("Marketing Manager", "E-Commerce", "Beginner", 1),
-    # ("Marketing Manager", "E-Commerce", "Intermediate", 3),
-    # ("Marketing Manager", "E-Commerce", "Advanced", 5),
-    # ("Clinical Researcher", "Pharma/Biotech", "Beginner", 1),
-    # ("Clinical Researcher", "Pharma/Biotech", "Intermediate", 3),
-    # ("Clinical Researcher", "Pharma/Biotech", "Advanced", 5),
+    ("Project Manager", "Software/Tech", "Beginner", 3),
+    ("Marketing Manager", "E-Commerce", "Beginner", 3),
+    ("Clinical Researcher", "Pharma/Biotech", "Beginner", 3),
 ]
 
-async def run_full_pipeline(profession: str, industry: str, level_str: str, difficulty_level: int, lesson_idx: int = 1, skip_media: bool = False):
+async def run_full_pipeline(profession: str, industry: str, level_str: str, difficulty_level: int, lesson_idx: int = 1, skip_media: bool = False, output_override: Optional[Path] = None):
     """Run every single module of the VINA platform."""
     # Ensure database is initialized before any phase starts
     init_db()
     
     # Determine Lesson ID dynamically
+    lesson_name = "Unknown Lesson"
     try:
         config = load_course_config(COURSE_ID)
         lessons = config.get("lessons", [])
@@ -82,7 +78,9 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
             print(f"📚 Selected Lesson {lesson_idx}: {lesson_name} ({lesson_id})")
         else:
             print(f"⚠️ Invalid lesson index {lesson_idx}, defaulting to Lesson 1")
-            lesson_id = lessons[0]["lesson_id"]
+            target_lesson = lessons[0]
+            lesson_id = target_lesson["lesson_id"]
+            lesson_name = target_lesson.get("lesson_name", "Unknown")
     except Exception as e:
         print(f"⚠️ Error loading course config: {e}. Using default.")
         lesson_id = DEFAULT_LESSON_ID
@@ -161,7 +159,12 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
     try:
         # Prepare Deterministic Pipeline ID
         # Format: profession_industry_difficulty_lessonid (safe for filenames)
-        slug = f"{profession}_{industry}_{level_str}_{COURSE_ID}_{LESSON_ID}".lower().replace(' ', '_').replace('/', '_')
+        # Start by getting the model name (and sanitizing it)
+        model_name = "unknown"
+        if generated_lesson.generation_metadata.llm_model:
+            model_name = generated_lesson.generation_metadata.llm_model.split("/")[-1] # Take last part if slash exists
+        
+        slug = f"{profession}_{industry}_{level_str}_d{difficulty_level}_{model_name}_{COURSE_ID}_{lesson_id}".lower().replace(' ', '_').replace('/', '_')
         run_name = slug
         
         config = PipelineConfig(
@@ -200,13 +203,13 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
             "slides": slides_adapted
         }
         
-        output_video_path = Path(f"cache/demo_videos/{run_name}.mp4")
+        output_video_path = output_override or Path(f"cache/demo_videos/{run_name}.mp4")
         output_video_path.parent.mkdir(parents=True, exist_ok=True)
 
         pipeline_result = await pipeline.generate_video_async(
             lesson_data=lesson_data,
             output_path=output_video_path,
-            course_label=user_profile.profession
+            course_label=lesson_name
         )
         
         e3 = time.time()
@@ -256,21 +259,41 @@ async def main():
     # Check for CLI flags
     skip_media = "--text-only" in sys.argv
     override_diff = None
-    for arg in sys.argv:
+    target_prof = None
+    target_lesson_idx = 1
+    output_override = None
+    
+    for i, arg in enumerate(sys.argv):
         if arg.startswith("--diff="):
             try:
                 override_diff = int(arg.split("=")[1])
             except ValueError:
                 print(f"⚠️ Invalid difficulty override: {arg}")
+        elif arg == "--diff" and i + 1 < len(sys.argv):
+             try:
+                override_diff = int(sys.argv[i + 1])
+             except ValueError: pass
+        elif arg == "--prof" and i + 1 < len(sys.argv):
+            target_prof = sys.argv[i + 1]
+        elif arg == "--lesson-num" and i + 1 < len(sys.argv):
+            try:
+                target_lesson_idx = int(sys.argv[i + 1])
+            except ValueError: pass
+        elif (arg == "--output" or arg == "--outputs") and i + 1 < len(sys.argv):
+            output_override = Path(sys.argv[i + 1])
 
     # Filter out flags from args for positional parsing
     args = [arg for arg in sys.argv if not arg.startswith("--")]
 
     # Parse parameters
     target_indices = range(len(TEST_CASES))
-    target_lesson_idx = 1
     
-    if len(args) > 1:
+    if target_prof:
+        target_indices = [i for i, case in enumerate(TEST_CASES) if case[0].lower() == target_prof.lower()]
+        if not target_indices:
+            print(f"⚠️ No test case found for profession: {target_prof}")
+            return
+    elif len(args) > 1:
         try:
             val = args[1]
             if val.lower() == "all":
@@ -279,12 +302,6 @@ async def main():
                 target_indices = [int(val)]
         except ValueError:
             pass
-            
-    if len(args) > 2:
-        try:
-            target_lesson_idx = int(args[2])
-        except ValueError:
-            print("⚠️ Invalid lesson index provided, using default (1)")
 
     for i in target_indices:
         case = list(TEST_CASES[i])
@@ -292,7 +309,7 @@ async def main():
         if override_diff is not None:
             case[3] = override_diff
             
-        await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media)
+        await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media, output_override=output_override)
         # Short pause between demos
         if len(target_indices) > 1:
             await asyncio.sleep(2)

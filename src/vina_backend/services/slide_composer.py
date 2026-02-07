@@ -61,14 +61,14 @@ class DesignSystem:
     image_card_inner_width: int = 872  # card_width - 2*card_padding
     image_card_inner_height: int = 712  # image_card_height - 2*card_padding
     
-    # Colors (modern, professional palette)
-    bg_color: Tuple[int, int, int] = (15, 23, 42)  # Dark blue-gray
-    card_bg_color: Tuple[int, int, int] = (30, 41, 59)  # Slightly lighter
+    # Colors (Vina Brand Light Theme)
+    bg_color: Tuple[int, int, int] = (255, 255, 255)  # White
+    card_bg_color: Tuple[int, int, int] = (241, 245, 249)  # Very light gray for cards
     
-    title_color: Tuple[int, int, int] = (255, 255, 255)  # White
-    body_color: Tuple[int, int, int] = (203, 213, 225)  # Light gray
-    accent_color: Tuple[int, int, int] = (59, 130, 246)  # Blue
-    label_color: Tuple[int, int, int] = (148, 163, 184)  # Medium gray
+    title_color: Tuple[int, int, int] = (26, 26, 26)  # Dark Text (#1A1A1A)
+    body_color: Tuple[int, int, int] = (26, 26, 26)  # Dark Text (#1A1A1A)
+    accent_color: Tuple[int, int, int] = (0, 115, 115)  # Brand Teal (#007373)
+    label_color: Tuple[int, int, int] = (100, 116, 139)  # Slate gray
 
 
 class SlideComposer:
@@ -107,6 +107,12 @@ class SlideComposer:
         
         # Load logo (if available)
         self.logo = None
+        if not logo_path:
+            # Try default path
+            default_logo = Path(__file__).parent.parent / "prompts" / "Vina_logo_transparent_bg.png"
+            if default_logo.exists():
+                logo_path = default_logo
+
         if logo_path and logo_path.exists():
             try:
                 self.logo = Image.open(logo_path).convert("RGBA")
@@ -189,7 +195,7 @@ class SlideComposer:
         draw = ImageDraw.Draw(canvas)
         
         # Draw common elements
-        self._draw_top_bar(draw, course_label)
+        self._draw_top_bar(draw, course_label, canvas=canvas)
         self._draw_title(draw, title)
         self._draw_bottom_bar(draw, slide_number, total_slides)
         
@@ -197,8 +203,8 @@ class SlideComposer:
         img_card_y = self.design.content_zone_start
         self._draw_image_card(canvas, image_path, self.design.margin_x, img_card_y)
         
-        # === BULLET CARDS (max 2) ===
-        bullets_to_show = bullets[:2]  # Limit to 2 for this template
+        # === BULLET CARDS (max 3) ===
+        bullets_to_show = bullets[:3]  # Limit to 3 for this template
         bullet_y = img_card_y + self.design.image_card_height + self.design.card_spacing
         
         for bullet in bullets_to_show:
@@ -228,7 +234,7 @@ class SlideComposer:
         draw = ImageDraw.Draw(canvas)
         
         # Draw common elements
-        self._draw_top_bar(draw, course_label)
+        self._draw_top_bar(draw, course_label, canvas=canvas)
         self._draw_title(draw, title)
         self._draw_bottom_bar(draw, slide_number, total_slides)
         
@@ -246,36 +252,48 @@ class SlideComposer:
         logger.info(f"Slide saved to {output_path}")
         return output_path
     
-    def _draw_top_bar(self, draw: ImageDraw.Draw, course_label: Optional[str]):
+    def _draw_top_bar(self, draw: ImageDraw.Draw, course_label: Optional[str], canvas: Optional[Image.Image] = None):
         """Draw top bar with logo and course label."""
-        # Logo (left)
-        if self.logo:
-            # Resize logo to fit (80x80)
-            logo_size = 80
-            logo_resized = self.logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
-            # Note: Can't paste on ImageDraw, need to handle in main canvas
-            # For now, use text-based logo
+        # 1. Logo (Top Left)
+        logo_y = self.design.top_bar_start
+        if self.logo and canvas:
+            # Resize logo to fit (height = 80px)
+            aspect = self.logo.width / self.logo.height
+            logo_h = 80
+            logo_w = int(logo_h * aspect)
+            logo_resized = self.logo.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
+            
+            # Paste onto canvas
+            canvas.paste(logo_resized, (self.design.margin_x, logo_y), logo_resized)
+        else:
+            # Text fallback
+            draw.text(
+                (self.design.margin_x, logo_y),
+                self.brand_name,
+                font=self.logo_font,
+                fill=self.design.accent_color
+            )
         
-        # Text-based logo
-        draw.text(
-            (self.design.margin_x, self.design.top_bar_start),
-            self.brand_name,
-            font=self.logo_font,
-            fill=self.design.accent_color
-        )
-        
-        # Course label (right)
+        # 2. Course/Lesson label (Top Right)
         if course_label:
             bbox = draw.textbbox((0, 0), course_label, font=self.label_font)
             text_width = bbox[2] - bbox[0]
             x = self.design.width - self.design.margin_x - text_width
             
             draw.text(
-                (x, self.design.top_bar_start + 20),
+                (x, logo_y + 20),
                 course_label,
                 font=self.label_font,
                 fill=self.design.label_color
             )
+        
+        # 3. Brand Line
+        line_y = self.design.top_bar_end - 10
+        draw.line(
+            [(self.design.margin_x, line_y), (self.design.width - self.design.margin_x, line_y)],
+            fill=self.design.accent_color,
+            width=3
+        )
     
     def _draw_title(self, draw: ImageDraw.Draw, title: str):
         """Draw title in title zone."""
@@ -304,7 +322,7 @@ class SlideComposer:
         # Background
         draw.rectangle(
             [(self.design.margin_x, bar_y), (self.design.margin_x + bar_width, bar_y + bar_height)],
-            fill=(71, 85, 105)
+            fill=(203, 213, 225)  # Light slate gray for visibility on white
         )
         
         # Filled
@@ -332,12 +350,21 @@ class SlideComposer:
         img = Image.open(image_path).convert("RGB")
         
         # Resize to fit card inner area (872x712)
-        # Center crop to square first
+        # Center crop to aspect first if needed
         img_w, img_h = img.size
-        crop_size = min(img_w, img_h)
-        left = (img_w - crop_size) // 2
-        top = (img_h - crop_size) // 2
-        img = img.crop((left, top, left + crop_size, top + crop_size))
+        target_aspect = self.design.image_card_inner_width / self.design.image_card_inner_height
+        current_aspect = img_w / img_h
+        
+        if current_aspect > target_aspect:
+            # Too wide
+            new_w = int(img_h * target_aspect)
+            left = (img_w - new_w) // 2
+            img = img.crop((left, 0, left + new_w, img_h))
+        else:
+            # Too tall
+            new_h = int(img_w / target_aspect)
+            top = (img_h - new_h) // 2
+            img = img.crop((0, top, img_w, top + new_h))
         
         # Resize to fit inner area
         img = img.resize(
