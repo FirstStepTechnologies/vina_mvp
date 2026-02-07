@@ -149,3 +149,34 @@ Implemented a 3-agent orchestration system mirror to the lesson generation servi
 **Prepared By:** AI Coding Assistant  
 **Date:** February 7, 2026  
 **Consolidated From:** `IMPLEMENTATION_REPORT_ONBOARDING_QUIZ.md` and `COMPLETED_ONBOARDING_QUIZ.md`.
+
+---
+
+## 🎓 Phase 5: Post-Lesson Quiz (February 7, 2026)
+
+**Status:** Fully Deployed
+
+### 1. Multi-Agent Generation Pipeline
+Extended the 3-agent architecture to generate lesson-specific quizzes:
+- **`LessonQuizGenerator`**: Creates 3-question quizzes tailored to specific lessons and professions.
+- **`LessonQuizReviewer`**: Validates scenario realism, concept diversity, and lesson alignment.
+- **`LessonQuizRewriter`**: Fixes identified issues while preserving high-quality questions.
+
+### 2. Intelligent Scripting & Storage
+- **Batch Generation Script**: `scripts/generate_lesson_quizzes.py` supports:
+    - **Lesson Range Filtering** (`--start 1 --end 5`)
+    - **Profession Targeting** (`--profession "HR Manager"`)
+    - **Smart Merging**: Updates `lesson_quizzes.json` without overwriting existing data.
+- **Prompt Management**: All prompts externalized to `src/vina_backend/prompts/lesson_quiz/`.
+
+### 3. API Integration
+- **Endpoints Implemented**:
+    - `GET /api/v1/quizzes/{lesson_id}?userId={userId}`: Retrieves profession-specific quiz.
+    - `POST /api/v1/quizzes/submit`: Processes answers, calculates score, and determines next lesson.
+- **Logic**:
+    - **Pass/Fail Threshold**: 2/3 correct required to pass.
+    - **Points System**: Awards 10/20/30 points based on score.
+    - **Progression**: Automatically identifies the next lesson ID upon passing.
+
+**Prepared By:** AI Coding Assistant  
+**Date:** February 7, 2026

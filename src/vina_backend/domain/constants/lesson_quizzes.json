@@ -1,0 +1,89 @@
+{
+  "l01_what_llms_are": {
+    "HR Manager": {
+      "lessonId": "l01_what_llms_are",
+      "profession": "HR Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask an AI tool to draft a new 'Remote Work Policy' for your hybrid engineering team based on current industry standards. The tool produces a polished document citing a specific '2024 Federal Remote Work Mandate' that requires specific equipment reimbursements. You've never heard of this mandate. Based on how LLMs work, what is the most likely explanation?",
+          "options": [
+            {
+              "text": "The AI has access to a live legal database that you don't, so the mandate is likely real and recent.",
+              "is_correct": false
+            },
+            {
+              "text": "The AI is predicting statistically likely words to create a plausible-sounding legal citation, even if the law doesn't exist.",
+              "is_correct": true
+            },
+            {
+              "text": "The AI is confused because the input prompt didn't specify which state laws to apply.",
+              "is_correct": false
+            },
+            {
+              "text": "The AI is retrieving data from a slightly outdated version of the federal labor code.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs are not knowledge bases that look up facts; they are prediction engines that generate text based on patterns. 'Federal Remote Work Mandate' sounds like a real law, so the AI constructs it because it fits the pattern of legal language, not because it 'knows' the law exists. This is a classic hallucination.",
+          "conceptTested": "llm_definition_prediction_vs_knowledge",
+          "rationale": "Tests if the learner understands that LLMs generate plausible text based on patterns rather than retrieving verified facts."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an LLM to summarize a transcript from a complex employee relations meeting involving a conflict between a Product Manager and a Lead Engineer. The output summary states: 'The Engineer admitted to violating the code of conduct,' a statement that was never actually said in the transcript. Why is this specific type of error dangerous for your role?",
+          "options": [
+            {
+              "text": "It suggests the LLM has a personal bias against engineering roles.",
+              "is_correct": false
+            },
+            {
+              "text": "It indicates the transcription software failed before the text reached the LLM.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM is generating a 'plausible' conclusion to fill a gap, which creates a false record of admission that could lead to wrongful termination risks.",
+              "is_correct": true
+            },
+            {
+              "text": "It means the LLM simply misunderstood the tone of voice used in the meeting.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Because LLMs work like 'autocomplete on steroids,' they try to complete the narrative arc. If a conflict usually ends in a violation, the LLM might predict that outcome even if it didn't happen. In HR, relying on this generated 'fact' without verification creates massive legal and ethical liability.",
+          "conceptTested": "hallucination_risk_application",
+          "rationale": "Tests if the learner can recognize how the 'autocomplete' nature of LLMs manifests as a specific professional risk in employee relations."
+        },
+        {
+          "id": "q3",
+          "text": "You need to update technical job descriptions for a niche role: 'Kubernetes Site Reliability Engineer.' You are considering using an LLM to generate the 'Required Skills' section. Given that LLMs operate on statistical patterns, what is the best strategy for using the tool?",
+          "options": [
+            {
+              "text": "Use the LLM output as the final draft since it was trained on millions of similar job descriptions.",
+              "is_correct": false
+            },
+            {
+              "text": "Use the LLM to draft the list, but have a technical hiring manager verify that the specific tools listed are actually compatible and not just buzzwords strung together.",
+              "is_correct": true
+            },
+            {
+              "text": "Avoid using the LLM entirely because it cannot understand technical terminology.",
+              "is_correct": false
+            },
+            {
+              "text": "Ask the LLM to provide its confidence score for each skill listed; if the score is high, no human review is needed.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs are excellent at generating lists that *look* like technical requirements because they've seen many job ads. However, they might list two technologies that never work together just because they often appear in the same document. Human verification is essential to ensure the statistical pattern matches technical reality.",
+          "conceptTested": "mitigation_strategy",
+          "rationale": "Tests if the learner can choose the correct workflow modification (human-in-the-loop) to mitigate the risk of plausible-sounding but technically inaccurate outputs."
+        }
+      ],
+      "passThreshold": 2
+    }
+  }
+}
