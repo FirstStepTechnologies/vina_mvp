@@ -1,0 +1,522 @@
+{
+  "Clinical Researcher": {
+    "profession": "Clinical Researcher",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "You are inputting a lengthy clinical trial protocol (approx. 8,000 words) into a standard LLM interface to generate a lay summary for participants. However, the model cuts off halfway through the document and forgets the earlier sections. What is the technical reason for this behavior?",
+        "options": [
+          {
+            "text": "The model's temperature setting was too low, causing it to become rigid and reject new information.",
+            "is_correct": false
+          },
+          {
+            "text": "The document exceeded the model's context window, which measures capacity in 'tokens' (roughly 0.75 words per token).",
+            "is_correct": true
+          },
+          {
+            "text": "The model detected sensitive medical terminology and automatically activated a privacy firewall.",
+            "is_correct": false
+          },
+          {
+            "text": "LLMs require structured database inputs (like SQL) rather than unstructured text documents.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests knowledge of L2 (Tokens & Context Windows) using a common frustration in research (handling large protocols)."
+      },
+      {
+        "id": "q2",
+        "text": "You ask an LLM to 'draft an exclusion criteria list based on standard oncology protocols.' You run the exact same prompt three times, but get slightly different wording each time. Which setting controls this variability?",
+        "options": [
+          {
+            "text": "Temperature: A value closer to 1.0 increases randomness, while 0 makes outputs more deterministic.",
+            "is_correct": true
+          },
+          {
+            "text": "Latency: High latency causes the model to 'guess' more often to save processing time.",
+            "is_correct": false
+          },
+          {
+            "text": "Fine-tuning: The model is learning from your previous two prompts and adjusting its answer.",
+            "is_correct": false
+          },
+          {
+            "text": "Bias Weighting: The model is fluctuating between different cultural definitions of oncology.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests knowledge of L3 (Temperature) and the probabilistic nature of LLMs within a drafting scenario."
+      },
+      {
+        "id": "q3",
+        "text": "You are considering using an LLM to assist with a systematic literature review. Which of the following tasks represents a 'High-ROI' use case that fits the model's strengths while minimizing the risk of fabrication?",
+        "options": [
+          {
+            "text": "Asking the LLM to search for and cite the 10 most recent papers on a niche biomarker without providing source text.",
+            "is_correct": false
+          },
+          {
+            "text": "Uploading a PDF of a specific paper and asking the LLM to summarize the 'Methods' section into three bullet points.",
+            "is_correct": true
+          },
+          {
+            "text": "Inputting raw patient datasets and asking the LLM to calculate the p-value for the primary endpoint.",
+            "is_correct": false
+          },
+          {
+            "text": "Asking the LLM to verify if a drug interaction listed in a protocol is factually correct based on its internal memory.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 2,
+        "rationale": "Tests L4/L5/L8. Distinguishes between summarization (High ROI/Safe) and factual retrieval/calculation (Hallucination risks)."
+      },
+      {
+        "id": "q4",
+        "text": "Your team wants to use a public cloud-based LLM (like ChatGPT or Claude) to clean up formatting on messy case report forms (CRFs). Why is this workflow currently rejected by most Institutional Review Boards (IRBs)?",
+        "options": [
+          {
+            "text": "LLMs cannot process the specific file formats (.xml or .csv) usually associated with CRFs.",
+            "is_correct": false
+          },
+          {
+            "text": "Inputting patient data into a public API potentially exposes PHI to third-party servers, violating HIPAA/GDPR data privacy rules.",
+            "is_correct": true
+          },
+          {
+            "text": "LLMs are statistically biased against clinical data and will automatically alter the numerical values during formatting.",
+            "is_correct": false
+          },
+          {
+            "text": "Cloud APIs are too slow to process CRFs in real-time, making the workflow inefficient.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 2,
+        "rationale": "Tests L7 (Safe Use Practices) regarding the critical distinction between public APIs and private data handling."
+      },
+      {
+        "id": "q5",
+        "text": "You need an LLM to extract adverse events from doctor's notes and format them into a specific JSON structure for your database. You have tried asking once, but the format is inconsistent. Which 'Few-Shot' prompting strategy would best correct this?",
+        "options": [
+          {
+            "text": "Adding the phrase 'Please be very careful and do not make mistakes' to the end of your prompt.",
+            "is_correct": false
+          },
+          {
+            "text": "Switching to a self-hosted model, as they inherently understand JSON better than cloud models.",
+            "is_correct": false
+          },
+          {
+            "text": "Providing the model with three examples of raw notes paired with the correctly formatted JSON output before asking it to process the new note.",
+            "is_correct": true
+          },
+          {
+            "text": "Increasing the Temperature setting to 1.5 to encourage the model to explore more formatting options.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "mastery_strategy",
+        "complexity_level": 3,
+        "rationale": "Tests L15 (Few-Shot Prompting). Identifies the specific technique needed to enforce complex output constraints."
+      }
+    ]
+  },
+  "HR Manager": {
+    "profession": "HR Manager",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "You are drafting a new remote work policy and use ChatGPT to help generate the initial text. When the model generates the policy, how is it actually constructing the sentences?",
+        "options": [
+          {
+            "text": "It searches a live database of existing HR policies to copy-paste relevant sections.",
+            "is_correct": false
+          },
+          {
+            "text": "It predicts the next most likely word (or token) based on patterns learned from massive amounts of training text.",
+            "is_correct": true
+          },
+          {
+            "text": "It accesses a logic engine that understands employment law to construct legally binding clauses.",
+            "is_correct": false
+          },
+          {
+            "text": "It retrieves pre-written templates stored in its memory by the developers.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests the fundamental concept of Lesson 1 (prediction based on patterns) versus the common misconception that LLMs act as search engines or logic databases."
+      },
+      {
+        "id": "q2",
+        "text": "You paste a very long employee handbook (approx. 15,000 words) into a standard LLM interface and ask it to summarize the benefits section, but the model cuts off or forgets the beginning of the text. What technical constraint is causing this?",
+        "options": [
+          {
+            "text": "The model's 'Temperature' setting is too high, causing it to lose focus.",
+            "is_correct": false
+          },
+          {
+            "text": "The text exceeded the model's 'Context Window' limit, meaning it could not process all the tokens at once.",
+            "is_correct": true
+          },
+          {
+            "text": "The model is hallucinating because the handbook contains proprietary jargon.",
+            "is_correct": false
+          },
+          {
+            "text": "The server connection timed out due to the file size.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 2,
+        "rationale": "Tests understanding of Lesson 2 (Context Windows & Tokens) applied to a realistic HR scenario (handling large policy documents)."
+      },
+      {
+        "id": "q3",
+        "text": "Your team is considering using an LLM to screen initial candidate resumes for a new role. Which of the following represents a significant 'Hallucination' risk in this specific workflow?",
+        "options": [
+          {
+            "text": "The model might format the output as a table instead of a bulleted list.",
+            "is_correct": false
+          },
+          {
+            "text": "The model might confidently state a candidate has a specific certification (e.g., PMP) based on adjacent keywords, even if the resume does not say so.",
+            "is_correct": true
+          },
+          {
+            "text": "The model will refuse to process the resumes due to privacy filters.",
+            "is_correct": false
+          },
+          {
+            "text": "The model will simply copy the resume text verbatim without summarizing it.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application",
+        "complexity_level": 3,
+        "rationale": "Tests Lesson 5 (Hallucinations) within a critical HR function. It distinguishes between a formatting error and a dangerous factual fabrication."
+      },
+      {
+        "id": "q4",
+        "text": "You want to automate the drafting of rejection emails for unsuccessful applicants to save time. According to Safe Use Practices, what is the most critical step in this workflow?",
+        "options": [
+          {
+            "text": "Ensuring the LLM has a 'temperature' of 1.0 to ensure each email feels unique and creative.",
+            "is_correct": false
+          },
+          {
+            "text": "Training the model on all previous internal emails to capture the company voice perfectly.",
+            "is_correct": false
+          },
+          {
+            "text": "Implementing a 'Human-in-the-Loop' review to approve the draft before it is sent to the candidate.",
+            "is_correct": true
+          },
+          {
+            "text": "Asking the LLM to auto-send the email immediately upon generation to reduce latency.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application",
+        "complexity_level": 3,
+        "rationale": "Tests Lesson 7 and 10 (Safe Use & Workflows). It identifies that high-stakes communication (rejections) requires human verification, regardless of efficiency."
+      },
+      {
+        "id": "q5",
+        "text": "You are creating a prompt to help managers write performance reviews. You want the LLM to output a specific format: 'Strengths, Areas for Improvement, and Action Goals.' Which prompting technique would most effectively ensure the LLM follows this structure every time?",
+        "options": [
+          {
+            "text": "Zero-Shot Prompting: Simply asking 'Write a performance review' and hoping it infers the structure.",
+            "is_correct": false
+          },
+          {
+            "text": "Few-Shot Prompting: Providing the LLM with 2-3 examples of completed reviews that follow exactly that format before asking it to write the new one.",
+            "is_correct": true
+          },
+          {
+            "text": "Temperature Adjustment: Setting the temperature to 0.9 to encourage the model to try different structural formats.",
+            "is_correct": false
+          },
+          {
+            "text": "Role-Based Prompting: Telling the model 'You are a helpful HR assistant' without providing further instructions.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "mastery",
+        "complexity_level": 4,
+        "rationale": "Tests Lesson 15 (Few-Shot Prompting). It validates the user understands that providing examples is the best way to enforce complex formatting constraints."
+      }
+    ]
+  },
+  "Project Manager": {
+    "profession": "Project Manager",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "You are feeding a lengthy project scope document into an LLM to generate a summary for stakeholders. The tool suddenly stops generating text mid-sentence, cutting off the conclusion. Based on how LLMs process inputs, what is the most likely technical cause?",
+        "options": [
+          {
+            "text": "The model's temperature setting was too low (near 0), causing it to freeze its output generation.",
+            "is_correct": false
+          },
+          {
+            "text": "The input document plus the generated output exceeded the model's context window limit (measured in tokens).",
+            "is_correct": true
+          },
+          {
+            "text": "The LLM detected a hallucination in its own response and terminated the process to prevent misinformation.",
+            "is_correct": false
+          },
+          {
+            "text": "The model's internal database does not contain information about your specific project scope.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests understanding of Context Windows and Tokens (Lesson 2). A common misconception is that LLMs stop due to lack of knowledge or internal checking, rather than hitting the hard token limit."
+      },
+      {
+        "id": "q2",
+        "text": "Your team is using an LLM to brainstorm 50 potential names for a new software release. You want a wide variety of creative, divergent options rather than safe, predictable ones. Which technical parameter should you adjust, and how?",
+        "options": [
+          {
+            "text": "Increase the Temperature to introduce more randomness and variety into the next-word prediction.",
+            "is_correct": true
+          },
+          {
+            "text": "Decrease the Temperature to ensure the model focuses strictly on the most statistically probable words.",
+            "is_correct": false
+          },
+          {
+            "text": "Increase the Token limit to allow the model to access a larger vocabulary database.",
+            "is_correct": false
+          },
+          {
+            "text": "Decrease the Context Window so the model isn't constrained by previous suggestions.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests understanding of Temperature and Output Variance (Lesson 3). PMs often need to toggle between 'creative brainstorming' and 'strict reporting'."
+      },
+      {
+        "id": "q3",
+        "text": "As a PM, you identify several repetitive tasks to delegate to an LLM to improve team ROI. Which of the following tasks represents a 'Good Fit' use case where the risks are manageable and the strengths of the LLM are maximized?",
+        "options": [
+          {
+            "text": "Generating the final budget approval spreadsheet for the Q4 financial audit.",
+            "is_correct": false
+          },
+          {
+            "text": "Drafting initial user stories based on meeting transcripts, subject to developer review.",
+            "is_correct": true
+          },
+          {
+            "text": "Providing the final sign-off on legal compliance for the new privacy policy.",
+            "is_correct": false
+          },
+          {
+            "text": "Analyzing confidential employee performance reviews to recommend promotion candidates.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 2,
+        "rationale": "Tests ability to Identify High-ROI Tasks and Designing Safe Workflows (Lessons 8, 9, 10). It distinguishes between drafting (Good Fit) and high-stakes decision making or handling sensitive data (Poor Fit)."
+      },
+      {
+        "id": "q4",
+        "text": "You are using an LLM to summarize a technical whitepaper for a client meeting. The summary looks professional, but you notice it references a 'Stage 4 protocol' that was never mentioned in the original text. What phenomenon is this, and what does it reveal about how the model works?",
+        "options": [
+          {
+            "text": "This is a hallucination; the model is predicting plausible-sounding words based on training patterns rather than retrieving facts.",
+            "is_correct": true
+          },
+          {
+            "text": "This is a data leak; the model is pulling real information from a confidential document belonging to another company.",
+            "is_correct": false
+          },
+          {
+            "text": "This is a bias error; the model is prioritizing the author's hidden intent over the actual written words.",
+            "is_correct": false
+          },
+          {
+            "text": "This is a context overflow; the model mixed up the whitepaper with previous documents you uploaded.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 2,
+        "rationale": "Tests understanding of Hallucinations (Lesson 5). PMs rely on summaries heavily; recognizing that professional-sounding text can be factually invented is critical."
+      },
+      {
+        "id": "q5",
+        "text": "You need an LLM to convert inconsistent JIRA ticket descriptions into a standardized format. You write a prompt that includes the task instruction and three examples of 'Bad Ticket' inputs paired with the desired 'Good Ticket' outputs. Which advanced prompting strategy are you employing?",
+        "options": [
+          {
+            "text": "Chain-of-Thought Prompting, by asking the model to explain its reasoning before formatting.",
+            "is_correct": false
+          },
+          {
+            "text": "Few-Shot Prompting, by providing pattern examples to guide the model's generation.",
+            "is_correct": true
+          },
+          {
+            "text": "Zero-Shot Prompting, by relying solely on the model's pre-trained knowledge of JIRA.",
+            "is_correct": false
+          },
+          {
+            "text": "Role-Based Prompting, by telling the model to act as a Senior Scrum Master.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "mastery_strategy",
+        "complexity_level": 3,
+        "rationale": "Tests understanding of Few-Shot Prompting (Lesson 15). This is a specific technique for enforcing format consistency, distinct from simply giving a role or asking for reasoning."
+      }
+    ]
+  },
+  "Marketing Manager": {
+    "profession": "Marketing Manager",
+    "questions": [
+      {
+        "id": "q1",
+        "text": "You are feeding a 50-page competitor analysis PDF into an LLM to extract key themes for a new campaign strategy. However, the model cuts off mid-sentence or errors out, claiming the input is too long. What core limitation are you hitting?",
+        "options": [
+          {
+            "text": "The Temperature Setting: The setting is too high, causing the model to lose focus on the task.",
+            "is_correct": false
+          },
+          {
+            "text": "The Context Window: You have exceeded the maximum number of tokens the model can process at once.",
+            "is_correct": true
+          },
+          {
+            "text": "The Hallucination Threshold: The document contains too many facts for the model to verify accurately.",
+            "is_correct": false
+          },
+          {
+            "text": "The Training Cutoff: The PDF contains data from after the model's training date.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 1,
+        "rationale": "Tests basic literacy regarding 'Tokens & Context Windows' (Lesson 2) using a common marketing documentation scenario."
+      },
+      {
+        "id": "q2",
+        "text": "Your team is using an LLM to brainstorm catchy subject lines for an A/B test. The initial results are too boring and repetitive. Which parameter should you adjust to generate more creative and varied options?",
+        "options": [
+          {
+            "text": "Increase the Temperature: A higher value encourages more randomness and creativity.",
+            "is_correct": true
+          },
+          {
+            "text": "Decrease the Temperature: A lower value forces the model to access a wider vocabulary database.",
+            "is_correct": false
+          },
+          {
+            "text": "Increase the Context Window: Giving the model more memory automatically improves creativity.",
+            "is_correct": false
+          },
+          {
+            "text": "Decrease the Latency: Speeding up the response time forces the model to be more spontaneous.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "foundations",
+        "complexity_level": 2,
+        "rationale": "Tests understanding of 'Why Outputs Vary' and temperature controls (Lesson 3) in the context of creative brainstorming."
+      },
+      {
+        "id": "q3",
+        "text": "You want to integrate AI into your content workflow to boost efficiency. Based on how LLMs function, which of the following tasks represents the highest ROI and best 'fit' for an LLM?",
+        "options": [
+          {
+            "text": "Analyzing customer sentiment in 5,000 raw survey comments to identify top 3 complaints.",
+            "is_correct": true
+          },
+          {
+            "text": "Fact-checking specific claims about a competitor's Q3 financial earnings for a press release.",
+            "is_correct": false
+          },
+          {
+            "text": "Inputting your confidential upcoming product roadmap to ask for strategic business advice.",
+            "is_correct": false
+          },
+          {
+            "text": "Asking the LLM to cite specific academic studies to support a whitepaper's claims.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 3,
+        "rationale": "Tests the ability to distinguish 'High-ROI/Good Fit' tasks (Lesson 4, 8, 9) from tasks prone to hallucination or security risks."
+      },
+      {
+        "id": "q4",
+        "text": "A junior marketer uses an LLM to generate a blog post about 'The Future of SEO.' The draft looks convincing, but upon review, you notice it cites a Google algorithm update that never happened. What is this phenomenon called, and why does it occur?",
+        "options": [
+          {
+            "text": "Bias: The model is prioritizing search results that favor Google over other search engines.",
+            "is_correct": false
+          },
+          {
+            "text": "Data Leakage: The model is mixing up confidential data from another user's prompt.",
+            "is_correct": false
+          },
+          {
+            "text": "Hallucination: The model predicts the next statistically likely word, not the factual truth.",
+            "is_correct": true
+          },
+          {
+            "text": "Overfitting: The model was trained too heavily on SEO jargon and is strictly copying text.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "application_risks",
+        "complexity_level": 3,
+        "rationale": "Tests the identification and understanding of 'Hallucinations' (Lesson 5) within a standard content creation workflow."
+      },
+      {
+        "id": "q5",
+        "text": "You need an LLM to write product descriptions in your specific brand voice (witty, concise, uses emojis). You have tried asking it to 'be funny,' but it isn't working. What is the most effective advanced prompting strategy to fix this?",
+        "options": [
+          {
+            "text": "Cloud API switching: Switch to a more expensive model, as higher cost models automatically detect brand voice.",
+            "is_correct": false
+          },
+          {
+            "text": "Few-Shot Prompting: Provide 3 examples of previous successful descriptions directly in the prompt before asking for the new one.",
+            "is_correct": true
+          },
+          {
+            "text": "Self-Hosting: Deploy a local model so you can adjust the server's backend code to force emoji usage.",
+            "is_correct": false
+          },
+          {
+            "text": "Zero-Shot Prompting: Remove all context and instructions to let the model's natural creativity take over.",
+            "is_correct": false
+          }
+        ],
+        "associated_stage": "mastery_strategy",
+        "complexity_level": 4,
+        "rationale": "Tests knowledge of 'Few-Shot Prompting' (Lesson 15) as a specific strategy to solve a quality issue, distinguishing it from deployment choices."
+      }
+    ]
+  }
+}
