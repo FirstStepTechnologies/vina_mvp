@@ -254,6 +254,17 @@ Apply these techniques:
 - Prefer direct statements over questions
 - Focus on facts and frameworks, minimal storytelling
 
+{% elif adaptation_context == "more_examples" %}
+**Apply these changes:**
+- **CRITICAL:** Override any difficulty instructions and use **Difficulty Level 3 (Practical)** pacing and tone
+- Focus heavily on APPLICATION: at least 70% of content should be examples
+- Provide 2 detailed, distinct examples per major concept
+- Examples must be explicitly tied to {{ profession }} and {{ typical_outputs }}
+- Include one "common mistake" or "anti-pattern" example with correction
+- Show "Before" (manual/current state) vs "After" (AI-assisted state) comparisons
+- Reduce theoretical explanation to make space for these examples (assume basic concept is understood)
+- Use "Case Study" or "Scenario" framing for slides
+
 {% endif %}
 
 {% endif %}

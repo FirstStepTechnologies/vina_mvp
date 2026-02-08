@@ -66,6 +66,21 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
     # Ensure database is initialized before any phase starts
     init_db()
     
+    # HACKATHON MIGRATION: Add adaptation_context to cache table if missing
+    try:
+        from sqlalchemy import text
+        with Session(engine) as session:
+            try:
+                # Check if column exists
+                session.exec(text("SELECT adaptation_context FROM lesson_cache LIMIT 1"))
+            except Exception:
+                # Column doesn't exist, add it
+                print("⚡ MIGRATION: Adding 'adaptation_context' column to lesson_cache table...")
+                session.exec(text("ALTER TABLE lesson_cache ADD COLUMN adaptation_context VARCHAR"))
+                session.commit()
+    except Exception as e:
+        print(f"⚠️ Migration warning: {e}")
+    
     # Determine Lesson ID dynamically
     lesson_name = "Unknown Lesson"
     try:
@@ -314,6 +329,12 @@ async def main():
         # If difficulty override is provided via CLI, use it
         if override_diff is not None:
             case[3] = override_diff
+        
+        # HACKATHON OVERRIDE: If generating "more_examples", FORCE difficulty to 3 (Practical)
+        # This prevents generating separate example videos for every difficulty level.
+        if adaptation_context == "more_examples":
+            print("⚡ OVERRIDE: Forcing Difficulty to 3 for 'more_examples' variant")
+            case[3] = 3
             
         await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media, output_override=output_override, adaptation_context=adaptation_context)
         # Short pause between demos

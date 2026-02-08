@@ -23,8 +23,9 @@ class LessonCache(SQLModel, table=True):
     cache_key: str = Field(unique=True, index=True)
     course_id: str = Field(index=True)
     lesson_id: str = Field(index=True)
-    llm_model: str = Field(index=True)  # Added to compare models
+    llm_model: str = Field(index=True)
     difficulty_level: int
+    adaptation_context: Optional[str] = Field(default=None, index=True)  # Added for adaptation caching
     profile_hash: str
     
     # Traceability for QA - Snapshots
@@ -60,10 +61,12 @@ class LessonCacheService:
         lesson_id: str,
         difficulty_level: int,
         profile_hash: str,
-        llm_model: str
+        llm_model: str,
+        adaptation_context: Optional[str] = None
     ) -> str:
-        """Cache key including model for QA comparison."""
-        return f"{course_id}:{lesson_id}:d{difficulty_level}:{llm_model}:{profile_hash}"
+        """Cache key including model and adaptation context."""
+        context_str = f":{adaptation_context}" if adaptation_context else ""
+        return f"{course_id}:{lesson_id}:d{difficulty_level}:{llm_model}:{profile_hash}{context_str}"
     
     def get(
         self,
@@ -71,11 +74,14 @@ class LessonCacheService:
         lesson_id: str,
         difficulty_level: int,
         user_profile: UserProfileData,
-        llm_model: str
+        llm_model: str,
+        adaptation_context: Optional[str] = None
     ) -> Optional[Dict]:
         """Retrieve cached lesson for a specific model."""
         profile_hash = self.generate_profile_hash(user_profile)
-        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash, llm_model)
+        cache_key = self.generate_cache_key(
+            course_id, lesson_id, difficulty_level, profile_hash, llm_model, adaptation_context
+        )
         
         statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
         cached_entry = self.db_session.exec(statement).first()
@@ -108,6 +114,7 @@ class LessonCacheService:
         user_profile: UserProfileData,
         llm_model: str,
         lesson_content: Dict,
+        adaptation_context: Optional[str] = None,
         initial_lesson: Optional[Dict] = None,
         review_result: Optional[Dict] = None,
         gen_prompt: Optional[str] = None,
@@ -116,7 +123,9 @@ class LessonCacheService:
     ) -> None:
         """Cache a lesson with intermediate snapshots for QA."""
         profile_hash = self.generate_profile_hash(user_profile)
-        cache_key = self.generate_cache_key(course_id, lesson_id, difficulty_level, profile_hash, llm_model)
+        cache_key = self.generate_cache_key(
+            course_id, lesson_id, difficulty_level, profile_hash, llm_model, adaptation_context
+        )
         
         statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
         existing = self.db_session.exec(statement).first()
@@ -141,6 +150,7 @@ class LessonCacheService:
                 lesson_id=lesson_id,
                 llm_model=llm_model,
                 difficulty_level=difficulty_level,
+                adaptation_context=adaptation_context,
                 profile_hash=profile_hash,
                 lesson_json=lesson_json,
                 initial_lesson_json=initial_json,

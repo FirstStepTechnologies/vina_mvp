@@ -100,11 +100,11 @@ class LessonGenerator:
         """
         start_time = time.time()
         
-        # 1. Check cache (skip if adaptation requested or bypass_cache is True)
+        # 1. Check cache (skip if bypass_cache is True)
         model_name = self.llm_client.model if self.llm_client else "unknown"
-        if self.cache_service and not adaptation_context and not bypass_cache:
+        if self.cache_service and not bypass_cache:
             cached_lesson = self.cache_service.get(
-                course_id, lesson_id, difficulty_level, user_profile, model_name
+                course_id, lesson_id, difficulty_level, user_profile, model_name, adaptation_context
             )
             if cached_lesson:
                 logger.info(f"Returning CACHED lesson for {lesson_id} (Model: {model_name})")
@@ -201,6 +201,7 @@ class LessonGenerator:
                 user_profile=user_profile,
                 llm_model=model_name,
                 lesson_content=lesson_json,
+                adaptation_context=adaptation_context,
                 initial_lesson=initial_lesson,
                 review_result=review_snapshot,
                 gen_prompt=generator_prompt,
