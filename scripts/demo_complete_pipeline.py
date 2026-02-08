@@ -61,7 +61,7 @@ TEST_CASES = [
     ("Clinical Researcher", "Pharma/Biotech", "Beginner", 3),
 ]
 
-async def run_full_pipeline(profession: str, industry: str, level_str: str, difficulty_level: int, lesson_idx: int = 1, skip_media: bool = False, output_override: Optional[Path] = None):
+async def run_full_pipeline(profession: str, industry: str, level_str: str, difficulty_level: int, lesson_idx: int = 1, skip_media: bool = False, output_override: Optional[Path] = None, adaptation_context: Optional[str] = None):
     """Run every single module of the VINA platform."""
     # Ensure database is initialized before any phase starts
     init_db()
@@ -125,12 +125,15 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
                 course_id=COURSE_ID,
                 user_profile=user_profile,
                 difficulty_level=difficulty_level,
+                adaptation_context=adaptation_context,
                 bypass_cache=False
             )
         
         e2 = time.time()
         metrics["2. Lesson Gen (3-Agent)"] = e2 - s2
         print(f"✅ Lesson Refined: \"{generated_lesson.lesson_content.lesson_title}\"")
+        if adaptation_context:
+            print(f"   Adaptation: {adaptation_context}")
         print(f"   Metadata: Cached={generated_lesson.generation_metadata.cache_hit}, Model={generated_lesson.generation_metadata.llm_model}")
         
         # Expert Systems Engineer Utility: Export Audit Trail
@@ -262,6 +265,7 @@ async def main():
     target_prof = None
     target_lesson_idx = 1
     output_override = None
+    adaptation_context = None
     
     for i, arg in enumerate(sys.argv):
         if arg.startswith("--diff="):
@@ -281,6 +285,8 @@ async def main():
             except ValueError: pass
         elif (arg == "--output" or arg == "--outputs") and i + 1 < len(sys.argv):
             output_override = Path(sys.argv[i + 1])
+        elif arg == "--adaptation" and i + 1 < len(sys.argv):
+            adaptation_context = sys.argv[i + 1]
 
     # Filter out flags from args for positional parsing
     args = [arg for arg in sys.argv if not arg.startswith("--")]
@@ -309,7 +315,7 @@ async def main():
         if override_diff is not None:
             case[3] = override_diff
             
-        await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media, output_override=output_override)
+        await run_full_pipeline(*case, lesson_idx=target_lesson_idx, skip_media=skip_media, output_override=output_override, adaptation_context=adaptation_context)
         # Short pause between demos
         if len(target_indices) > 1:
             await asyncio.sleep(2)
