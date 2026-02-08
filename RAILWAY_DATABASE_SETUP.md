@@ -1,15 +1,166 @@
 # Railway Database Setup & Population Guide
 
-This guide walks you through setting up and populating the PostgreSQL database on Railway with lesson content, quizzes, and practice questions.
+This guide walks you through setting up and populating your Railway database with lesson content, quizzes, and practice questions.
+
+---
+
+## 🎯 Choose Your Database Strategy
+
+You have **two options** for Railway deployment:
+
+### Option 1: SQLite + Volume (⭐ Recommended for Hackathons)
+
+**Best for:** Demos, hackathons, quick deployments, single-instance apps
+
+**Advantages:**
+- ✅ **Faster setup** - No PostgreSQL provisioning needed
+- ✅ **Simpler** - Use the same `vina.db` locally and on Railway
+- ✅ **Easier content migration** - Just upload your local database file
+- ✅ **Cost-effective** - Volumes are cheaper than managed PostgreSQL
+- ✅ **No data migration** - All your local content works immediately
+
+**How it works:** Railway Volumes provide persistent storage that survives deployments and restarts. Mount a volume to `/app/data` and your SQLite database persists across redeploys.
+
+**Setup time:** ~5 minutes
+
+### Option 2: PostgreSQL (Production-Ready)
+
+**Best for:** Production apps, high concurrency, horizontal scaling
+
+**Advantages:**
+- ✅ **Scalable** - Supports multiple app instances
+- ✅ **High concurrency** - Better for many simultaneous users
+- ✅ **Industry standard** - Production-grade database
+- ✅ **Advanced features** - Full SQL capabilities, replication, backups
+
+**Trade-offs:**
+- ⚠️ Requires data migration from SQLite
+- ⚠️ More expensive than volumes
+- ⚠️ More complex setup
+
+**Setup time:** ~20-30 minutes
 
 ---
 
 ## 📋 Prerequisites
 
+### For SQLite + Volume (Option 1)
+- ✅ Railway deployment is successful and running
+- ✅ Railway CLI installed locally: `npm install -g @railway/cli`
+- ✅ Local `vina.db` with generated content (optional but recommended)
+
+### For PostgreSQL (Option 2)
 - ✅ Railway deployment is successful and running
 - ✅ PostgreSQL database is provisioned in Railway
 - ✅ `DATABASE_URL` environment variable is set in Railway
 - ✅ Railway CLI installed locally: `npm install -g @railway/cli`
+
+---
+
+## 🚀 Setup Guide: SQLite + Volume (Recommended for Hackathons)
+
+### Step 1: Create a Railway Volume
+
+1. **Go to Railway Dashboard** → Your Project → Your Service
+2. **Click "Variables"** tab
+3. **Click "New Volume"**
+4. **Configure:**
+   - Mount Path: `/app/data`
+   - Size: 1 GB (sufficient for demo)
+5. **Click "Add"**
+
+### Step 2: Update Environment Variable
+
+Set the database URL to use the volume path:
+
+```bash
+railway variables set DATABASE_URL="sqlite:////app/data/vina.db"
+```
+
+**Note:** Four slashes (`////`) - one for the protocol, three for the absolute path.
+
+### Step 3: Upload Your Local Database (Fastest Method)
+
+If you already have a local `vina.db` with generated content:
+
+```bash
+# 1. Install Railway CLI (if not already)
+npm install -g @railway/cli
+
+# 2. Login and link to your project
+railway login
+cd /path/to/vina-backend
+railway link
+
+# 3. Copy your local database to Railway volume
+railway run --service your-service-name \
+  "mkdir -p /app/data && cat > /app/data/vina.db" < src/vina_backend/vina.db
+
+# Alternative: Use scp if Railway shell access is available
+railway shell
+# Then manually copy the file
+```
+
+**Or use the Railway Volume Upload feature:**
+1. Go to Railway Dashboard → Volumes
+2. Click on your volume
+3. Upload `vina.db` directly to `/app/data/vina.db`
+
+### Step 4: Redeploy
+
+```bash
+railway up --detach
+```
+
+Your app will now use the SQLite database on the persistent volume!
+
+### Step 5: Verify
+
+```bash
+# Check that the database is accessible
+railway run python -c "
+from vina_backend.integrations.db.engine import engine
+from sqlmodel import Session, select
+from vina_backend.services.lesson_cache import LessonCache
+
+with Session(engine) as session:
+    count = len(session.exec(select(LessonCache)).all())
+    print(f'✅ Found {count} lessons in cache')
+"
+```
+
+### Step 6: Generate Additional Content (Optional)
+
+If you need to generate more content directly on Railway:
+
+```bash
+# Generate new lessons
+railway run python scripts/demo_complete_pipeline.py \
+  --lesson 4 \
+  --profession nurse \
+  --difficulty beginner
+
+# Generate quizzes
+railway run python scripts/generate_lesson_quizzes.py \
+  --lessons 4 5 \
+  --professions nurse doctor pharmacist \
+  --difficulties beginner intermediate advanced
+
+# Generate practice questions
+railway run python scripts/generate_practice_questions.py \
+  --lessons 4 5 \
+  --professions nurse doctor pharmacist
+```
+
+**Done! Your SQLite database is now persistent on Railway.** 🎉
+
+---
+
+## 🔧 Setup Guide: PostgreSQL (Production Option)
+
+### Prerequisites
+- PostgreSQL database provisioned in Railway
+- `DATABASE_URL` environment variable automatically set by Railway
 
 ---
 
