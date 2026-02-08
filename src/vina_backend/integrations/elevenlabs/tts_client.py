@@ -36,7 +36,7 @@ class TTSClient:
         api_key: Optional[str] = None,
         voice_id: Optional[str] = None,
         max_concurrent: int = 3,
-        model: str = "eleven_multilingual_v2"
+        model: Optional[str] = None
     ):
         """
         Initialize TTS client.
@@ -54,7 +54,8 @@ class TTSClient:
         self.voice_id = voice_id or settings.elevenlabs_voice_id
         logger.info(f"Using ElevenLabs voice ID: {self.voice_id}")
         
-        self.model = model
+        self.model = model or settings.elevenlabs_model
+        logger.info(f"Using ElevenLabs model: {self.model}")
         self.max_concurrent = max_concurrent
         self.semaphore = asyncio.Semaphore(max_concurrent)
         

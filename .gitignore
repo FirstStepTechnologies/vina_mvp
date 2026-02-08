@@ -45,3 +45,5 @@ cache/demo_pipeline_*/
 # Extra generated folders
 assets/
 cache/reports/
+
+logs*.log

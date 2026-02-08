@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # Text-to-Speech (ElevenLabs)
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = "pFZP5JQG7iQjIQuC4Bku"  # Default: Narrator voice
+    elevenlabs_model: str = "eleven_multilingual_v2"  # Options: eleven_multilingual_v2, eleven_turbo_v2, eleven_turbo_v2_5
     
     # Cloudinary (Video Storage)
     cloudinary_cloud_name: str = ""
