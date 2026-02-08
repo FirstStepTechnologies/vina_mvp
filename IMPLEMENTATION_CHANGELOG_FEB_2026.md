@@ -205,3 +205,30 @@ Fixed a critical gap where adapted lessons were bypassing the cache system:
 
 **Prepared By:** AI Coding Assistant  
 **Date:** February 8, 2026
+## 🔌 Phase 7: Backend API & Database Resilience (February 8, 2026)
+
+**Status:** Fully Deployed
+
+### 1. Backend API Implementation
+Completed the implementation of all required endpoints to support the frontend MVP:
+- **Authentication**: `POST /auth/register` (gamification-aware) and `POST /auth/login`.
+- **User Profile**: `GET/PATCH /user/profile` and `POST /user/profile/reset-pathway`.
+- **Course Map**: `GET /course/map` dynamically tailored to user progress.
+- **Lesson Delivery**: `GET /lessons/:id` with fuzzy matching for video assets.
+- **Progress Sync**: `POST /user/progress/sync` and `POST /user/progress/lesson/:id/complete`.
+
+### 2. Database Migration Utility (`db_migration_utils.py`)
+Developed a robust utility to handle database schema changes without losing expensive LLM-generated content:
+- **Backup**: Exports the `LessonCache` table to `data/lesson_cache_backup.json`.
+- **Restore**: Re-imports cached lessons into a fresh database schema.
+- **Why**: Essential for iterating on `User` and `UserProfile` models (e.g., changing ID types) while preserving 40+ generated lessons.
+
+### 3. Testing & Verification
+- **Regression Suite**: `scripts/test_backend_api.py` verified all endpoints with a 100% pass rate (excluding expected 404s for missing content).
+- **Security**: Resolved `bcrypt`/`passlib` compatibility issues to ensure secure password hashing.
+- **SQLite Compatibility**: Migrated `UUID` fields to `str` to fix `AttributeError: 'str' object has no attribute 'hex'` errors.
+- **Report**: Full test results are available in `reports/api_test_results.txt`.
+- **Lesson 3 Fix**: Resolved a 404 error where `l03_prompting_basics` wasn't finding videos because they were tagged with the old ID `l03_why_outputs_vary`. Updated `video_manifest.json` to alias these correctly.
+
+**Prepared By:** AI Coding Assistant
+**Date:** February 8, 2026

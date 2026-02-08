@@ -1,3 +1,17 @@
+"""
+Generate lesson-specific quizzes for target professions.
+Supports batch generation across a range of lessons.
+
+Usage Examples:
+1. Generate missing quizzes for lessons 1-3 (Default: Skip Existing):
+   uv run scripts/generate_lesson_quizzes.py --start 1 --end 3
+
+2. Generate for a specific profession:
+   uv run scripts/generate_lesson_quizzes.py --start 1 --end 3 --profession "HR Manager"
+
+3. Force regenerate even if quizzes already exist:
+   uv run scripts/generate_lesson_quizzes.py --start 1 --end 3 --overwrite
+"""
 
 import json
 import logging
@@ -115,6 +129,7 @@ def main():
     parser.add_argument("--start", type=int, required=True, help="Start lesson number (inclusive)")
     parser.add_argument("--end", type=int, required=True, help="End lesson number (inclusive)")
     parser.add_argument("--profession", type=str, help="Specific profession (optional)")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing quizzes in the range (default: False)")
     args = parser.parse_args()
 
     # Filter professions
@@ -201,6 +216,11 @@ def main():
             final_output[lesson_id] = {}
             
         for profession in professions_to_process:
+            # Check if entry exists and skip if not overwriting
+            if profession in final_output[lesson_id] and not args.overwrite:
+                logger.info(f"⏩ SKIP: {lesson_id} × {profession} (Already exists)")
+                continue
+                
             try:
                 quiz = generate_quiz_for_lesson(
                     lesson_id=lesson_id,
@@ -214,7 +234,7 @@ def main():
                 
                 # Update/Overwrite specific entry
                 # Convert Pydantic model to dict
-                final_output[lesson_id][profession] = quiz.dict()  # Use model_dump() for Pydantic v2
+                final_output[lesson_id][profession] = quiz.model_dump()
                 success_count += 1
                 logger.info(f"✅ SUCCESS: {lesson_id} × {profession}\n")
                 

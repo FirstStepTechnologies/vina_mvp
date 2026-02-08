@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 from vina_backend.integrations.imagen.client import ImagenClient
 from vina_backend.integrations.elevenlabs.tts_client import TTSClient
+from vina_backend.integrations.cloudinary.client import CloudinaryClient
 from vina_backend.services.slide_composer import SlideComposer
 from vina_backend.services.video_renderer import VideoRenderer
 
@@ -43,7 +44,10 @@ class PipelineResult:
     """Result of the video pipeline execution."""
     video_path: Path
     assets_dir: Path
+    video_path: Path
+    assets_dir: Path
     metrics: Dict[str, float]
+    video_url: Optional[str] = None
 
 
 class VideoPipeline:
@@ -70,6 +74,7 @@ class VideoPipeline:
         # Initialize clients
         self.imagen_client = ImagenClient(max_concurrent=self.config.max_concurrent_images)
         self.tts_client = TTSClient(max_concurrent=self.config.max_concurrent_audio)
+        self.cloudinary_client = CloudinaryClient()
         self.slide_composer = SlideComposer(brand_name=self.config.brand_name)
         self.video_renderer = VideoRenderer()
         
@@ -170,14 +175,26 @@ class VideoPipeline:
         shutil.copy(video_path, cached_video_path)
         logger.info(f"Saved master copy to video cache: {cached_video_path.name}")
         
+        # upload to Cloudinary
+        video_url = None
+        try:
+            logger.info("Uploading generated video to Cloudinary...")
+            s5 = time.time()
+            video_url = self.cloudinary_client.upload_video(video_path)
+            metrics["video_upload"] = round(time.time() - s5, 2)
+            logger.info(f"✅ Video uploaded: {video_url}")
+        except Exception as e:
+            logger.error(f"Failed to upload video: {e}")
+
         total_duration = time.time() - start_time
         metrics["total_duration"] = round(total_duration, 2)
         
-        logger.info(f"✅ Video generation complete: {video_path}")
+        logger.info(f"✅ Video generation complete: {video_url or video_path}")
         return PipelineResult(
             video_path=video_path,
             assets_dir=self.config.cache_dir,
-            metrics=metrics
+            metrics=metrics,
+            video_url=video_url
         )
     
     def generate_video(

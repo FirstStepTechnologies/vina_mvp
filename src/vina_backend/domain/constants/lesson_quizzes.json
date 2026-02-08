@@ -85,5 +85,179 @@
       ],
       "passThreshold": 2
     }
+  },
+  "l02_tokens_context": {
+    "HR Manager": {
+      "lessonId": "l02_tokens_context",
+      "profession": "HR Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are preparing a technical job description for a Senior DevOps Engineer role. When you paste the raw text into an LLM tool to help draft the requirements, the tool converts your input into 'tokens.' Which of the following best describes how the LLM sees your job description?",
+          "options": [
+            {
+              "text": "It sees each bullet point as one single token, regardless of length.",
+              "is_correct": false
+            },
+            {
+              "text": "It breaks the text down into chunks roughly equivalent to 3/4 of a word each.",
+              "is_correct": true
+            },
+            {
+              "text": "It processes the text character-by-character, similar to a spell checker.",
+              "is_correct": false
+            },
+            {
+              "text": "It only counts the keywords related to technical skills and ignores filler words.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs do not read words or sentences like humans do. They process text as tokens, which are small chunks of characters. For English text, a good rule of thumb is that 100 words equals about 133 tokens.",
+          "conceptTested": "token_definition",
+          "rationale": "Tests the fundamental understanding of what a token is using a common HR artifact (job description)."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an AI chatbot to help summarize quarterly performance reviews for a team of 12 engineers. After pasting the first 10 reviews into the chat, you paste the 11th review and ask for a summary of everyone's feedback so far. However, the AI's summary completely fails to mention the first two employees you discussed. What is the most likely cause?",
+          "options": [
+            {
+              "text": "The AI tool has decided those two employees are underperforming and excluded them.",
+              "is_correct": false
+            },
+            {
+              "text": "The conversation exceeded the 'context window,' causing the LLM to 'forget' the earliest parts of the chat.",
+              "is_correct": true
+            },
+            {
+              "text": "You failed to use the specific keyword 'cumulative summary' in your prompt.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM's internal database for performance metrics is temporarily offline.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "Every LLM has a 'context window'\u2014a strict limit on how much text it can 'remember' in a single session. When you add too much information (like 11 lengthy performance reviews), the earliest information is pushed out of the window and effectively forgotten.",
+          "conceptTested": "context_window_limit",
+          "rationale": "Tests application of the context window concept in a realistic scenario where an HR manager might overload the chat history."
+        },
+        {
+          "id": "q3",
+          "text": "You need to update the Employee Handbook to include new remote work policies, but the current handbook is a massive 150-page PDF. You want an LLM to rewrite the 'Equipment Provisioning' section to align with new hybrid standards. Given your knowledge of context windows, what is the best strategy?",
+          "options": [
+            {
+              "text": "Upload the entire 150-page PDF at once so the AI understands the full company culture before writing.",
+              "is_correct": false
+            },
+            {
+              "text": "Paste only the 'Equipment Provisioning' section and the specific new hybrid policy details into the LLM.",
+              "is_correct": true
+            },
+            {
+              "text": "Ask the LLM to write the policy from scratch without providing any of the existing handbook text.",
+              "is_correct": false
+            },
+            {
+              "text": "Convert the PDF to an image file, as images consume fewer tokens than text.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "Since large documents can easily exceed context limits (and cost more to process), the most effective strategy is to chunk the text. By feeding the LLM only the relevant section and the new rules, you ensure the model focuses on the right content without running out of memory.",
+          "conceptTested": "chunking_strategy",
+          "rationale": "Tests the strategic mitigation for context window limits (chunking) applied to a common HR document management task."
+        }
+      ],
+      "passThreshold": 2
+    }
+  },
+  "l03_why_outputs_vary": {
+    "HR Manager": {
+      "lessonId": "l03_why_outputs_vary",
+      "profession": "HR Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask ChatGPT to draft a rejection email for a Product Manager candidate. You aren't happy with the tone, so you paste the exact same prompt again without changing any settings. The second output is noticeably different from the first. Why did this happen?",
+          "options": [
+            {
+              "text": "The model learned from your hesitation and automatically adjusted its algorithm to be more empathetic.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM is designed with inherent randomness to produce natural, non-robotic variations in language, even with identical inputs.",
+              "is_correct": true
+            },
+            {
+              "text": "The model accessed a new database of email templates between your first and second attempt.",
+              "is_correct": false
+            },
+            {
+              "text": "This is a bug in the system; identical inputs should always produce identical outputs for reliability.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs predict the next likely word based on probabilities, not fixed rules. By design, they introduce slight variations to sound more human and less robotic. It's not a bug or a 'live learning' adjustment; it's a core feature of how these models generate text.",
+          "conceptTested": "randomness_by_design",
+          "rationale": "Tests the fundamental understanding that variation is a feature, not a bug, using a common HR task (drafting emails)."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an AI tool to extract specific salary data and visa sponsorship requirements from 50 different resume PDFs to populate a spreadsheet. You need the output to be strictly factual and consistent every time you run it. How should you adjust the 'Temperature' setting?",
+          "options": [
+            {
+              "text": "Set Temperature to 0 to minimize randomness and force the model to choose the most probable answer.",
+              "is_correct": true
+            },
+            {
+              "text": "Set Temperature to 1.0 to ensure the model thinks creatively about how to format the data.",
+              "is_correct": false
+            },
+            {
+              "text": "Set Temperature to 0.5 so the model can handle edge cases where the resume formatting is messy.",
+              "is_correct": false
+            },
+            {
+              "text": "Leave the Temperature on default, as the model automatically detects that this is a data entry task.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "For tasks requiring high precision and consistency\u2014like data extraction for compliance or compensation\u2014you want to remove variability. Setting the temperature to 0 forces the model to be deterministic, ensuring it sticks to the facts without 'creative' interpretation.",
+          "conceptTested": "temperature_application_low",
+          "rationale": "Tests the application of the Temperature setting for a high-stakes, data-centric HR task."
+        },
+        {
+          "id": "q3",
+          "text": "You are brainstorming ideas for a new 'Remote-First Culture Handbook' and want the AI to generate ten unique, out-of-the-box suggestions for virtual team-building activities. Your current prompts are resulting in generic, repetitive lists. What strategy should you use?",
+          "options": [
+            {
+              "text": "Lower the Temperature to 0 to focus the model on the most popular team-building activities found online.",
+              "is_correct": false
+            },
+            {
+              "text": "Keep submitting the same prompt until the model eventually hallucinates a better answer.",
+              "is_correct": false
+            },
+            {
+              "text": "Increase the Temperature (e.g., to 0.8 or higher) to encourage the model to select less probable, more creative word choices.",
+              "is_correct": true
+            },
+            {
+              "text": "Switch to a smaller, less capable model, as they are often more creative with simple brainstorming tasks.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "When you need diversity of thought or creative brainstorming, higher temperature settings allow the model to take more 'risks' in its word prediction. This moves the output away from the most statistically probable (boring) answers and towards novel, creative ideas.",
+          "conceptTested": "temperature_application_high",
+          "rationale": "Tests the strategy of using high temperature for creative tasks specifically relevant to employee engagement and culture."
+        }
+      ],
+      "passThreshold": 2
+    }
   }
 }

@@ -1,6 +1,20 @@
-# scripts/generate_onboarding_quizzes_new.py
+"""
+Generate Onboarding/Placement quizzes for target professions.
+Quizzes are used to determine the user's starting point in the curriculum.
+
+Usage Examples:
+1. Generate missing quizzes for ALL professions:
+   uv run scripts/generate_onboarding_quizzes.py
+
+2. Generate/Update quizzes only for "HR Manager":
+   uv run scripts/generate_onboarding_quizzes.py --profession "HR Manager"
+
+3. Force regenerate even if quizzes already exist:
+   uv run scripts/generate_onboarding_quizzes.py --overwrite
+"""
 
 import json
+import argparse
 import logging
 import sys
 from pathlib import Path
@@ -164,7 +178,13 @@ def generate_quiz_for_profession(
 @track(name="generate_all_quizzes")
 def main():
     """Main execution: Generate quizzes for all professions."""
-    logger.info("🎓 Vina Quiz Generator - Generic Multi-Agent Pipeline")
+    parser = argparse.ArgumentParser(description="Generate onboarding quizzes")
+    parser.add_argument("--profession", type=str, help="Specific profession to target (optional)")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing quizzes (default: False)")
+    args = parser.parse_args()
+
+    logger.info("🎓 Vina Onboarding Quiz Generator")
+    logger.info(f"👥 Target: {args.profession if args.profession else 'ALL professions'}")
     logger.info(f"📦 Opik Integration: {'✅ Enabled' if OPIK_AVAILABLE else '❌ Disabled'}")
     
     # 1. Load Course Structure
@@ -188,10 +208,27 @@ def main():
     reviewer = QuizReviewerAgent()
     rewriter = QuizRewriterAgent()
     
-    # 3. Generate for Each Profession
+    # 3. Load Existing Data (Merge Strategy)
     final_output = {}
+    if OUTPUT_FILE.exists():
+        try:
+            with open(OUTPUT_FILE, "r") as f:
+                logger.info(f"📂 Loading existing quizzes from {OUTPUT_FILE}")
+                final_output = json.load(f)
+        except json.JSONDecodeError:
+            logger.warning(f"⚠️  Could not parse existing quiz file. Starting fresh.")
+
+    # 4. Filter Professions
+    professions_to_process = [args.profession] if args.profession else TARGET_PROFESSIONS
     
-    for profession in TARGET_PROFESSIONS:
+    # 5. Generate for Each Profession
+    success_count = 0
+    for profession in professions_to_process:
+        # Check if entry exists and skip if not overwriting
+        if profession in final_output and not args.overwrite:
+            logger.info(f"⏩ SKIP: {profession} (Already exists)")
+            continue
+            
         try:
             quiz = generate_quiz_for_profession(
                 profession=profession,
@@ -204,7 +241,8 @@ def main():
                 rewriter=rewriter
             )
             
-            final_output[profession] = quiz.dict()
+            final_output[profession] = quiz.model_dump()
+            success_count += 1
             logger.info(f"✅ SUCCESS: {profession} quiz complete\n")
             
         except Exception as e:

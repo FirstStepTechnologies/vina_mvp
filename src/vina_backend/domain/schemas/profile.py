@@ -40,7 +40,19 @@ class UserProfileData(BaseModel):
         ..., 
         description="Specific work outputs or decisions where errors have serious consequences"
     )
-
+    # Gamification & Onboarding Fields (New)
+    resolution: str = Field(
+        default="", 
+        description="User's learning resolution (e.g. 'Master AI Strategy')"
+    )
+    daily_goal_minutes: int = Field(
+        default=15, 
+        description="Daily learning goal in minutes"
+    )
+    onboarding_responses: dict = Field(
+        default_factory=dict, 
+        description="Raw responses from onboarding quiz"
+    )
 
 class UserProfileRequest(BaseModel):
     """Request to generate a user profile."""
@@ -60,3 +72,6 @@ class UserProfileResponse(BaseModel):
         default=False,
         description="Whether this profile was retrieved from cache/database"
     )
+    user_id: str = Field(..., description="The UUID of the user")
+    email: str = Field(..., description="User email")
+    created_at: str = Field(..., description="ISO timestamp")

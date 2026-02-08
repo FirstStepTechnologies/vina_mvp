@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     opik_api_key: str = ""
     opik_workspace: str = "vina-hackathon"
     
+    # Auth
+    secret_key: str = "change-me-in-production"
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 10080  # 1 week for hackathon
+    
     class Config:
         env_file = ".env"
         case_sensitive = False

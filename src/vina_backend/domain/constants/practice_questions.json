@@ -1,0 +1,3124 @@
+{
+  "questions": [
+    {
+      "id": "pq_l01_hr_manager_01",
+      "lessonId": "l01_what_llms_are",
+      "text": "As an HR Manager, you are explaining to your team why the new AI chatbot behaves differently than the old keyword-based FAQ system. You want to describe the fundamental nature of the Large Language Model (LLM) powering it. Which description is most accurate?",
+      "options": [
+        {
+          "text": "It is a structured database that looks up pre-written answers based on specific search terms.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a probabilistic model trained on vast amounts of text to predict the next likely word in a sequence.",
+          "is_correct": true
+        },
+        {
+          "text": "It is a search engine that browses the live internet to copy and paste the best articles it finds.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a sentient logic engine that understands human emotion and reasoning just like a person.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs are fundamentally probabilistic prediction engines (next-token predictors) trained on massive datasets, not structured databases or sentient beings. Option A describes old chatbot tech, and C describes a search engine.",
+      "conceptTested": "Definition of an LLM"
+    },
+    {
+      "id": "pq_l01_hr_manager_02",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are considering using a public, open-access LLM (like the free version of ChatGPT) to summarize sensitive exit interview notes to identify retention issues. What is the primary risk associated with this action?",
+      "options": [
+        {
+          "text": "The LLM will likely refuse to summarize negative feedback due to content filters.",
+          "is_correct": false
+        },
+        {
+          "text": "The data input into the public model may be used to train future versions, potentially leaking confidential employee information.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM cannot understand the nuances of HR terminology.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will run too slowly to be useful for a single document.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Public LLMs often use user inputs for training data. Uploading sensitive internal data (PII or confidential feedback) creates a significant data privacy and security risk. This is a critical concept for HR compliance.",
+      "conceptTested": "Data Privacy & Security"
+    },
+    {
+      "id": "pq_l01_hr_manager_03",
+      "lessonId": "l01_what_llms_are",
+      "text": "An employee complains that the internal HR bot invented a non-existent company policy about 'Pet Bereavement Leave' when asked. What is the technical term for this phenomenon where an LLM generates confident but false information?",
+      "options": [
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": false
+        },
+        {
+          "text": "Fine-tuning",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination is the specific term for when an LLM generates factually incorrect information presenting it as true. This is a common limitation HR managers must mitigate.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l01_hr_manager_04",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are drafting a job description using an LLM. You simply type: 'Write a job description for a Sales Director.' The result is generic and boring. To get a result that matches your company's energetic culture and specific requirements, what technique should you apply?",
+      "options": [
+        {
+          "text": "Prompt Engineering (adding context, tone, and constraints)",
+          "is_correct": true
+        },
+        {
+          "text": "Data Cleaning (removing bad data from the internet)",
+          "is_correct": false
+        },
+        {
+          "text": "Model Training (building a new AI from scratch)",
+          "is_correct": false
+        },
+        {
+          "text": "Hardware Acceleration (using a faster computer)",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Prompt Engineering involves crafting inputs with specific context, tone, and constraints to guide the model toward a better output. This is the immediate application needed to improve the draft.",
+      "conceptTested": "Prompt Engineering Basics"
+    },
+    {
+      "id": "pq_l01_hr_manager_05",
+      "lessonId": "l01_what_llms_are",
+      "text": "Your team is using an LLM to screen resumes. You notice the model consistently rates candidates from specific universities higher than others, even when skills are identical. This is an example of what core LLM issue?",
+      "options": [
+        {
+          "text": "Algorithmic Bias",
+          "is_correct": true
+        },
+        {
+          "text": "Prompt Injection",
+          "is_correct": false
+        },
+        {
+          "text": "Low Context Window",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature settings",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "LLMs inherit biases present in their training data. If the training data historically favored certain universities, the model will replicate that bias (Algorithmic Bias), posing a legal and ethical risk for HR.",
+      "conceptTested": "Bias and Ethics"
+    },
+    {
+      "id": "pq_l01_hr_manager_06",
+      "lessonId": "l01_what_llms_are",
+      "text": "You want to fine-tune a model specifically to answer questions about your company's unique 401k plan. Why might a general-purpose LLM (like GPT-4) fail to answer these specific questions accurately out of the box?",
+      "options": [
+        {
+          "text": "General models are not intelligent enough to understand finance.",
+          "is_correct": false
+        },
+        {
+          "text": "General models have a training cutoff and do not have access to your private, proprietary documents.",
+          "is_correct": true
+        },
+        {
+          "text": "LLMs can only process creative writing, not technical documents.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will be too biased against 401k plans.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Foundation models are trained on public internet data up to a specific date. They do not know about private, internal company documents unless that data is provided via RAG (Retrieval Augmented Generation) or fine-tuning.",
+      "conceptTested": "Knowledge Cutoff & Proprietary Data"
+    },
+    {
+      "id": "pq_l01_hr_manager_07",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are evaluating a vendor who claims their 'AI Interviewer' can analyze a candidate's facial expressions during a video call to determine their 'cultural fit.' Based on your knowledge of how LLMs and AI work, what is the most responsible course of action?",
+      "options": [
+        {
+          "text": "Implement it immediately to save recruiter time.",
+          "is_correct": false
+        },
+        {
+          "text": "Reject the tool or demand rigorous scientific validation, as this is pseudoscience not supported by LLM capabilities and poses high ethical risks.",
+          "is_correct": true
+        },
+        {
+          "text": "Use it only for junior roles where stakes are lower.",
+          "is_correct": false
+        },
+        {
+          "text": "Trust the vendor's accuracy claims because AI is objective.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs process text, not video/facial expressions (though multimodal models exist, inferring personality from faces is scientifically dubious and ethically dangerous). HR managers must critically evaluate vendor claims to avoid discrimination and pseudoscience.",
+      "conceptTested": "AI Evaluation & Vendor Selection"
+    },
+    {
+      "id": "pq_l01_hr_manager_08",
+      "lessonId": "l01_what_llms_are",
+      "text": "An HR analyst on your team suggests increasing the 'temperature' setting of the LLM you use to generate quarterly compliance reports. Why is this likely a bad idea?",
+      "options": [
+        {
+          "text": "It will make the computer overheat.",
+          "is_correct": false
+        },
+        {
+          "text": "It will make the output shorter.",
+          "is_correct": false
+        },
+        {
+          "text": "Higher temperature increases creativity and randomness, which is undesirable for factual compliance reporting.",
+          "is_correct": true
+        },
+        {
+          "text": "It will make the model refuse to answer the question.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "In LLMs, 'Temperature' controls randomness. High temperature leads to creative, varied (and less factually reliable) outputs. Low temperature is deterministic and better for factual tasks like compliance.",
+      "conceptTested": "LLM Parameters (Temperature)"
+    },
+    {
+      "id": "pq_l01_hr_manager_09",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are leading a workshop on 'AI in HR.' An employee asks: 'Does the AI actually understand the harassment policy it just summarized?' Which answer best reflects the technical reality of LLMs?",
+      "options": [
+        {
+          "text": "Yes, it understands the moral implications of harassment.",
+          "is_correct": false
+        },
+        {
+          "text": "No, it is processing syntax and statistical patterns of language without any cognitive comprehension or moral agency.",
+          "is_correct": true
+        },
+        {
+          "text": "Yes, but only if we use the paid version.",
+          "is_correct": false
+        },
+        {
+          "text": "It understands it better than a human lawyer would.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "It is crucial to distinguish between linguistic fluency and actual comprehension. LLMs manipulate symbols based on math; they do not 'understand' concepts or have moral agency.",
+      "conceptTested": "Capabilities vs. Limitations"
+    },
+    {
+      "id": "pq_l01_hr_manager_10",
+      "lessonId": "l01_what_llms_are",
+      "text": "To solve the issue of the HR bot hallucinating policies, your IT team suggests implementing a RAG (Retrieval-Augmented Generation) architecture. How does this help the HR function?",
+      "options": [
+        {
+          "text": "It forces the LLM to look up answers in your actual employee handbook before generating a response, reducing hallucinations.",
+          "is_correct": true
+        },
+        {
+          "text": "It prevents employees from asking questions that are too difficult.",
+          "is_correct": false
+        },
+        {
+          "text": "It automatically fires employees who ask inappropriate questions.",
+          "is_correct": false
+        },
+        {
+          "text": "It makes the LLM run offline so no internet is needed.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "RAG connects the LLM to a trusted knowledge base (like a handbook). The model retrieves relevant text first, then uses that text to answer, significantly grounding the response in fact rather than probability.",
+      "conceptTested": "Retrieval-Augmented Generation (RAG)"
+    },
+    {
+      "id": "pq_l01_product_manager_01",
+      "lessonId": "l01_what_llms_are",
+      "text": "As a PM for a customer support chatbot, you are trying to explain to stakeholders why the model sometimes generates plausible-sounding but factually incorrect refund policies. What concept explains this behavior?",
+      "options": [
+        {
+          "text": "Quantization",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Gradient Descent",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization limit",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination occurs when an LLM generates text that is grammatically correct and confident but factually unfounded. Quantization relates to model compression, and tokenization relates to input processing, not factual accuracy.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l01_product_manager_02",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are building a text summarization tool. You need to estimate API costs. You notice the pricing is listed per 1,000 'tokens'. Your developer tells you that 1,000 tokens is roughly equivalent to 750 words. Why are tokens not a 1:1 match with words?",
+      "options": [
+        {
+          "text": "Tokens include hidden metadata tags that increase the count.",
+          "is_correct": false
+        },
+        {
+          "text": "LLMs break down text into sub-word units (like 'ing' or 'pre') for efficiency.",
+          "is_correct": true
+        },
+        {
+          "text": "Tokens are calculated based on the computational time required, not text length.",
+          "is_correct": false
+        },
+        {
+          "text": "Pricing models artificially inflate word counts to increase revenue.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tokenization breaks text into smaller units (sub-words, characters, or whole words). Common words might be single tokens, but complex words are split, leading to a ratio where token count is usually higher than word count.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l01_product_manager_03",
+      "lessonId": "l01_what_llms_are",
+      "text": "Your team is selecting an LLM for a creative writing assistant. You notice that 'Temperature' is a configurable parameter. If the goal is to generate highly diverse and creative plot twists, how should you configure this parameter?",
+      "options": [
+        {
+          "text": "Set Temperature to 0 for maximum determinism.",
+          "is_correct": false
+        },
+        {
+          "text": "Set Temperature to 0.7 - 0.9 for higher randomness.",
+          "is_correct": true
+        },
+        {
+          "text": "Set Temperature to a negative value to invert the model's logic.",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature does not affect creativity; it only affects speed.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Temperature controls the randomness of the model's output. Higher values (closer to 1) introduce more randomness/creativity, while values closer to 0 make the model deterministic and repetitive.",
+      "conceptTested": "Inference Parameters (Temperature)"
+    },
+    {
+      "id": "pq_l01_product_manager_04",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are the PM for an internal legal document search tool. The LLM needs to answer questions based *strictly* on a new set of PDF policies uploaded daily. Your engineers suggest 'Fine-Tuning' the model every night. Why might 'RAG' (Retrieval-Augmented Generation) be a better architectural choice?",
+      "options": [
+        {
+          "text": "RAG eliminates the need for a vector database.",
+          "is_correct": false
+        },
+        {
+          "text": "RAG allows the model to access up-to-date external data without expensive retraining.",
+          "is_correct": true
+        },
+        {
+          "text": "Fine-tuning is legally prohibited for internal documents.",
+          "is_correct": false
+        },
+        {
+          "text": "RAG removes the context window limitation entirely.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Fine-tuning is slow and expensive for rapidly changing data. RAG retrieves relevant data at query time and feeds it to the LLM as context, making it ideal for dynamic knowledge bases like daily policy updates.",
+      "conceptTested": "RAG vs. Fine-Tuning"
+    },
+    {
+      "id": "pq_l01_product_manager_05",
+      "lessonId": "l01_what_llms_are",
+      "text": "Your product feature involves classifying user feedback into 'Positive', 'Neutral', or 'Negative'. You find that simply asking the LLM to classify the text yields inconsistent results. You decide to provide three examples of correctly classified feedback in the prompt before asking for the new classification. What is this technique called?",
+      "options": [
+        {
+          "text": "Zero-shot prompting",
+          "is_correct": false
+        },
+        {
+          "text": "Few-shot prompting",
+          "is_correct": true
+        },
+        {
+          "text": "Reinforcement Learning",
+          "is_correct": false
+        },
+        {
+          "text": "Model Distillation",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Few-shot prompting involves providing a few examples (shots) in the context window to guide the model's behavior. Zero-shot provides no examples, while RL and Distillation are training/optimization techniques.",
+      "conceptTested": "Prompt Engineering"
+    },
+    {
+      "id": "pq_l01_product_manager_06",
+      "lessonId": "l01_what_llms_are",
+      "text": "A developer suggests using a 'Context Window' of 128k tokens for a chatbot that only answers simple FAQs. As a PM concerned with latency and cost, why might you push back on maximizing the context window unnecessarily?",
+      "options": [
+        {
+          "text": "Larger context windows always decrease the accuracy of the model.",
+          "is_correct": false
+        },
+        {
+          "text": "Processing a full context window linearly increases cost and latency.",
+          "is_correct": true
+        },
+        {
+          "text": "128k context windows are only available for image generation models.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will stop working if the user query is shorter than the window size.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Cost and latency generally scale with the amount of context processed. Filling a massive context window for simple tasks is inefficient and expensive compared to using a smaller window or relevant retrieval.",
+      "conceptTested": "Context Window Constraints"
+    },
+    {
+      "id": "pq_l01_product_manager_07",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are launching a coding assistant feature. You have the choice between a massive 70B parameter model and a smaller 7B parameter model. The 7B model has slightly lower reasoning scores but is much faster. Under what scenario is the 7B model the clear winner?",
+      "options": [
+        {
+          "text": "The feature requires complex architectural reasoning.",
+          "is_correct": false
+        },
+        {
+          "text": "The feature is a real-time code auto-complete running on the user's laptop.",
+          "is_correct": true
+        },
+        {
+          "text": "The budget is unlimited and latency is irrelevant.",
+          "is_correct": false
+        },
+        {
+          "text": "The user is asking for legal advice regarding software licensing.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Real-time auto-complete requires extremely low latency (speed). A smaller model (7B) is faster and can often run locally (edge computing), whereas a 70B model would introduce significant lag.",
+      "conceptTested": "Model Size vs. Latency"
+    },
+    {
+      "id": "pq_l01_product_manager_08",
+      "lessonId": "l01_what_llms_are",
+      "text": "Your team proposes building a 'Transformer' model from scratch for your startup's niche sentiment analysis tool. As a PM, you need to evaluate the feasibility. Which component of the Transformer architecture is most responsible for its ability to handle long-range dependencies in text (understanding how words relate to each other far apart in a sentence)?",
+      "options": [
+        {
+          "text": "The Feed-Forward Network",
+          "is_correct": false
+        },
+        {
+          "text": "The Self-Attention Mechanism",
+          "is_correct": true
+        },
+        {
+          "text": "The Output Layer",
+          "is_correct": false
+        },
+        {
+          "text": "The Tokenizer",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The Self-Attention mechanism allows the model to weigh the importance of different words in a sequence relative to one another, regardless of their distance. This is the key innovation of the Transformer over previous architectures like RNNs.",
+      "conceptTested": "Transformer Architecture"
+    },
+    {
+      "id": "pq_l01_product_manager_09",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are overseeing the development of an LLM for medical diagnosis support. The team has finished 'Pre-training' on a vast corpus of internet text. The model speaks fluent English but offers dangerous medical advice. What is the critical next step to align the model with safety guidelines and medical accuracy?",
+      "options": [
+        {
+          "text": "Add more internet data to the pre-training set.",
+          "is_correct": false
+        },
+        {
+          "text": "Perform Reinforcement Learning from Human Feedback (RLHF).",
+          "is_correct": true
+        },
+        {
+          "text": "Increase the inference temperature.",
+          "is_correct": false
+        },
+        {
+          "text": "Switch to a different tokenizer.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pre-training teaches the model language patterns. RLHF (or instruction tuning) is required to align the model's outputs with human intent, safety guidelines, and specific behavioral instructions.",
+      "conceptTested": "RLHF / Alignment"
+    },
+    {
+      "id": "pq_l01_product_manager_10",
+      "lessonId": "l01_what_llms_are",
+      "text": "Your company wants to integrate an LLM to automatically take actions, such as scheduling meetings and sending emails, based on user chat. Your engineers mention using 'Agents'. What distinguishes an LLM-based 'Agent' from a standard LLM chatbot?",
+      "options": [
+        {
+          "text": "Agents can only understand structured JSON data.",
+          "is_correct": false
+        },
+        {
+          "text": "Agents have a larger parameter count than chatbots.",
+          "is_correct": false
+        },
+        {
+          "text": "Agents can use external tools and execute multi-step workflows to achieve a goal.",
+          "is_correct": true
+        },
+        {
+          "text": "Agents are strictly rule-based and do not use generative AI.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "While a standard LLM generates text, an Agent uses the LLM as a 'brain' to reason about which external tools (APIs, functions) to call to complete a task, creating a loop of Action -> Observation -> Action.",
+      "conceptTested": "LLM Agents"
+    },
+    {
+      "id": "pq_l01_sales_representative_01",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You are preparing for a discovery call with a prospect in the manufacturing sector. You ask ChatGPT to 'Give me a summary of the top 3 pain points for manufacturing CTOs in 2024.'\n\nQuestion: Which core capability of an LLM are you primarily leveraging in this scenario to save research time?",
+      "options": [
+        {
+          "text": "Sentiment Analysis",
+          "is_correct": false
+        },
+        {
+          "text": "Information Synthesis and Summarization",
+          "is_correct": true
+        },
+        {
+          "text": "Predictive Analytics",
+          "is_correct": false
+        },
+        {
+          "text": "Real-time Web Scraping",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The LLM is taking its vast training data regarding the manufacturing industry and condensing it into a concise list. While it isn't predicting the future (Predictive Analytics) or necessarily browsing the live web (unless using a specific plugin), it is synthesizing existing knowledge.",
+      "conceptTested": "LLM Capabilities (Summarization)"
+    },
+    {
+      "id": "pq_l01_sales_representative_02",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: A client asks a technical question about your product's integration with a legacy system. You don't know the answer, so you type the question into a public AI tool. The tool generates a very confident, detailed answer that sounds plausible.\n\nQuestion: Before sending this answer to the client, what specific LLM limitation should you be most concerned about?",
+      "options": [
+        {
+          "text": "Latency",
+          "is_correct": false
+        },
+        {
+          "text": "Context Window Limits",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs can 'hallucinate,' meaning they generate confident but factually incorrect information. In a technical sales context, sending a hallucinated answer can destroy trust and kill a deal. You must verify the output against internal documentation.",
+      "conceptTested": "LLM Limitations (Hallucinations)"
+    },
+    {
+      "id": "pq_l01_sales_representative_03",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You want to draft a cold outreach email to a VP of Sales. You provide the AI with the prompt: 'Write a cold email.' The resulting email is generic and sounds robotic.\n\nQuestion: What is the most effective way to improve the quality of this output based on Prompt Engineering basics?",
+      "options": [
+        {
+          "text": "Ask the AI to write it in Python code instead.",
+          "is_correct": false
+        },
+        {
+          "text": "Add specific context, such as the recipient's industry, the value proposition, and the desired tone.",
+          "is_correct": true
+        },
+        {
+          "text": "Repeat the exact same prompt three times.",
+          "is_correct": false
+        },
+        {
+          "text": "Upgrade to a more expensive computer processor.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs rely on context to generate high-quality outputs. A generic prompt yields a generic result. Adding specific details about the persona, industry, and tone (context) drastically improves the relevance of the draft.",
+      "conceptTested": "Basic Prompt Engineering"
+    },
+    {
+      "id": "pq_l01_sales_representative_04",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You have a transcript of a 45-minute sales call. You paste the entire transcript into an LLM and ask it to extract the budget, authority, need, and timeline (BANT).\n\nQuestion: The LLM successfully extracts the information. What type of task is the model performing here?",
+      "options": [
+        {
+          "text": "Creative Writing",
+          "is_correct": false
+        },
+        {
+          "text": "Extraction",
+          "is_correct": true
+        },
+        {
+          "text": "Translation",
+          "is_correct": false
+        },
+        {
+          "text": "Image Generation",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "This is an extraction task. The model is analyzing unstructured text (the transcript) and pulling out specific, structured data points (BANT) without necessarily generating new content.",
+      "conceptTested": "LLM Use Cases (Extraction)"
+    },
+    {
+      "id": "pq_l01_sales_representative_05",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You are negotiating a contract and want to check if the legal terms are standard. You are tempted to copy and paste the client's confidential Non-Disclosure Agreement (NDA) into a free, public version of ChatGPT to summarize it.\n\nQuestion: Why is this action generally considered a violation of corporate data privacy policies?",
+      "options": [
+        {
+          "text": "The AI cannot understand legal jargon.",
+          "is_correct": false
+        },
+        {
+          "text": "The input data may be used to train future versions of the model, potentially leaking confidential client info.",
+          "is_correct": true
+        },
+        {
+          "text": "It consumes too many tokens.",
+          "is_correct": false
+        },
+        {
+          "text": "Public AIs are legally banned from reading contracts.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Public LLMs often use user inputs for training data. Pasting confidential client data (like an NDA) puts that information at risk of being exposed to other users in the future, violating data privacy and confidentiality agreements.",
+      "conceptTested": "Data Privacy & Ethics"
+    },
+    {
+      "id": "pq_l01_sales_representative_06",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You ask an AI assistant to 'Write a sales script for our new CRM software.' The AI produces a script that mentions features your competitor has, but your product does not.\n\nQuestion: Which underlying mechanism of how LLMs function explains why this happened?",
+      "options": [
+        {
+          "text": "The LLM is biased against your company.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM is predicting the next statistically likely word based on general training data, not retrieving a fact from your database.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM has a virus.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM is connected to your competitor's live website.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs are probabilistic engines that predict the next word based on patterns in their training data. If 'CRM software' generally includes Feature X in its training data, the LLM may predict Feature X belongs in your script, even if it's factually wrong for your specific product.",
+      "conceptTested": "How LLMs Work (Probabilistic Prediction)"
+    },
+    {
+      "id": "pq_l01_sales_representative_07",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You are crafting a prompt to help you overcome a specific objection about pricing. You tell the AI: 'You are an expert sales coach with 20 years of experience in SaaS negotiation. The prospect says our price is too high. How should I respond?'\n\nQuestion: What prompt engineering technique are you using by establishing the 'Sales Coach' character?",
+      "options": [
+        {
+          "text": "Few-Shot Prompting",
+          "is_correct": false
+        },
+        {
+          "text": "Persona Adoption (Role Prompting)",
+          "is_correct": true
+        },
+        {
+          "text": "Chain of Thought",
+          "is_correct": false
+        },
+        {
+          "text": "Zero-Shot Prompting",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Persona Adoption (or Role Prompting) involves assigning a specific role to the AI to guide the tone, expertise, and perspective of the response. This usually results in higher-quality, domain-specific advice.",
+      "conceptTested": "Advanced Prompting (Persona)"
+    },
+    {
+      "id": "pq_l01_sales_representative_08",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: A prospect asks you about a specific industry regulation that was passed two weeks ago. You ask a standard LLM (trained on data only up to 2023) about this new regulation, and it says the regulation doesn't exist.\n\nQuestion: What concept best explains this failure?",
+      "options": [
+        {
+          "text": "Knowledge Cutoff Date",
+          "is_correct": true
+        },
+        {
+          "text": "Algorithm Bias",
+          "is_correct": false
+        },
+        {
+          "text": "Low Temperature Setting",
+          "is_correct": false
+        },
+        {
+          "text": "Prompt Injection",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "LLMs have a knowledge cutoff based on when their training data was finalized. Without access to live search tools (RAG), a model trained in 2023 cannot know about events that happened two weeks ago.",
+      "conceptTested": "LLM Limitations (Knowledge Cutoff)"
+    },
+    {
+      "id": "pq_l01_sales_representative_09",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You are using an internal AI sales tool that has been connected to your company's Knowledge Base. You ask, 'What is the implementation timeline for product X?' and the AI gives a perfect answer citing a specific internal PDF.\n\nQuestion: This ability to retrieve specific proprietary data to answer the prompt is likely achieved through which architecture?",
+      "options": [
+        {
+          "text": "RAG (Retrieval-Augmented Generation)",
+          "is_correct": true
+        },
+        {
+          "text": "Standard Pre-training",
+          "is_correct": false
+        },
+        {
+          "text": "A/B Testing",
+          "is_correct": false
+        },
+        {
+          "text": "Sentiment Analysis",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Retrieval-Augmented Generation (RAG) allows an LLM to look up relevant information from an external (or internal) database before generating an answer. This grounds the AI in your specific company data rather than just general internet training data.",
+      "conceptTested": "RAG (Retrieval-Augmented Generation)"
+    },
+    {
+      "id": "pq_l01_sales_representative_10",
+      "lessonId": "l01_what_llms_are",
+      "text": "Scenario: You want to use an LLM to grade your recent sales calls. You provide a rubric (e.g., 'Did I set a next step?', 'Did I ask open-ended questions?') and the call transcript. You ask the LLM to score the call 1-10 based on the rubric.\n\nQuestion: Why is this an effective use of an LLM compared to asking a human manager to do it for every call?",
+      "options": [
+        {
+          "text": "The LLM has more empathy than a human manager.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM can scale analysis to review 100% of calls instantly, whereas a human can only review a small fraction.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM will never give a low score.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM can legally sign off on the performance review.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "While humans are better at nuance, LLMs offer scalability. A Sales Rep can get instant feedback on every single call they make, identifying patterns faster than waiting for a manager's weekly review of one specific call.",
+      "conceptTested": "Benefits of LLMs (Scalability)"
+    },
+    {
+      "id": "pq_l02_product_manager_01",
+      "lessonId": "l02_tokens_context",
+      "text": "As a PM for a customer support chatbot, you notice the LLM occasionally generates different answers to the exact same user query about return policies. You need the bot to be as consistent and deterministic as possible. Which parameter should you advise your engineering team to adjust?",
+      "options": [
+        {
+          "text": "Increase the Context Window",
+          "is_correct": false
+        },
+        {
+          "text": "Lower the Temperature to 0",
+          "is_correct": true
+        },
+        {
+          "text": "Increase the Token Limit",
+          "is_correct": false
+        },
+        {
+          "text": "Switch to a larger model size",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Temperature controls the randomness of the model's output. Setting it to 0 makes the model greedy/deterministic, selecting the most likely next token every time, which is ideal for policy-based answers. Context windows and token limits affect length, not randomness.",
+      "conceptTested": "Temperature / Determinism"
+    },
+    {
+      "id": "pq_l02_product_manager_02",
+      "lessonId": "l02_tokens_context",
+      "text": "You are scoping a feature that summarizes 50-page PDF legal contracts. Your developers mention that the standard model you selected truncates the text halfway through the document. What technical constraint is the primary bottleneck here?",
+      "options": [
+        {
+          "text": "The model is hallucinating the ending.",
+          "is_correct": false
+        },
+        {
+          "text": "The Context Window is too small.",
+          "is_correct": true
+        },
+        {
+          "text": "The Training Data cutoff is outdated.",
+          "is_correct": false
+        },
+        {
+          "text": "The Temperature is set too high.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The Context Window defines the maximum amount of text (input + output) the model can process at once. If a 50-page document exceeds this limit (measured in tokens), the model physically cannot 'see' the end of the file.",
+      "conceptTested": "Context Window"
+    },
+    {
+      "id": "pq_l02_product_manager_03",
+      "lessonId": "l02_tokens_context",
+      "text": "During a stakeholder demo, your prototype LLM generates a very convincing bio for a fictional CEO that doesn't exist. Your VP of Sales is confused why the AI lied. How should you explain this behavior to the stakeholder?",
+      "options": [
+        {
+          "text": "The model has a virus or malicious prompt injection.",
+          "is_correct": false
+        },
+        {
+          "text": "The model is searching the live internet and found a fake website.",
+          "is_correct": false
+        },
+        {
+          "text": "The model predicts the next statistically likely token, not factual truth.",
+          "is_correct": true
+        },
+        {
+          "text": "The model is overfitting to the training data.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs are probabilistic engines designed to predict the next plausible word based on patterns, not knowledge bases designed to retrieve facts. This phenomenon is often called 'hallucination.'",
+      "conceptTested": "Next-Token Prediction / Hallucination"
+    },
+    {
+      "id": "pq_l02_product_manager_04",
+      "lessonId": "l02_tokens_context",
+      "text": "You are building a pricing estimator tool using a standard LLM. You find that while the text explanation of the pricing tier is correct, the specific arithmetic calculation (e.g., $45.50 * 12) is frequently wrong. What is the best architectural decision to fix this?",
+      "options": [
+        {
+          "text": "Retrain the LLM on more math textbooks.",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the temperature to allow for more creative math.",
+          "is_correct": false
+        },
+        {
+          "text": "Offload the calculation to a calculator tool/plugin rather than relying on the LLM's internal weights.",
+          "is_correct": true
+        },
+        {
+          "text": "Ask the user to double-check the math themselves.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs are generally poor at precise arithmetic because they treat numbers as tokens to be predicted rather than values to be computed. The standard best practice is to give the LLM access to a tool (like a Python calculator) to perform the math reliably.",
+      "conceptTested": "LLM Limitations / Tool Use"
+    },
+    {
+      "id": "pq_l02_product_manager_05",
+      "lessonId": "l02_tokens_context",
+      "text": "Your team is paying for an LLM API based on usage. You are analyzing the bill and see charges for 'Input Tokens' and 'Output Tokens'. A developer explains that the word 'Apple' counts as one token, but 'Supercalifragilistic' counts as multiple tokens. Why is this?",
+      "options": [
+        {
+          "text": "Tokens are strictly defined by the number of vowels in a word.",
+          "is_correct": false
+        },
+        {
+          "text": "The API charges more for complex words.",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization breaks text into sub-word units, not always whole words.",
+          "is_correct": true
+        },
+        {
+          "text": "The developer is incorrect; one word always equals one token.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs process text as tokens, which are sub-word units (roughly 0.75 words on average in English). Common words might be single tokens, while complex or rare words are split into multiple tokens.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l02_product_manager_06",
+      "lessonId": "l02_tokens_context",
+      "text": "You are launching a feature that helps users draft emails. You want the tone to be professional yet creative. You decide to set the Temperature parameter to 0.7 rather than 0.1. What is the trade-off you are accepting?",
+      "options": [
+        {
+          "text": "Higher creativity/diversity, but a higher risk of incoherence or hallucination.",
+          "is_correct": true
+        },
+        {
+          "text": "Faster response times, but lower accuracy.",
+          "is_correct": false
+        },
+        {
+          "text": "Lower cost, but shorter email drafts.",
+          "is_correct": false
+        },
+        {
+          "text": "Higher security, but less user personalization.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Higher temperature increases randomness in token selection. This fosters creativity and diversity in phrasing but increases the probability that the model will pick a 'less likely' token that might be factually wrong or nonsensical.",
+      "conceptTested": "Temperature Trade-offs"
+    },
+    {
+      "id": "pq_l02_product_manager_07",
+      "lessonId": "l02_tokens_context",
+      "text": "A user asks your travel-planning LLM, 'Who won the Super Bowl yesterday?' The model responds with a team that won 3 years ago. What is the most likely cause of this error?",
+      "options": [
+        {
+          "text": "The model is broken and needs a reboot.",
+          "is_correct": false
+        },
+        {
+          "text": "The knowledge is outside the model's training data cutoff.",
+          "is_correct": true
+        },
+        {
+          "text": "The prompt was not specific enough.",
+          "is_correct": false
+        },
+        {
+          "text": "The context window was full.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pre-trained LLMs have a knowledge cutoff\u2014they only 'know' information present in their training dataset at the time of training. Unless connected to a live search tool (RAG), they cannot answer questions about recent events.",
+      "conceptTested": "Knowledge Cutoff"
+    },
+    {
+      "id": "pq_l02_product_manager_08",
+      "lessonId": "l02_tokens_context",
+      "text": "You are a PM at a healthcare company. You want to fine-tune an open-source LLM on your proprietary patient data to improve its medical terminology. Which risk must be your top priority?",
+      "options": [
+        {
+          "text": "The model might become too good at math.",
+          "is_correct": false
+        },
+        {
+          "text": "The model might 'memorize' PII (Personally Identifiable Information) and leak it in future outputs.",
+          "is_correct": true
+        },
+        {
+          "text": "The model will stop understanding English and only speak Latin medical terms.",
+          "is_correct": false
+        },
+        {
+          "text": "Fine-tuning always increases latency significantly.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs can memorize training data. If you fine-tune on sensitive private data (PII) without strict sanitation, the model may regurgitate that private data to other users in the future, posing a massive compliance risk.",
+      "conceptTested": "Data Privacy / Fine-tuning Risks"
+    },
+    {
+      "id": "pq_l02_product_manager_09",
+      "lessonId": "l02_tokens_context",
+      "text": "Your engineering lead suggests using a 'Transformer' architecture for your new NLP product. A stakeholder asks what makes the Transformer different from older AI models (like RNNs). What is the key innovation you should highlight?",
+      "options": [
+        {
+          "text": "It simulates a human brain perfectly.",
+          "is_correct": false
+        },
+        {
+          "text": "It uses the 'Attention Mechanism' to process the entire input sequence in parallel rather than sequentially.",
+          "is_correct": true
+        },
+        {
+          "text": "It requires zero training data to work.",
+          "is_correct": false
+        },
+        {
+          "text": "It only works with images, not text.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The core innovation of the Transformer (the 'T' in GPT) is the Attention Mechanism, which allows the model to weigh the importance of different words in a sentence simultaneously (parallelization), leading to much faster training and better context handling than sequential RNNs.",
+      "conceptTested": "Transformer Architecture"
+    },
+    {
+      "id": "pq_l02_product_manager_10",
+      "lessonId": "l02_tokens_context",
+      "text": "You are evaluating two models for a creative writing app: Model A (7 Billion Parameters) and Model B (70 Billion Parameters). Assuming your budget allows for either, why might you still choose Model A?",
+      "options": [
+        {
+          "text": "Model A will definitely be more factually accurate.",
+          "is_correct": false
+        },
+        {
+          "text": "Model A will offer lower latency (faster generation speed) and cheaper hosting costs.",
+          "is_correct": true
+        },
+        {
+          "text": "Model A has a larger context window by default.",
+          "is_correct": false
+        },
+        {
+          "text": "Model B is too smart and will intimidate users.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Smaller models (fewer parameters) require less computational power (GPU memory) to run. This translates to faster inference speeds (latency) and lower operational costs, which is often preferable if the task doesn't require the advanced reasoning of a huge model.",
+      "conceptTested": "Model Size vs. Latency/Cost"
+    },
+    {
+      "id": "pq_l02_software_engineer_01",
+      "lessonId": "l02_tokens_context",
+      "text": "You are debugging an LLM-powered chatbot that is consistently hallucinating facts about your company's proprietary internal documents, despite the prompt being correct. You suspect the model simply doesn't know this specific information. What implies that the model's training method is the primary constraint here?",
+      "options": [
+        {
+          "text": "The model uses a temperature of 0.7.",
+          "is_correct": false
+        },
+        {
+          "text": "The model was only pre-trained on public internet data up to a specific cutoff date.",
+          "is_correct": true
+        },
+        {
+          "text": "The token limit for the output is set too low.",
+          "is_correct": false
+        },
+        {
+          "text": "The model is using an RNN architecture instead of a Transformer.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pre-training determines the model's base knowledge. If the model was trained only on public data, it cannot know about private, proprietary documents regardless of its architecture or sampling settings. This highlights the distinction between pre-training knowledge and knowledge injection via RAG or fine-tuning.",
+      "conceptTested": "Pre-training Limitations"
+    },
+    {
+      "id": "pq_l02_software_engineer_02",
+      "lessonId": "l02_tokens_context",
+      "text": "While optimizing an API call to a hosted LLM, you notice the cost is significantly higher than expected. You are currently sending raw text composed of standard English words. What underlying mechanism converts this text into the billable units used by the provider?",
+      "options": [
+        {
+          "text": "Hashing",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": true
+        },
+        {
+          "text": "Quantization",
+          "is_correct": false
+        },
+        {
+          "text": "Vectorization",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs process text by breaking it down into tokens (sub-word units). API providers bill based on token count, not character count or raw word count. Hashing and vectorization are different processes, and quantization relates to model compression.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l02_software_engineer_03",
+      "lessonId": "l02_tokens_context",
+      "text": "You are building a semantic search feature for a documentation site. You need to convert user queries into a numerical format that captures meaning so you can compare them against document vectors. Which component of the LLM ecosystem is responsible for this transformation?",
+      "options": [
+        {
+          "text": "The Decoder block",
+          "is_correct": false
+        },
+        {
+          "text": "The Embedding model",
+          "is_correct": true
+        },
+        {
+          "text": "The Softmax layer",
+          "is_correct": false
+        },
+        {
+          "text": "The RLHF pipeline",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Embedding models convert text into high-dimensional vectors (lists of numbers) where semantically similar text is located closer together in vector space. Decoders generate text, and Softmax calculates probabilities.",
+      "conceptTested": "Embeddings"
+    },
+    {
+      "id": "pq_l02_software_engineer_04",
+      "lessonId": "l02_tokens_context",
+      "text": "You are designing a code completion tool using an LLM. You want the model to generate very creative and diverse variable names during a brainstorming mode, rather than the most predictable ones. Which parameter should you increase to achieve this?",
+      "options": [
+        {
+          "text": "Top-k",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature",
+          "is_correct": true
+        },
+        {
+          "text": "Stop sequences",
+          "is_correct": false
+        },
+        {
+          "text": "Context window",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Temperature controls the randomness of the model's output distribution. Increasing temperature flattens the probability distribution, allowing the model to select lower-probability tokens, resulting in more creative or diverse outputs.",
+      "conceptTested": "Inference Parameters (Temperature)"
+    },
+    {
+      "id": "pq_l02_software_engineer_05",
+      "lessonId": "l02_tokens_context",
+      "text": "A junior engineer asks why modern LLMs are based on the Transformer architecture rather than Recurrent Neural Networks (RNNs) or LSTMs. From a training infrastructure perspective, what is the most significant advantage of Transformers?",
+      "options": [
+        {
+          "text": "Transformers require less RAM during inference.",
+          "is_correct": false
+        },
+        {
+          "text": "Transformers allow for parallelization of training data processing.",
+          "is_correct": true
+        },
+        {
+          "text": "Transformers remove the need for tokenization.",
+          "is_correct": false
+        },
+        {
+          "text": "Transformers are inherently better at math problems.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The key breakthrough of the Transformer architecture (Attention mechanism) allows the model to process all tokens in a sequence simultaneously (parallelization), whereas RNNs process tokens sequentially. This allows for training on much larger datasets significantly faster.",
+      "conceptTested": "Transformer Architecture Advantages"
+    },
+    {
+      "id": "pq_l02_software_engineer_06",
+      "lessonId": "l02_tokens_context",
+      "text": "You are feeding a 50-page PDF into an LLM to generate a summary. The API returns an error: 'Input exceeds maximum length'. Which architectural constraint have you hit?",
+      "options": [
+        {
+          "text": "The Context Window",
+          "is_correct": true
+        },
+        {
+          "text": "The Parameter Count",
+          "is_correct": false
+        },
+        {
+          "text": "The Learning Rate",
+          "is_correct": false
+        },
+        {
+          "text": "The Attention Head limit",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Every LLM has a fixed context window (measured in tokens) which defines the maximum amount of text the model can consider at one time (input prompt + generated output). Exceeding this limit results in errors or truncation.",
+      "conceptTested": "Context Window"
+    },
+    {
+      "id": "pq_l02_software_engineer_07",
+      "lessonId": "l02_tokens_context",
+      "text": "You are fine-tuning an open-source model to specialize in generating Python unit tests. You have a dataset of 5,000 Python functions and their corresponding tests. This process changes the model's weights. What is this type of learning called?",
+      "options": [
+        {
+          "text": "Zero-shot prompting",
+          "is_correct": false
+        },
+        {
+          "text": "In-context learning",
+          "is_correct": false
+        },
+        {
+          "text": "Supervised Fine-Tuning (SFT)",
+          "is_correct": true
+        },
+        {
+          "text": "Retrieval Augmented Generation (RAG)",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Supervised Fine-Tuning (SFT) involves updating the model's internal weights using labeled data (input-output pairs) to specialize its behavior. Prompting, in-context learning, and RAG do not change the model's weights.",
+      "conceptTested": "Fine-Tuning"
+    },
+    {
+      "id": "pq_l02_software_engineer_08",
+      "lessonId": "l02_tokens_context",
+      "text": "Your team is debating whether to use a Decoder-only model (like GPT) or an Encoder-only model (like BERT) for a new feature. The feature requires classifying customer support tickets into categories (Billing, Technical, Sales) based on the ticket text. Which architecture is theoretically best suited for this understanding task?",
+      "options": [
+        {
+          "text": "Decoder-only, because it is better at text generation.",
+          "is_correct": false
+        },
+        {
+          "text": "Encoder-only, because it utilizes bidirectional context for better understanding.",
+          "is_correct": true
+        },
+        {
+          "text": "Decoder-only, because it processes tokens sequentially.",
+          "is_correct": false
+        },
+        {
+          "text": "Encoder-only, because it has a larger context window.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Encoder-only models (like BERT) look at the entire sequence at once (bidirectional attention), making them superior for tasks requiring deep understanding and classification of text. Decoder-only models are optimized for generating the next token in a sequence.",
+      "conceptTested": "Encoder vs. Decoder Architectures"
+    },
+    {
+      "id": "pq_l02_software_engineer_09",
+      "lessonId": "l02_tokens_context",
+      "text": "You are reviewing a prompt for a code generation task: 'Write a Python script to parse a CSV.' The model output is mediocre. You change the prompt to: 'You are a Senior Python Backend Engineer. Write a robust, error-handling Python script to parse a CSV.' The output improves significantly. Why does this 'persona adoption' work technically?",
+      "options": [
+        {
+          "text": "It activates a specific 'expert module' hardcoded into the architecture.",
+          "is_correct": false
+        },
+        {
+          "text": "It steers the probability distribution toward tokens associated with high-quality, professional code found in the training data.",
+          "is_correct": true
+        },
+        {
+          "text": "It increases the temperature specifically for coding tokens.",
+          "is_correct": false
+        },
+        {
+          "text": "It bypasses the RLHF safety filters.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs predict the next token based on the context provided. By setting a 'Senior Engineer' persona, the context vector aligns with high-quality code examples seen during training, making the model more likely to predict tokens associated with robust, professional coding patterns.",
+      "conceptTested": "Prompt Engineering / Probabilistic Nature"
+    },
+    {
+      "id": "pq_l02_software_engineer_10",
+      "lessonId": "l02_tokens_context",
+      "text": "Your application uses a 'Chain of Thought' prompting strategy where the LLM is asked to 'think step-by-step' before answering. However, this has increased latency and cost significantly. What is the fundamental trade-off occurring here regarding the Transformer's compute mechanism?",
+      "options": [
+        {
+          "text": "The model is retraining itself on the fly.",
+          "is_correct": false
+        },
+        {
+          "text": "The Attention mechanism computation grows quadratically with sequence length, and generating more 'thought' tokens linearly increases inference time.",
+          "is_correct": true
+        },
+        {
+          "text": "The embedding lookup table is being overloaded by the reasoning steps.",
+          "is_correct": false
+        },
+        {
+          "text": "Step-by-step thinking requires switching from GPU to CPU processing.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Generating 'thoughts' requires generating more tokens. Since LLM generation is sequential (one token at a time), more tokens mean higher latency and cost. Additionally, as the sequence grows, the attention mechanism has more context to attend to, increasing compute requirements.",
+      "conceptTested": "Inference Costs & Latency"
+    },
+    {
+      "id": "pq_l02_sales_representative_01",
+      "lessonId": "l02_tokens_context",
+      "text": "You are drafting a cold email to a prospective client in the healthcare sector. You ask ChatGPT to 'Write a personalized email to Dr. Smith about our medical software.' The output is generic and mentions features you don't have. What is the most likely reason for this poor output?",
+      "options": [
+        {
+          "text": "The LLM is broken and needs a software update.",
+          "is_correct": false
+        },
+        {
+          "text": "The prompt lacked specific context and constraints about your product and the prospect.",
+          "is_correct": true
+        },
+        {
+          "text": "LLMs are incapable of writing sales emails for healthcare.",
+          "is_correct": false
+        },
+        {
+          "text": "You used the wrong font in your input.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs act as reasoning engines based on the input they receive. Without specific details about 'our medical software' or Dr. Smith's specific needs, the model will hallucinate or provide generic filler content. Providing context is crucial for quality output.",
+      "conceptTested": "Prompt Engineering Basics"
+    },
+    {
+      "id": "pq_l02_sales_representative_02",
+      "lessonId": "l02_tokens_context",
+      "text": "A potential customer asks a highly technical question about your product's API integration limits. You copy-paste the question into a general-purpose LLM to get an answer. Why is this a risky strategy?",
+      "options": [
+        {
+          "text": "The LLM might hallucinate facts, providing confident but incorrect technical specifications.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM will refuse to answer technical questions.",
+          "is_correct": false
+        },
+        {
+          "text": "It is illegal to use LLMs for technical support.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM will always admit it doesn't know the answer.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "One of the main limitations of LLMs is 'hallucination,' where they generate plausible-sounding but factually incorrect information. For precise technical specs, you must verify the output against official documentation.",
+      "conceptTested": "Hallucinations & Fact-Checking"
+    },
+    {
+      "id": "pq_l02_sales_representative_03",
+      "lessonId": "l02_tokens_context",
+      "text": "You want to use an LLM to summarize a 50-page transcript of a sales call to update your CRM. Which capability of LLMs are you primarily leveraging here?",
+      "options": [
+        {
+          "text": "Predictive Analytics",
+          "is_correct": false
+        },
+        {
+          "text": "Summarization and Extraction",
+          "is_correct": true
+        },
+        {
+          "text": "Image Generation",
+          "is_correct": false
+        },
+        {
+          "text": "Sentiment Manipulation",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Summarization is a core capability of LLMs. They excel at processing large volumes of text and condensing them into key points, action items, or summaries suitable for CRM entry.",
+      "conceptTested": "LLM Core Capabilities"
+    },
+    {
+      "id": "pq_l02_sales_representative_04",
+      "lessonId": "l02_tokens_context",
+      "text": "You paste a confidential list of your top 100 clients, including their annual spend and contact details, into a public, free version of an LLM to ask for 'upsell strategies.' What is the major concern here?",
+      "options": [
+        {
+          "text": "The LLM will likely crash due to too much data.",
+          "is_correct": false
+        },
+        {
+          "text": "The strategies generated will be too aggressive.",
+          "is_correct": false
+        },
+        {
+          "text": "You have likely exposed proprietary company data that could train future versions of the model.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM cannot understand numbers.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Data privacy is a critical concern. Information entered into public LLM interfaces can potentially be used for model training, meaning your confidential client data could theoretically be exposed or memorized by the model.",
+      "conceptTested": "Data Privacy & Security"
+    },
+    {
+      "id": "pq_l02_sales_representative_05",
+      "lessonId": "l02_tokens_context",
+      "text": "You are preparing for a negotiation with a tough procurement manager. You tell the LLM: 'Act as a skeptical procurement manager for a manufacturing firm. I will pitch you my product, and you should push back on price and implementation time.' What technique are you using?",
+      "options": [
+        {
+          "text": "Persona Adoption / Role-Playing",
+          "is_correct": true
+        },
+        {
+          "text": "Fine-Tuning",
+          "is_correct": false
+        },
+        {
+          "text": "Zero-shot prompting",
+          "is_correct": false
+        },
+        {
+          "text": "Code Interpretation",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "By instructing the LLM to 'Act as' a specific role, you are using Persona Adoption. This is highly effective for sales role-play and anticipating objections before a real call.",
+      "conceptTested": "Advanced Prompting Techniques"
+    },
+    {
+      "id": "pq_l02_sales_representative_06",
+      "lessonId": "l02_tokens_context",
+      "text": "You have a library of PDF case studies. You want to query an LLM to find 'companies similar to Client X' within your own files. Which LLM application architecture allows the model to 'read' your private files without retraining the whole model?",
+      "options": [
+        {
+          "text": "Retrieval-Augmented Generation (RAG)",
+          "is_correct": true
+        },
+        {
+          "text": "Reinforcement Learning from Human Feedback (RLHF)",
+          "is_correct": false
+        },
+        {
+          "text": "Pre-training",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "RAG allows an LLM to reference an external knowledge base (like your PDF library) to answer questions. It retrieves relevant chunks of text and uses them to generate an accurate response based on your specific data.",
+      "conceptTested": "RAG (Retrieval-Augmented Generation)"
+    },
+    {
+      "id": "pq_l02_sales_representative_07",
+      "lessonId": "l02_tokens_context",
+      "text": "You are analyzing a sales call transcript where the customer said, 'I guess the price is okay, but I'm worried about the learning curve.' An LLM flags this as 'Positive Sentiment.' As a rep, how should you evaluate this analysis?",
+      "options": [
+        {
+          "text": "Accept it blindly; AI sentiment analysis is 100% accurate.",
+          "is_correct": false
+        },
+        {
+          "text": "Reject the tool entirely; it clearly doesn't work.",
+          "is_correct": false
+        },
+        {
+          "text": "Recognize the nuance; the sentiment is mixed (hesitant), and the LLM may have missed the subtle objection.",
+          "is_correct": true
+        },
+        {
+          "text": "Assume the customer is lying about their worry.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs can struggle with nuance and mixed emotions. While 'price is okay' is positive, the worry indicates a blocker. A human rep must verify the sentiment analysis to address the underlying objection (implementation fears).",
+      "conceptTested": "Limitations in Sentiment Analysis"
+    },
+    {
+      "id": "pq_l02_sales_representative_08",
+      "lessonId": "l02_tokens_context",
+      "text": "Your manager asks why the company is investing in an 'Enterprise' version of ChatGPT rather than letting everyone use their personal free accounts. From a risk analysis perspective, what is the strongest argument for the Enterprise version?",
+      "options": [
+        {
+          "text": "The Enterprise version has cooler emojis.",
+          "is_correct": false
+        },
+        {
+          "text": "The Enterprise version ensures data inputs are not used for model training and offers SOC2 compliance.",
+          "is_correct": true
+        },
+        {
+          "text": "The Enterprise version is actually slower, giving reps more time to think.",
+          "is_correct": false
+        },
+        {
+          "text": "There is no difference; it's just branding.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "For businesses, the critical difference is data governance. Enterprise tiers contractually guarantee that input data remains private and is not used to train the public model, protecting trade secrets.",
+      "conceptTested": "Enterprise vs. Public LLMs"
+    },
+    {
+      "id": "pq_l02_sales_representative_09",
+      "lessonId": "l02_tokens_context",
+      "text": "You are using an LLM to draft a proposal. The model generates a convincing paragraph citing a study by 'Gartner in 2023' that claims your industry grew by 500%. You've never heard of this statistic. What is your next best step?",
+      "options": [
+        {
+          "text": "Include it in the proposal; it makes the pitch stronger.",
+          "is_correct": false
+        },
+        {
+          "text": "Ask the LLM 'Are you sure?' and trust its second answer.",
+          "is_correct": false
+        },
+        {
+          "text": "Independently verify the study exists via a search engine before including it.",
+          "is_correct": true
+        },
+        {
+          "text": "Change the number to 400% to be safe.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs can fabricate citations and statistics seamlessly. Asking 'Are you sure?' often leads to the model doubling down on the error. The only safe analytical step is independent verification via a trusted source (search engine).",
+      "conceptTested": "Verification Strategies"
+    },
+    {
+      "id": "pq_l02_sales_representative_10",
+      "lessonId": "l02_tokens_context",
+      "text": "Your sales team is integrating an LLM into the CRM to auto-draft responses to inbound leads. During testing, you notice the model sometimes responds to angry customers with overly cheerful, inappropriate jokes. This is an example of a failure in:",
+      "options": [
+        {
+          "text": "Tone and Style Alignment",
+          "is_correct": true
+        },
+        {
+          "text": "Grammar processing",
+          "is_correct": false
+        },
+        {
+          "text": "Latency",
+          "is_correct": false
+        },
+        {
+          "text": "Data retrieval",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "LLMs predict the next word based on probability, not empathy. Without strict style guidelines (system prompts), they may default to a generic, cheerful 'assistant' tone that is mismatched for resolving conflict or handling angry leads.",
+      "conceptTested": "Tone & Alignment Issues"
+    },
+    {
+      "id": "pq_l03_hr_manager_01",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are explaining to your recruitment team how a tool like ChatGPT generates job descriptions. A recruiter asks, 'Does it actually understand what a Software Engineer does, or is it just guessing?' Which answer best reflects the foundational nature of LLMs?",
+      "options": [
+        {
+          "text": "It understands the role deeply, similar to how a human hiring manager understands job requirements.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a database of pre-written job descriptions that retrieves the best match based on keywords.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a probabilistic engine that predicts the next most likely word based on patterns learned from training data.",
+          "is_correct": true
+        },
+        {
+          "text": "It is a rule-based system that follows a strict 'if-this-then-that' logic coded by developers.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs operate on 'next token prediction,' calculating the statistical probability of which word comes next. They do not have cognitive understanding or act as a static database.",
+      "conceptTested": "Probabilistic Nature of LLMs"
+    },
+    {
+      "id": "pq_l03_hr_manager_02",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "An HR Manager uses an LLM to draft a sensitive termination letter. The initial output is generic and lacks the specific empathetic tone required by company culture. What foundational concept explains why the model didn't 'know' the company's specific tone automatically?",
+      "options": [
+        {
+          "text": "The model is experiencing a hallucination.",
+          "is_correct": false
+        },
+        {
+          "text": "The model's training data cut-off date is too old.",
+          "is_correct": false
+        },
+        {
+          "text": "The model lacks specific context about the company culture unless it is provided in the prompt.",
+          "is_correct": true
+        },
+        {
+          "text": "The model is biased against writing termination letters.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "LLMs are trained on general internet data. They do not know private company norms or specific stylistic requirements unless that information is provided within the context window (the prompt).",
+      "conceptTested": "Context and Training Data Limitations"
+    },
+    {
+      "id": "pq_l03_hr_manager_03",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are summarizing 50 pages of employee survey feedback using an LLM. Halfway through the document, the tool stops responding or forgets the beginning of the survey. This is likely a limitation of what technical constraint?",
+      "options": [
+        {
+          "text": "The Context Window",
+          "is_correct": true
+        },
+        {
+          "text": "Temperature settings",
+          "is_correct": false
+        },
+        {
+          "text": "Data privacy filters",
+          "is_correct": false
+        },
+        {
+          "text": "The model's reasoning capability",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The context window is the limit on the amount of text (tokens) the model can process at one time. If the input exceeds this limit, the model cannot 'see' or remember the earlier parts of the text.",
+      "conceptTested": "Context Window Limits"
+    },
+    {
+      "id": "pq_l03_hr_manager_04",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your team is using an LLM to screen resumes. You notice the model consistently ranks candidates from specific universities higher, even when their skills are identical to others. What is the most likely cause?",
+      "options": [
+        {
+          "text": "The model has developed a personal preference for those schools.",
+          "is_correct": false
+        },
+        {
+          "text": "The model is reflecting historical biases present in the public data it was trained on.",
+          "is_correct": true
+        },
+        {
+          "text": "The model is hallucinating the skills of the other candidates.",
+          "is_correct": false
+        },
+        {
+          "text": "The prompt was too short.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs are trained on vast amounts of historical data which often contain societal biases. The model mimics these statistical correlations, leading to biased outputs unless specifically mitigated.",
+      "conceptTested": "Bias in LLMs"
+    },
+    {
+      "id": "pq_l03_hr_manager_05",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "An HR coordinator asks an LLM for the '2024 Labor Law updates for California.' The model generates a very convincing list of laws, but upon checking with legal, two of the laws do not exist. What is this phenomenon called?",
+      "options": [
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": false
+        },
+        {
+          "text": "Fine-tuning",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination occurs when an LLM generates grammatically correct and confident-sounding text that is factually incorrect or nonsensical. It prioritizes fluency over factual accuracy.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l03_hr_manager_06",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are configuring a chatbot for employee benefits questions. You want the answers to be very factual and consistent, with zero creativity. How should you adjust the 'Temperature' setting?",
+      "options": [
+        {
+          "text": "Set the Temperature to 0 (or very low).",
+          "is_correct": true
+        },
+        {
+          "text": "Set the Temperature to 1 (or very high).",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature does not affect consistency.",
+          "is_correct": false
+        },
+        {
+          "text": "Set the Temperature to -1.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Temperature controls the randomness of the output. A low temperature (near 0) makes the model deterministic and factual. A high temperature makes it more creative and random.",
+      "conceptTested": "Temperature / Inference Parameters"
+    },
+    {
+      "id": "pq_l03_hr_manager_07",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "An HR Manager copies specific employee salary data and performance review notes into a public, free version of ChatGPT to ask for a summary. Why is this a major security risk?",
+      "options": [
+        {
+          "text": "The model will criticize the salaries.",
+          "is_correct": false
+        },
+        {
+          "text": "The output might be hallucinated.",
+          "is_correct": false
+        },
+        {
+          "text": "The input data may be used to train future versions of the model, potentially leaking private info.",
+          "is_correct": true
+        },
+        {
+          "text": "The model cannot process numbers accurately.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Many public LLMs use user inputs to retrain and improve their models. Using them for PII (Personally Identifiable Information) creates a risk of that data appearing in future outputs for other users.",
+      "conceptTested": "Data Privacy and Security"
+    },
+    {
+      "id": "pq_l03_hr_manager_08",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You want to implement an LLM to help employees find answers in the company handbook. You are debating between using a standard public model vs. a RAG (Retrieval-Augmented Generation) system. Why would you choose RAG for HR policies?",
+      "options": [
+        {
+          "text": "RAG is cheaper to implement than a standard prompt.",
+          "is_correct": false
+        },
+        {
+          "text": "RAG allows the model to reference your specific, up-to-date documents rather than relying solely on its pre-training.",
+          "is_correct": true
+        },
+        {
+          "text": "RAG models are less likely to understand human language.",
+          "is_correct": false
+        },
+        {
+          "text": "RAG eliminates the need for any human oversight.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "RAG connects the LLM to a trusted external source (like your handbook). This forces the model to answer based on your documents, reducing hallucinations and ensuring answers reflect current company policy.",
+      "conceptTested": "RAG (Retrieval-Augmented Generation)"
+    },
+    {
+      "id": "pq_l03_hr_manager_09",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "A junior HR staff member is struggling to get good results from an LLM when generating interview questions. They type: 'Give me interview questions.' You advise them to use 'Chain of Thought' prompting. What does this look like?",
+      "options": [
+        {
+          "text": "Asking the same question five times in a row.",
+          "is_correct": false
+        },
+        {
+          "text": "Asking the model to break down the steps it takes to determine the competencies before writing the questions.",
+          "is_correct": true
+        },
+        {
+          "text": "Providing the model with a list of 50 banned words.",
+          "is_correct": false
+        },
+        {
+          "text": "Asking the model to write the questions in Python code.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Chain of Thought prompting encourages the model to 'show its work' or reason through a problem step-by-step. This usually results in higher quality, more logical outputs for complex tasks.",
+      "conceptTested": "Prompt Engineering Strategies"
+    },
+    {
+      "id": "pq_l03_hr_manager_10",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are evaluating a vendor who claims their 'HR-GPT' tool has been 'Fine-Tuned' for HR tasks. What does this technically imply compared to a base model?",
+      "options": [
+        {
+          "text": "It has been trained further on a specific dataset of HR-related text to improve performance in that domain.",
+          "is_correct": true
+        },
+        {
+          "text": "It has a larger context window than any other model.",
+          "is_correct": false
+        },
+        {
+          "text": "It is connected to the internet to search for real-time laws.",
+          "is_correct": false
+        },
+        {
+          "text": "It generates text faster but with lower accuracy.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Fine-tuning involves taking a pre-trained base model and training it further on a smaller, specific dataset (like HR policies or legal texts) to specialize its behavior and knowledge for that domain.",
+      "conceptTested": "Fine-Tuning"
+    },
+    {
+      "id": "pq_l03_product_manager_01",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are explaining the core mechanism of your new AI writing assistant to stakeholders. One executive asks how the model knows which word should come next in a sentence. Which explanation best describes the underlying probabilistic nature of the LLM?",
+      "options": [
+        {
+          "text": "The model accesses a database of grammar rules and dictionary definitions to select the most grammatically correct word.",
+          "is_correct": false
+        },
+        {
+          "text": "The model predicts the next token based on the statistical likelihood of it following the previous sequence of tokens, learned from training data.",
+          "is_correct": true
+        },
+        {
+          "text": "The model searches the live internet for similar sentences and copies the next word found in the most reliable source.",
+          "is_correct": false
+        },
+        {
+          "text": "The model uses a rigid decision tree created by linguists to determine the next word based on sentence structure.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs differ from traditional rule-based systems because they are probabilistic engines that predict the next token (part of a word) based on statistical patterns learned during pre-training, not by looking up hard-coded rules or live internet searches.",
+      "conceptTested": "Next-Token Prediction"
+    },
+    {
+      "id": "pq_l03_product_manager_02",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your team is building a chatbot for customer support. A developer mentions that the model is struggling because the input 'contract' is being treated differently than 'Contract'. You suspect this is an issue at the very first step of the LLM pipeline. What process is likely responsible?",
+      "options": [
+        {
+          "text": "Tokenization",
+          "is_correct": true
+        },
+        {
+          "text": "Temperature Scaling",
+          "is_correct": false
+        },
+        {
+          "text": "Reinforcement Learning",
+          "is_correct": false
+        },
+        {
+          "text": "Vector Embedding",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Tokenization is the process of breaking text into smaller units (tokens) for the model to process. Case sensitivity issues often arise here if the tokenizer treats capitalized and lowercase versions of the same word as entirely distinct IDs.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l03_product_manager_03",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are reviewing the API costs for a new document summarization feature. Your engineering lead mentions that costs are calculated based on 'tokens' rather than words. For a rough budget estimation, which heuristic should you generally apply for English text?",
+      "options": [
+        {
+          "text": "1 token is approximately 10 words.",
+          "is_correct": false
+        },
+        {
+          "text": "1 token is exactly 1 character.",
+          "is_correct": false
+        },
+        {
+          "text": "1,000 tokens is approximately 750 words.",
+          "is_correct": true
+        },
+        {
+          "text": "1 token is exactly 1 word.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "A common rule of thumb in LLM pricing and capacity planning is that 1,000 tokens equal roughly 750 words. Tokens can be parts of words, whole words, or even spaces, so they rarely map 1:1 with words.",
+      "conceptTested": "Token Economics"
+    },
+    {
+      "id": "pq_l03_product_manager_04",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your product allows users to upload 50-page legal PDFs for analysis. Users are complaining that the AI 'forgets' the beginning of the document when answering questions about the end. What technical constraint is the primary cause of this issue?",
+      "options": [
+        {
+          "text": "The model's temperature setting is too high.",
+          "is_correct": false
+        },
+        {
+          "text": "The document exceeds the model's Context Window.",
+          "is_correct": true
+        },
+        {
+          "text": "The model was not fine-tuned on legal data.",
+          "is_correct": false
+        },
+        {
+          "text": "The inference latency is too high.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The Context Window is the maximum amount of text (measured in tokens) the model can consider at one time. If the document exceeds this limit, the beginning is truncated or 'pushes out' earlier information, causing the model to lose track of the start.",
+      "conceptTested": "Context Window"
+    },
+    {
+      "id": "pq_l03_product_manager_05",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your team is launching a medical advice chatbot. During testing, the bot confidently invents a fake medical study to support an answer. You need to explain this risk to legal. What is the industry term for this phenomenon?",
+      "options": [
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Catastrophic Forgetting",
+          "is_correct": false
+        },
+        {
+          "text": "Vanishing Gradient",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination occurs when an LLM generates output that sounds plausible and confident but is factually incorrect or nonsensical. It is a critical risk to manage in high-stakes domains like healthcare.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l03_product_manager_06",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are building a specialized internal tool to query a massive proprietary HR database. The base model (GPT-4) answers well but lacks knowledge of your specific company policies. You need the model to answer accurately based *only* on your documents. Which approach is most appropriate and cost-effective initially?",
+      "options": [
+        {
+          "text": "Train a new Foundation Model from scratch using your HR data.",
+          "is_correct": false
+        },
+        {
+          "text": "Use RAG (Retrieval-Augmented Generation) to inject relevant policy snippets into the prompt.",
+          "is_correct": true
+        },
+        {
+          "text": "Perform Full Fine-Tuning (FFT) on the model to memorize the database.",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the temperature parameter to make the model more creative.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "RAG is the standard approach for connecting LLMs to private data. It retrieves relevant information and provides it as context, which is cheaper and more reliable for factual retrieval than fine-tuning (which is better for style/behavior) or training from scratch (which is prohibitively expensive).",
+      "conceptTested": "RAG vs. Fine-Tuning"
+    },
+    {
+      "id": "pq_l03_product_manager_07",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your team is adjusting the 'creativity' of a marketing copy generator. The engineers ask you to define the default 'Temperature' setting. If you want the output to be highly deterministic, focused, and consistent every time a user clicks 'Generate', what value should you choose?",
+      "options": [
+        {
+          "text": "Temperature = 0.9",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature = 1.5",
+          "is_correct": false
+        },
+        {
+          "text": "Temperature = 0.1",
+          "is_correct": true
+        },
+        {
+          "text": "Temperature = -1.0",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Low temperature (closer to 0) makes the model pick the most likely next token, resulting in deterministic and repetitive outputs. High temperature (closer to 1) introduces randomness and creativity. Negative temperature is not a standard parameter.",
+      "conceptTested": "Inference Parameters (Temperature)"
+    },
+    {
+      "id": "pq_l03_product_manager_08",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are weighing the trade-offs between two models for a real-time chat application: Model A (7 billion parameters) and Model B (70 billion parameters). Assuming similar architecture, which analysis of the trade-offs is most accurate?",
+      "options": [
+        {
+          "text": "Model A will have higher latency and cost more to run, but will be smarter.",
+          "is_correct": false
+        },
+        {
+          "text": "Model B will generally have higher reasoning capabilities but will incur higher inference costs and latency.",
+          "is_correct": true
+        },
+        {
+          "text": "Model A and Model B will have identical costs, but Model B requires more storage space.",
+          "is_correct": false
+        },
+        {
+          "text": "Model B allows for a larger context window simply because it has more parameters.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Larger models (more parameters) generally exhibit better reasoning and knowledge retrieval but require more computational power (GPU) to run, leading to higher costs and slower response times (latency). Context window size is architectural and not strictly defined by parameter count.",
+      "conceptTested": "Model Size Trade-offs"
+    },
+    {
+      "id": "pq_l03_product_manager_09",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your company wants to fine-tune an open-source model (Llama-3) to speak in your brand's specific 'voice'. However, you have a limited budget for GPU compute. Your data scientist suggests 'PEFT' (Parameter-Efficient Fine-Tuning). Why is this the correct strategic choice compared to full fine-tuning?",
+      "options": [
+        {
+          "text": "PEFT updates only a small subset of the model's weights (adapters), significantly reducing the computational load while achieving similar results.",
+          "is_correct": true
+        },
+        {
+          "text": "PEFT compresses the training data into smaller tokens so the model learns faster.",
+          "is_correct": false
+        },
+        {
+          "text": "PEFT removes the need for a validation set, cutting the project timeline in half.",
+          "is_correct": false
+        },
+        {
+          "text": "PEFT automatically cleans the data for hallucinations, saving time on data preparation.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Full fine-tuning requires updating all billions of parameters, which is computationally massive. PEFT (like LoRA) freezes most of the model and only trains small adapter layers, making it feasible to fine-tune large models on consumer-grade or lower-cost hardware.",
+      "conceptTested": "Fine-Tuning Strategies (PEFT)"
+    },
+    {
+      "id": "pq_l03_product_manager_10",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are the PM for a code-generation tool. The model is built on the Transformer architecture. A user asks why the model is so much better at understanding the relationship between a variable declared on line 1 and its usage on line 50 compared to older RNN (Recurrent Neural Network) models. Which Transformer mechanism is primarily responsible for this long-range dependency handling?",
+      "options": [
+        {
+          "text": "Reinforcement Learning from Human Feedback (RLHF)",
+          "is_correct": false
+        },
+        {
+          "text": "Self-Attention Mechanism",
+          "is_correct": true
+        },
+        {
+          "text": "Backpropagation",
+          "is_correct": false
+        },
+        {
+          "text": "Gradient Descent",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The 'Attention' mechanism (specifically Self-Attention) allows the Transformer to weigh the importance of different words in a sequence relative to each other, regardless of distance. This allows it to maintain context between line 1 and line 50 much better than RNNs, which process data sequentially and suffer from 'forgetting' over long distances.",
+      "conceptTested": "Transformer Architecture (Attention)"
+    },
+    {
+      "id": "pq_l03_software_engineer_01",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are debugging an LLM application where users are complaining that the model's output gets cut off abruptly in the middle of a sentence when processing very long documents. You suspect the issue is related to the model's limitations. What is the most likely technical constraint causing this issue?",
+      "options": [
+        {
+          "text": "The model's temperature parameter is set too low.",
+          "is_correct": false
+        },
+        {
+          "text": "The input and output combined exceeded the model's context window limit.",
+          "is_correct": true
+        },
+        {
+          "text": "The model has suffered from catastrophic forgetting during fine-tuning.",
+          "is_correct": false
+        },
+        {
+          "text": "The tokenizer is using an incompatible vocabulary size.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs have a fixed context window (measured in tokens) that limits the total amount of text they can process at once (input prompt + generated output). If the sum exceeds this limit, the output is often truncated. Temperature affects randomness, not length limits.",
+      "conceptTested": "Context Window"
+    },
+    {
+      "id": "pq_l03_software_engineer_02",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your team is building a chatbot to answer questions about a private, internal API documentation set that the base LLM was never trained on. You need the model to answer accurately based ONLY on this new data. Which approach is most appropriate for this specific requirement?",
+      "options": [
+        {
+          "text": "Increase the model's parameter count to improve general reasoning.",
+          "is_correct": false
+        },
+        {
+          "text": "Use Retrieval-Augmented Generation (RAG) to inject relevant documentation into the prompt.",
+          "is_correct": true
+        },
+        {
+          "text": "Pre-train a new Foundation Model from scratch using only the API docs.",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the temperature to encourage the model to be more creative with the docs.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "RAG is the standard pattern for grounding LLMs in private or up-to-date data without expensive retraining. Pre-training from scratch is computationally prohibitive for just API docs, and increasing parameters doesn't help with unknown data.",
+      "conceptTested": "RAG vs. Training"
+    },
+    {
+      "id": "pq_l03_software_engineer_03",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are calculating the cost of using a hosted LLM API. The pricing is based on 'tokens'. You input the string 'shipping_address' into the tokenizer. Roughly how many tokens is this likely to be, and why?",
+      "options": [
+        {
+          "text": "1 token, because tokenizers treat whole words as single units.",
+          "is_correct": false
+        },
+        {
+          "text": "16 tokens, because there is 1 token per character.",
+          "is_correct": false
+        },
+        {
+          "text": "2-3 tokens, because sub-word tokenizers often split common words and underscores.",
+          "is_correct": true
+        },
+        {
+          "text": "0.5 tokens, because structured data is compressed by the tokenizer.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Modern tokenizers (like BPE or WordPiece) break text into sub-words. 'shipping_address' would likely be split into parts like 'shipping', '_', and 'address', or similar chunks. It is rarely 1:1 with characters or whole words.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l03_software_engineer_04",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are fine-tuning an open-source model to write Python code. During the training process, you notice the validation loss is decreasing, but when you test the model, it can write Python well but has completely lost the ability to write SQL, which it could do previously. What phenomenon is this?",
+      "options": [
+        {
+          "text": "Hallucination",
+          "is_correct": false
+        },
+        {
+          "text": "Catastrophic Forgetting",
+          "is_correct": true
+        },
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Vanishing Gradient",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Catastrophic Forgetting occurs when a neural network forgets previously learned information (SQL) upon learning new information (Python) during fine-tuning. This is distinct from overfitting, which is performing well on training data but poor on unseen data.",
+      "conceptTested": "Catastrophic Forgetting"
+    },
+    {
+      "id": "pq_l03_software_engineer_05",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are designing the architecture for a text summarization tool. You need to explain to a stakeholder why Transformer models are better at handling long-range dependencies (connecting the start of a paragraph to the end) compared to older RNNs. What key mechanism enables this?",
+      "options": [
+        {
+          "text": "Sequential processing of tokens one by one.",
+          "is_correct": false
+        },
+        {
+          "text": "The Self-Attention mechanism allows the model to weigh the relevance of every token to every other token simultaneously.",
+          "is_correct": true
+        },
+        {
+          "text": "The use of Convolutional layers to pool features.",
+          "is_correct": false
+        },
+        {
+          "text": "Higher learning rates during the pre-training phase.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The key innovation of the Transformer is Self-Attention, which calculates relationships between all tokens in a sequence in parallel, regardless of distance. RNNs process sequentially, leading to memory issues over long distances.",
+      "conceptTested": "Transformer Architecture (Self-Attention)"
+    },
+    {
+      "id": "pq_l03_software_engineer_06",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are implementing a feature that generates creative marketing copy. Users complain the output is too repetitive and deterministic. You want to introduce more variety into the word choices. Which parameter adjustment should you prioritize?",
+      "options": [
+        {
+          "text": "Decrease the Temperature.",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the Temperature.",
+          "is_correct": true
+        },
+        {
+          "text": "Increase the Context Window.",
+          "is_correct": false
+        },
+        {
+          "text": "Switch to a smaller model size.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Temperature controls the randomness of the token sampling. A higher temperature (closer to 1.0) flattens the probability distribution, making lower-probability tokens more likely to be selected, increasing creativity and variety.",
+      "conceptTested": "Inference Parameters (Temperature)"
+    },
+    {
+      "id": "pq_l03_software_engineer_07",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "A junior engineer asks you about the 'Pre-training' phase of an LLM like GPT-4. They assume the model is being supervised by humans labeling data as 'correct' or 'incorrect'. How do you correct this misconception regarding the primary training objective?",
+      "options": [
+        {
+          "text": "Pre-training is actually Reinforcement Learning from Human Feedback (RLHF).",
+          "is_correct": false
+        },
+        {
+          "text": "Pre-training uses self-supervised learning where the objective is simply 'next-token prediction' based on vast raw text.",
+          "is_correct": true
+        },
+        {
+          "text": "Pre-training relies on adversarial networks (GANs) to generate text.",
+          "is_correct": false
+        },
+        {
+          "text": "Humans manually write the rules for grammar and logic before the model sees data.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The fundamental pre-training objective of a decoder-only LLM is self-supervised: predicting the next token in a sequence given the previous tokens. RLHF usually happens *after* pre-training to align the model.",
+      "conceptTested": "Pre-training Objectives"
+    },
+    {
+      "id": "pq_l03_software_engineer_08",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are evaluating an LLM for a medical advice chatbot. You observe that when asked about a fake medication called 'CureAllX', the model confidently generates a list of side effects and dosage instructions. What is this behavior called?",
+      "options": [
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Gradient Explosion",
+          "is_correct": false
+        },
+        {
+          "text": "Token bias",
+          "is_correct": false
+        },
+        {
+          "text": "Emergent Behavior",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Hallucination is when an LLM generates content that is nonsensical or unfaithful to the source/reality but is presented confidently. The model is predicting plausible-sounding text patterns rather than retrieving facts.",
+      "conceptTested": "Hallucination"
+    },
+    {
+      "id": "pq_l03_software_engineer_09",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You need to select a model for a latency-sensitive autocomplete application where users are typing code in real-time. You are deciding between a 7-billion parameter model and a 70-billion parameter model. Assuming hardware is sufficient for both, which trade-off is most critical to your decision?",
+      "options": [
+        {
+          "text": "The 70B model will have lower latency because it is smarter.",
+          "is_correct": false
+        },
+        {
+          "text": "The 7B model will likely have lower inference latency and cost, but potentially lower reasoning capability.",
+          "is_correct": true
+        },
+        {
+          "text": "The 70B model has a smaller vocabulary size, making it faster.",
+          "is_correct": false
+        },
+        {
+          "text": "The 7B model cannot handle code syntax.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Inference latency generally scales with model size (parameter count). For real-time autocomplete, a smaller model (7B) is preferred for speed, even if it is slightly less capable in complex reasoning than a huge model (70B).",
+      "conceptTested": "Model Size vs. Latency"
+    },
+    {
+      "id": "pq_l03_software_engineer_10",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "Your application prompts an LLM to extract JSON data from emails. Occasionally, the model returns text that looks like JSON but includes conversational filler (e.g., 'Here is the JSON: { ... }'). This breaks your parser. Which technique is the most reliable engineering fix for this?",
+      "options": [
+        {
+          "text": "Train a new foundation model on JSON files only.",
+          "is_correct": false
+        },
+        {
+          "text": "Use Few-Shot Prompting to show the model examples of strictly raw JSON output.",
+          "is_correct": true
+        },
+        {
+          "text": "Increase the Top-P parameter to 1.0.",
+          "is_correct": false
+        },
+        {
+          "text": "Use a regex to strip all whitespace from the response.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Few-Shot Prompting (providing examples of input-output pairs in the prompt context) is a powerful technique to steer the format and style of the output without retraining. It explicitly shows the model that no conversational filler is desired.",
+      "conceptTested": "Prompt Engineering (Few-Shot)"
+    },
+    {
+      "id": "pq_l03_sales_representative_01",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are drafting a cold email to a prospect in the healthcare industry using ChatGPT. You ask the model, 'Write a sales email to a hospital CEO.' The output is generic and doesn't mention your company's specific medical device compliance features. What is the most likely reason for this generic output?",
+      "options": [
+        {
+          "text": "The model is currently offline and using cached data.",
+          "is_correct": false
+        },
+        {
+          "text": "The prompt lacked specific context and instructions about your product and the target audience's pain points.",
+          "is_correct": true
+        },
+        {
+          "text": "LLMs are inherently unable to write about specialized industries like healthcare.",
+          "is_correct": false
+        },
+        {
+          "text": "The model determines that cold emails are unethical and refuses to write a persuasive one.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs operate on 'garbage in, garbage out.' Without specific context (your product details) and instruction (focus on compliance), the model relies on its general training data, resulting in generic output. It is not an issue of connectivity or capability.",
+      "conceptTested": "Prompt Engineering Basics (Context)"
+    },
+    {
+      "id": "pq_l03_sales_representative_02",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "A potential client asks a technical question about your software's API integration during a live chat. You copy the question into an LLM tool to generate a quick answer. The LLM confidently provides a specific line of code that looks correct, but your engineering team later says that code doesn't exist in your product. What phenomenon did you just experience?",
+      "options": [
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Tokenization error",
+          "is_correct": false
+        },
+        {
+          "text": "Data leakage",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination occurs when an LLM generates information that sounds plausible and confident but is factually incorrect or fabricated. Sales reps must verify technical claims generated by AI before sending them to clients.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l03_sales_representative_03",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You want to use an LLM to summarize a transcript of a sales call to update your CRM. The transcript contains the client's credit card number and personal home address. What is the safest course of action regarding data privacy?",
+      "options": [
+        {
+          "text": "Upload the full transcript immediately to save time.",
+          "is_correct": false
+        },
+        {
+          "text": "Ask the LLM to promise not to store the data before pasting it.",
+          "is_correct": false
+        },
+        {
+          "text": "Anonymize or redact the sensitive PII (Personally Identifiable Information) before pasting the transcript into the public LLM.",
+          "is_correct": true
+        },
+        {
+          "text": "Use a private browser window, which automatically encrypts all data sent to the LLM.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Public LLMs may use input data for training. The standard best practice for sales reps is to remove PII (Personally Identifiable Information) like financial details or addresses before inputting data, to prevent data leakage.",
+      "conceptTested": "Data Privacy & Security"
+    },
+    {
+      "id": "pq_l03_sales_representative_04",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are using an AI tool to brainstorm objection-handling scripts for a new product. You type: 'What do I say if they say it's too expensive?' The model provides a response. How did the model essentially generate this answer?",
+      "options": [
+        {
+          "text": "It accessed a live database of current competitor pricing models.",
+          "is_correct": false
+        },
+        {
+          "text": "It predicted the most statistically likely sequence of words based on patterns it learned during training.",
+          "is_correct": true
+        },
+        {
+          "text": "It performed a Google search and copy-pasted the top result.",
+          "is_correct": false
+        },
+        {
+          "text": "It used a logical reasoning engine to calculate the optimal psychological negotiation tactic.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs are probabilistic engines, not search engines or logic calculators. They generate text by predicting the next token (word/part of word) based on patterns seen in their vast training data.",
+      "conceptTested": "LLM Fundamentals (Next-Token Prediction)"
+    },
+    {
+      "id": "pq_l03_sales_representative_05",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You have a 50-page PDF of a Request for Proposal (RFP) from a government client. You want to know if your company meets the 'Security Requirements' listed on page 42. You paste the text of the RFP into a chat window, but the model cuts you off and says the message is too long. What constraint have you hit?",
+      "options": [
+        {
+          "text": "The Context Window limit",
+          "is_correct": true
+        },
+        {
+          "text": "The Parameter limit",
+          "is_correct": false
+        },
+        {
+          "text": "The Training Data cutoff",
+          "is_correct": false
+        },
+        {
+          "text": "The Hallucination threshold",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Every LLM has a 'Context Window,' which is the maximum amount of text (measured in tokens) the model can process at one time (including both your input and its output). Exceeding this limit results in errors or truncated text.",
+      "conceptTested": "Technical Constraints (Context Window)"
+    },
+    {
+      "id": "pq_l03_sales_representative_06",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are crafting a prompt to generate a discovery call script. You decide to assign the AI a 'persona' by typing: 'Act as an expert enterprise software sales consultant with 20 years of experience using the SPIN selling methodology.' Why is this an effective strategy?",
+      "options": [
+        {
+          "text": "It increases the processing speed of the model.",
+          "is_correct": false
+        },
+        {
+          "text": "It forces the model to verify facts against a specific database.",
+          "is_correct": false
+        },
+        {
+          "text": "It narrows the model's probabilistic focus to a specific style and tone, improving the relevance of the output.",
+          "is_correct": true
+        },
+        {
+          "text": "It unlocks paid features of the model that are otherwise hidden.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Assigning a persona primes the model to access specific subsets of its training data related to that role (e.g., professional tone, specific sales methodologies). This is a core prompt engineering technique to get higher-quality responses.",
+      "conceptTested": "Prompt Engineering (Persona Adoption)"
+    },
+    {
+      "id": "pq_l03_sales_representative_07",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "A sales manager notices that her team is using ChatGPT to write follow-up emails. However, she realizes the emails sound very robotic and use the exact same phrases like 'I hope this email finds you well' repeatedly. How should the team adjust their usage of the LLM?",
+      "options": [
+        {
+          "text": "Stop using LLMs and go back to writing everything manually.",
+          "is_correct": false
+        },
+        {
+          "text": "Iterate on the prompt by asking the LLM to 'revise for a casual, conversational tone' or provide examples of the rep's own writing style.",
+          "is_correct": true
+        },
+        {
+          "text": "Ask the LLM to write longer emails to hide the robotic phrases.",
+          "is_correct": false
+        },
+        {
+          "text": "Switch to a different LLM, as only ChatGPT has this issue.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs tend to revert to 'average' or formal language. The solution is 'Iterative Prompting'\u2014refining the output by giving feedback on tone or providing 'few-shot' examples of the desired writing style to guide the model.",
+      "conceptTested": "Iterative Prompting / Style Transfer"
+    },
+    {
+      "id": "pq_l03_sales_representative_08",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You ask an AI tool, 'Who is the current VP of Marketing at Coca-Cola?' to find a prospect. The model returns a name, but when you check LinkedIn, that person left the company three years ago. Why did this happen?",
+      "options": [
+        {
+          "text": "The model is biased against Coca-Cola.",
+          "is_correct": false
+        },
+        {
+          "text": "The model's training data has a 'knowledge cutoff' date, meaning it does not know about events or changes happening after it was trained.",
+          "is_correct": true
+        },
+        {
+          "text": "You didn't ask politely enough.",
+          "is_correct": false
+        },
+        {
+          "text": "The model is confusing Coca-Cola with Pepsi.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Most base LLMs are not connected to the live internet; they rely on static training data that has a cutoff date. For real-time data like job roles, stock prices, or recent news, a standard LLM is unreliable without browsing capabilities.",
+      "conceptTested": "Knowledge Cutoffs / Static Data"
+    },
+    {
+      "id": "pq_l03_sales_representative_09",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "You are analyzing a quarterly sales report. You paste the raw CSV data into an Advanced Data Analysis LLM tool and ask for 'insights.' The model notes a correlation between discount rates and churn that you hadn't noticed. How should you treat this insight?",
+      "options": [
+        {
+          "text": "Immediately present it to the VP of Sales as a fact.",
+          "is_correct": false
+        },
+        {
+          "text": "Ignore it, as LLMs cannot do math.",
+          "is_correct": false
+        },
+        {
+          "text": "Use the insight as a hypothesis, but verify the numbers manually or with Excel before making strategic decisions.",
+          "is_correct": true
+        },
+        {
+          "text": "Ask the model to write a resignation letter for the person responsible for the churn.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "While LLMs (especially those with code interpreters) are getting better at analysis, they can still make logical errors or misinterpret data structures. A human in the loop is required to verify the analysis before high-stakes business decisions are made.",
+      "conceptTested": "Human in the Loop / Verification"
+    },
+    {
+      "id": "pq_l03_sales_representative_10",
+      "lessonId": "l03_why_outputs_vary",
+      "text": "A client sends you an email written in German. You don't speak German. You use an LLM to translate it to English so you can reply. Which capability of the LLM are you primarily leveraging here?",
+      "options": [
+        {
+          "text": "Content Generation",
+          "is_correct": false
+        },
+        {
+          "text": "Transformation / Translation",
+          "is_correct": true
+        },
+        {
+          "text": "Summarization",
+          "is_correct": false
+        },
+        {
+          "text": "Semantic Search",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs excel at transformation tasks, which include rewriting text in a different format or translating between languages. This preserves the original meaning while changing the representation.",
+      "conceptTested": "LLM Capabilities (Transformation)"
+    },
+    {
+      "id": "pq_l01_software_engineer_01",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are debugging an LLM-based chatbot that occasionally outputs nonsense words or interprets simple words incorrectly. Upon inspecting the input pipeline, you notice raw text is being fed directly into the model's neural network layers without preprocessing. What critical step is missing?",
+      "options": [
+        {
+          "text": "Temperature Scaling",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization",
+          "is_correct": true
+        },
+        {
+          "text": "Beam Search",
+          "is_correct": false
+        },
+        {
+          "text": "Positional Encoding",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Neural networks cannot process raw text strings; they require numerical input. Tokenization is the process of breaking text into smaller units (tokens) and mapping them to numerical IDs, which is the prerequisite for generating embeddings.",
+      "conceptTested": "Tokenization"
+    },
+    {
+      "id": "pq_l01_software_engineer_02",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are building a semantic search engine for a documentation site. You need to store the documentation in a vector database so that users can find relevant articles even if they don't use the exact keywords (e.g., searching 'login issues' finds 'authentication errors'). Which model output should you store in the database?",
+      "options": [
+        {
+          "text": "The final softmax probabilities",
+          "is_correct": false
+        },
+        {
+          "text": "The raw token IDs",
+          "is_correct": false
+        },
+        {
+          "text": "The vector embeddings",
+          "is_correct": true
+        },
+        {
+          "text": "The attention weights",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Embeddings are dense vector representations where semantically similar text is located close together in vector space. This allows for semantic search, unlike raw tokens (integers) or softmax probabilities (predictions).",
+      "conceptTested": "Vector Embeddings"
+    },
+    {
+      "id": "pq_l01_software_engineer_03",
+      "lessonId": "l01_what_llms_are",
+      "text": "An engineer asks you why LLMs are called 'autoregressive' models. Which of the following scenarios best demonstrates this property?",
+      "options": [
+        {
+          "text": "The model generates an entire paragraph of text simultaneously in parallel.",
+          "is_correct": false
+        },
+        {
+          "text": "The model predicts the next token based on all previous tokens, then appends that prediction to the input to predict the subsequent token.",
+          "is_correct": true
+        },
+        {
+          "text": "The model analyzes the sentiment of a sentence by looking at it from both left-to-right and right-to-left at the same time.",
+          "is_correct": false
+        },
+        {
+          "text": "The model retrains itself automatically on the data provided by the user during the chat session.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Autoregressive generation means the model's output at time step *t* becomes part of the input for time step *t+1*. LLMs generate text one token at a time, strictly relying on the sequence generated so far.",
+      "conceptTested": "Autoregressive Generation"
+    },
+    {
+      "id": "pq_l01_software_engineer_04",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are fine-tuning a code generation model. You notice that the model struggles to understand the relationship between a variable declared at the top of a long file and its usage 200 lines later. Which architectural component is likely the bottleneck or limitation here?",
+      "options": [
+        {
+          "text": "The Context Window / Attention Mechanism",
+          "is_correct": true
+        },
+        {
+          "text": "The Tokenizer vocabulary size",
+          "is_correct": false
+        },
+        {
+          "text": "The Loss Function (Cross-Entropy)",
+          "is_correct": false
+        },
+        {
+          "text": "The Temperature setting",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "The Attention mechanism allows the model to weigh the importance of different tokens relative to each other. If the context window is too small or the attention mechanism cannot span the distance, the model loses the 'context' of the earlier variable declaration.",
+      "conceptTested": "Attention Mechanism & Context Window"
+    },
+    {
+      "id": "pq_l01_software_engineer_05",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are implementing a creative writing assistant feature. Users complain that the story generation is too boring, repetitive, and deterministic, often repeating the most obvious phrases. What parameter adjustment should you recommend to increase creativity?",
+      "options": [
+        {
+          "text": "Decrease the Temperature (closer to 0)",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the Temperature (e.g., to 0.7 or 0.9)",
+          "is_correct": true
+        },
+        {
+          "text": "Increase the batch size",
+          "is_correct": false
+        },
+        {
+          "text": "Switch from a Transformer to an RNN",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Temperature controls the randomness of token selection. Low temperature makes the model greedy (deterministic), selecting the most probable next token. Increasing temperature flattens the probability distribution, allowing the model to choose less probable, more 'creative' tokens.",
+      "conceptTested": "Temperature & Sampling"
+    },
+    {
+      "id": "pq_l01_software_engineer_06",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are optimizing the inference cost for a summarization app. You are choosing between a model with a 4k context window and an 8k context window. The average document size is 6,000 tokens. If you choose the 4k model and simply truncate the input, what is the most likely risk?",
+      "options": [
+        {
+          "text": "The model will hallucinate facts not present in the text.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will fail to output any JSON format.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will miss critical information located at the end of the document.",
+          "is_correct": true
+        },
+        {
+          "text": "The model's perplexity score will increase to infinity.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "The context window is the hard limit on how much text the model can 'see' at once. Truncation discards data. If the input exceeds the window (6k > 4k), the tokenizer typically truncates the end (or beginning), causing the model to lose access to that portion of the document completely.",
+      "conceptTested": "Context Window Limits"
+    },
+    {
+      "id": "pq_l01_software_engineer_07",
+      "lessonId": "l01_what_llms_are",
+      "text": "A junior engineer proposes removing the 'Positional Encodings' from your Transformer architecture to save memory, arguing that the Self-Attention mechanism already sees all tokens. Why would you reject this proposal?",
+      "options": [
+        {
+          "text": "Positional encodings are required to calculate the loss function.",
+          "is_correct": false
+        },
+        {
+          "text": "Without them, the model treats the input as a 'bag of words' and cannot distinguish 'The dog bit the man' from 'The man bit the dog'.",
+          "is_correct": true
+        },
+        {
+          "text": "Positional encodings are necessary for tokenization to work.",
+          "is_correct": false
+        },
+        {
+          "text": "Removing them would actually increase memory usage due to sparse matrix operations.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "The Self-Attention mechanism is permutation-invariant; it calculates relationships between tokens regardless of their order. Positional encodings inject information about the order/sequence of tokens, which is crucial for understanding syntax and meaning in language.",
+      "conceptTested": "Positional Encoding"
+    },
+    {
+      "id": "pq_l01_software_engineer_08",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are designing a system to classify customer support tickets. You decide to use a pre-trained LLM solely to generate features, which you then feed into a simple Logistic Regression classifier. Which internal state of the LLM are you effectively extracting?",
+      "options": [
+        {
+          "text": "The Feed-Forward Network weights",
+          "is_correct": false
+        },
+        {
+          "text": "The learned Embeddings (hidden states)",
+          "is_correct": true
+        },
+        {
+          "text": "The Tokenizer logic",
+          "is_correct": false
+        },
+        {
+          "text": "The Temperature parameters",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "In this architecture, the LLM acts as a feature extractor. You pass text through the LLM to get the vector embeddings (hidden states), which contain the dense semantic understanding of the text. These vectors are then used as numerical input features for the classifier.",
+      "conceptTested": "LLMs as Feature Extractors"
+    },
+    {
+      "id": "pq_l01_software_engineer_09",
+      "lessonId": "l01_what_llms_are",
+      "text": "During a code review, you see a configuration for `Top-P` (Nucleus Sampling) set to 0.9 alongside a `Temperature` of 1.0. How does the `Top-P` setting modify the model's token selection process compared to using Temperature alone?",
+      "options": [
+        {
+          "text": "It forces the model to only consider the top 90% most probable tokens for the next step, cutting off the long tail of low-probability options.",
+          "is_correct": true
+        },
+        {
+          "text": "It scales the probabilities so that the top token is 90% likely to be chosen.",
+          "is_correct": false
+        },
+        {
+          "text": "It ensures that 90% of the generated tokens are unique.",
+          "is_correct": false
+        },
+        {
+          "text": "It acts as a penalty for repeating words within the last 90 tokens.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Top-P (Nucleus Sampling) dynamically creates a candidate pool of tokens whose cumulative probability exceeds P (0.9). This effectively removes the 'long tail' of very unlikely tokens, preventing the model from going completely off-track while still allowing for variety within the plausible options.",
+      "conceptTested": "Top-P (Nucleus) Sampling"
+    },
+    {
+      "id": "pq_l01_software_engineer_10",
+      "lessonId": "l01_what_llms_are",
+      "text": "You are analyzing the computational complexity of the Self-Attention layer in a Transformer model as you scale up the input sequence length ($N$). If you double the input sequence length from 4k to 8k tokens, roughly how does the computational cost of the attention mechanism change?",
+      "options": [
+        {
+          "text": "It increases linearly ($O(N)$), so it doubles.",
+          "is_correct": false
+        },
+        {
+          "text": "It increases quadratically ($O(N^2)$), so it quadruples.",
+          "is_correct": true
+        },
+        {
+          "text": "It remains constant ($O(1)$).",
+          "is_correct": false
+        },
+        {
+          "text": "It increases logarithmically ($O(log N)$).",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Standard Self-Attention calculates the relationship between *every* token and *every other* token. This results in an $N \times N$ matrix, leading to quadratic complexity ($O(N^2)$). Doubling the sequence length (2x) results in $2^2 = 4x$ the compute/memory cost.",
+      "conceptTested": "Complexity of Attention"
+    },
+    {
+      "id": "pq_l02_hr_manager_01",
+      "lessonId": "l02_tokens_context",
+      "text": "You are drafting a complex job description for a new 'Chief AI Officer' role. You ask ChatGPT to write it, but the output is generic and misses your company's unique culture. To improve the result based on LLM fundamentals, what is the most effective immediate step?",
+      "options": [
+        {
+          "text": "Ask the model to rewrite it in Python code to force logic.",
+          "is_correct": false
+        },
+        {
+          "text": "Provide the model with examples of previous successful job descriptions and a paragraph describing your company culture.",
+          "is_correct": true
+        },
+        {
+          "text": "Wait 24 hours and try the exact same prompt again to get a fresh response.",
+          "is_correct": false
+        },
+        {
+          "text": "Increase the word count limit in your request to 5,000 words.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs function as next-token predictors that rely heavily on context. By providing 'few-shot' examples and specific context about culture, you guide the probability distribution toward the desired style. Waiting or increasing word count does not fix the lack of context.",
+      "conceptTested": "Context & Few-Shot Prompting"
+    },
+    {
+      "id": "pq_l02_hr_manager_02",
+      "lessonId": "l02_tokens_context",
+      "text": "An HR team member suggests uploading the last 5 years of employee exit interview transcripts (which contain names and grievances) into a free, public version of ChatGPT to identify retention trends. What is the primary LLM risk here?",
+      "options": [
+        {
+          "text": "The LLM will hallucinate and invent fake employees.",
+          "is_correct": false
+        },
+        {
+          "text": "The model will become sentient and judge the company's retention strategy.",
+          "is_correct": false
+        },
+        {
+          "text": "Data leakage, as the public model may use this sensitive training data to answer future queries from other users.",
+          "is_correct": true
+        },
+        {
+          "text": "The text volume will break the internet connection.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Public LLMs often use input data for training. Uploading PII (Personally Identifiable Information) creates a severe privacy risk where sensitive data could be exposed. Hallucination is a risk, but the *primary* security concern here is data privacy.",
+      "conceptTested": "Data Privacy & Security"
+    },
+    {
+      "id": "pq_l02_hr_manager_03",
+      "lessonId": "l02_tokens_context",
+      "text": "You ask an LLM to 'List the top 5 candidates for the Marketing Director role' from a pile of resumes you pasted in. The LLM lists 5 names, but one name includes a certification that does not exist on their resume. What is this phenomenon called?",
+      "options": [
+        {
+          "text": "Data poisoning",
+          "is_correct": false
+        },
+        {
+          "text": "Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Overfitting",
+          "is_correct": false
+        },
+        {
+          "text": "Tokenization error",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Hallucination occurs when an LLM generates information that sounds plausible and authoritative but is factually incorrect or not present in the source text. It is predicting likely words, not retrieving facts.",
+      "conceptTested": "Hallucinations"
+    },
+    {
+      "id": "pq_l02_hr_manager_04",
+      "lessonId": "l02_tokens_context",
+      "text": "You are using an LLM to draft rejection letters. You notice that the letters generated for candidates with non-Western names tend to be colder in tone than those for Western names, despite using the same prompt instructions. This is likely an example of:",
+      "options": [
+        {
+          "text": "Algorithmic Bias rooted in the model's training data.",
+          "is_correct": true
+        },
+        {
+          "text": "A software bug in the browser you are using.",
+          "is_correct": false
+        },
+        {
+          "text": "The model intentionally discriminating against candidates.",
+          "is_correct": false
+        },
+        {
+          "text": "The 'temperature' setting being too high.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "LLMs are trained on vast amounts of internet text which contain societal biases. The model reproduces these statistical patterns (bias) unless specifically guard railed. It is not 'intentional' malice by the software.",
+      "conceptTested": "Bias in LLMs"
+    },
+    {
+      "id": "pq_l02_hr_manager_05",
+      "lessonId": "l02_tokens_context",
+      "text": "A manager asks you how an LLM actually 'thinks' when answering HR policy questions. Which analogy best describes the fundamental mechanism of an LLM?",
+      "options": [
+        {
+          "text": "It is a search engine that looks up the exact answer in a database.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a calculator that uses strict logical formulas to derive truth.",
+          "is_correct": false
+        },
+        {
+          "text": "It is a prediction engine that guesses the most likely next word based on patterns it learned during training.",
+          "is_correct": true
+        },
+        {
+          "text": "It is a conscious digital assistant that understands meaning like a human.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "At their core, LLMs are probabilistic engines designed to predict the next token (part of a word) in a sequence. They do not 'know' facts or search databases like Google; they generate text based on statistical likelihood.",
+      "conceptTested": "Next-Token Prediction"
+    },
+    {
+      "id": "pq_l02_hr_manager_06",
+      "lessonId": "l02_tokens_context",
+      "text": "You want to implement an internal AI chatbot to answer employee questions about benefits (e.g., 'What is my dental deductible?'). Why is a standard, out-of-the-box LLM (like base GPT-4) insufficient for this specific task without modification?",
+      "options": [
+        {
+          "text": "The LLM does not understand English well enough.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM's training data has a cutoff date and does not know your company's specific, private insurance documents.",
+          "is_correct": true
+        },
+        {
+          "text": "LLMs cannot process numbers or currency.",
+          "is_correct": false
+        },
+        {
+          "text": "Employees will refuse to talk to a robot.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Base models are trained on public internet data up to a specific date. They have zero knowledge of private company documents (like your specific 2024 Benefits Guide) unless that data is provided via RAG (Retrieval-Augmented Generation) or fine-tuning.",
+      "conceptTested": "Knowledge Cutoff & Private Data"
+    },
+    {
+      "id": "pq_l02_hr_manager_07",
+      "lessonId": "l02_tokens_context",
+      "text": "You are reviewing a vendor's proposal for an 'AI-Powered Resume Screener.' They claim their LLM has 'Zero Bias' because they removed names from the resumes. Based on your knowledge of LLM associations, why might this claim be false?",
+      "options": [
+        {
+          "text": "It is impossible to remove names from PDF files.",
+          "is_correct": false
+        },
+        {
+          "text": "The LLM might still correlate proxy variables (like zip codes, college names, or hobbies) with protected characteristics.",
+          "is_correct": true
+        },
+        {
+          "text": "The LLM will refuse to read resumes without names.",
+          "is_correct": false
+        },
+        {
+          "text": "Zero bias is easily achievable, so the claim is likely true.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Removing explicit identifiers (like names) does not remove bias. LLMs pick up on subtle correlations (proxies) in the training data, such as associating certain universities or vocabulary with gender or ethnicity, leading to continued biased outputs.",
+      "conceptTested": "Bias & Proxy Variables"
+    },
+    {
+      "id": "pq_l02_hr_manager_08",
+      "lessonId": "l02_tokens_context",
+      "text": "You are tasked with summarizing 50 pages of new labor law compliance updates into a one-page memo for the executive team. Which LLM capability is best suited for this, and what is the main risk to watch for?",
+      "options": [
+        {
+          "text": "Capability: Text Generation. Risk: Bias.",
+          "is_correct": false
+        },
+        {
+          "text": "Capability: Summarization. Risk: Hallucination (inventing laws that don't exist).",
+          "is_correct": true
+        },
+        {
+          "text": "Capability: Sentiment Analysis. Risk: Being too emotional.",
+          "is_correct": false
+        },
+        {
+          "text": "Capability: Translation. Risk: Wrong language.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Summarization is a core strength of LLMs. However, the risk of hallucination is high when dealing with factual/legal documents; the model might misinterpret a clause or confidentially state a regulation that doesn't actually exist in the text.",
+      "conceptTested": "Summarization & Risks"
+    },
+    {
+      "id": "pq_l02_hr_manager_09",
+      "lessonId": "l02_tokens_context",
+      "text": "An employee complains that the internal HR bot gave them the wrong advice about maternity leave, causing them to miss a deadline. The bot's answer 'sounded very confident.' This illustrates which dangerous characteristic of LLMs?",
+      "options": [
+        {
+          "text": "Stochastic Parrots",
+          "is_correct": false
+        },
+        {
+          "text": "Confident Hallucination",
+          "is_correct": true
+        },
+        {
+          "text": "Data Leakage",
+          "is_correct": false
+        },
+        {
+          "text": "Prompt Injection",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "LLMs do not have a measure of uncertainty. Even when they are factually wrong, they generate text with the same statistical confidence as when they are right, making misinformation harder for users to spot.",
+      "conceptTested": "Confidence vs. Accuracy"
+    },
+    {
+      "id": "pq_l02_hr_manager_10",
+      "lessonId": "l02_tokens_context",
+      "text": "You paste a sensitive employee performance review into an LLM and ask it to 'make this sound more professional.' To protect privacy while still getting the benefit of the tool, what should you have done first?",
+      "options": [
+        {
+          "text": "Sanitization/Anonymization: Replace names and specific identifiers with placeholders (e.g., [Employee Name]).",
+          "is_correct": true
+        },
+        {
+          "text": "Tokenization: Break the text into characters manually.",
+          "is_correct": false
+        },
+        {
+          "text": "Encryption: Encrypt the text into a code so the LLM can't read it.",
+          "is_correct": false
+        },
+        {
+          "text": "Nothing, performance reviews aren't considered sensitive data.",
+          "is_correct": false
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Before sending data to any cloud-based LLM, PII must be sanitized. If you encrypt it (Option C), the LLM cannot process the language to improve the tone. Sanitization allows the LLM to work on the language structure without exposing the individual's identity.",
+      "conceptTested": "Data Anonymization"
+    }
+  ]
+}

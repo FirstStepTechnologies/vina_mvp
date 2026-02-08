@@ -1,0 +1,32 @@
+Starting API Tests at 2026-02-08 17:11:24.359392
+Target: http://localhost:8000/api/v1
+------------------------------------------------------------
+✅ PASS: [POST] /auth/register - Status: 201 (Expected: 201) - 0.696s
+   Got Access Token.
+✅ PASS: [PATCH] /user/profile - Status: 200 (Expected: 200) - 0.007s
+   Updated profile to 'HR Manager'.
+✅ PASS: [POST] /auth/login - Status: 200 (Expected: 200) - 0.239s
+✅ PASS: [GET] /user/profile - Status: 200 (Expected: 200) - 0.002s
+   User ID: 661c5c2a-8dea-4ebb-b812-a8586a19f123
+   Profession: HR Manager
+✅ PASS: [PATCH] /user/profile - Status: 200 (Expected: 200) - 0.004s
+✅ PASS: [GET] /user/profile - Status: 200 (Expected: 200) - 0.002s
+   ✅ Update persisted correctly.
+✅ PASS: [GET] /user/progress - Status: 200 (Expected: 200) - 0.040s
+✅ PASS: [POST] /user/progress/sync - Status: 200 (Expected: 200) - 0.005s
+✅ PASS: [GET] /course/map - Status: 200 (Expected: 200) - 0.003s
+   Retrieved 7 lessons.
+   Checking video availability for Lessons 1-3 (Persona-specific)...
+✅ PASS: [GET] /lessons/l01_what_llms_are?difficulty=1 - Status: 200 (Expected: 200) - 0.005s
+   ✅ Lesson l01_what_llms_are (D1): https://res.cloudinary.com/dary9m194/video/upload/v1770565456/vina_lessons/hr_manager_tech_company_beginner_d1_gemini-3-pro-preview_c_llm_foundations_l01_what_llms_are.mp4
+✅ PASS: [GET] /lessons/l02_tokens_context?difficulty=3 - Status: 200 (Expected: 200) - 0.002s
+   ✅ Lesson l02_tokens_context (D3): https://res.cloudinary.com/dary9m194/video/upload/v1770565248/vina_lessons/hr_manager_tech_company_beginner_d3_gemini-3-pro-preview_c_llm_foundations_l02_tokens_context.mp4
+✅ PASS: [GET] /lessons/l03_prompting_basics?difficulty=5 - Status: 200 (Expected: 200) - 0.002s
+   ✅ Lesson l03_prompting_basics (D5): https://res.cloudinary.com/dary9m194/video/upload/v1770565340/vina_lessons/hr_manager_tech_company_beginner_d5_gemini-3-pro-preview_c_llm_foundations_l03_why_outputs_vary.mp4
+   ✅ Found working videos for 3/3 target lessons.
+✅ PASS: [POST] /user/progress/lesson/l01_what_llms_are/complete - Status: 200 (Expected: 200) - 0.004s
+✅ PASS: [GET] /assessment/pre-quiz - Status: 200 (Expected: 200) - 0.037s
+✅ PASS: [POST] /assessment/submit - Status: 200 (Expected: 200) - 0.003s
+✅ PASS: [POST] /user/profile/reset-pathway - Status: 200 (Expected: 200) - 0.003s
+------------------------------------------------------------
+Tests Completed.
