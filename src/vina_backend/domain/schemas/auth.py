@@ -17,13 +17,15 @@ class UserLogin(BaseModel):
 
 
 class User(BaseModel):
-    userId: UUID
+    id: UUID
     email: EmailStr
     fullName: str
-    createdAt: datetime
-    profession: Optional[str] = None
+    onboardingResponses: Optional[dict] = None
+    resolution: Optional[str] = None
+    dailyGoalMinutes: Optional[int] = None
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user: Optional[User] = None

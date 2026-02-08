@@ -115,11 +115,13 @@ def submit_assessment(
     
     starting_lesson = "l01_what_llms_are"
     placement = "Beginner"
+    difficulty_level = 1
     lessons_to_skip = []
     
     if score >= 4:
         starting_lesson = "l06_bias_issues"
         placement = "Advanced"
+        difficulty_level = 5
         lessons_to_skip = [
             "l01_what_llms_are", 
             "l02_tokens_context", 
@@ -130,6 +132,7 @@ def submit_assessment(
     elif score >= 2:
         starting_lesson = "l04_where_llms_excel"
         placement = "Intermediate"
+        difficulty_level = 3
         lessons_to_skip = [
             "l01_what_llms_are", 
             "l02_tokens_context", 
@@ -143,6 +146,7 @@ def submit_assessment(
         new_completed = list(current_completed.union(set(lessons_to_skip)))
         
         current_user.progress.completed_lessons = new_completed
+        current_user.progress.current_difficulty = difficulty_level
         current_user.progress.diamonds += 50 # Initial bonus
         
         session.add(current_user.progress)

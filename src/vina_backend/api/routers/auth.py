@@ -44,7 +44,22 @@ def register(user_data: UserRegister, session: Session = Depends(get_session)):
     
     # 4. Token
     access_token = create_access_token(subject=str(new_user.id))
-    return Token(access_token=access_token, token_type="bearer")
+    
+    # Map to frontend schema
+    user_resp = {
+        "id": new_user.id,
+        "email": new_user.email,
+        "fullName": new_user.full_name,
+        "onboardingResponses": new_profile.onboarding_responses if new_profile else {},
+        "resolution": new_profile.resolution if new_profile else "",
+        "dailyGoalMinutes": new_profile.daily_goal_minutes if new_profile else 15
+    }
+    
+    return Token(
+        access_token=access_token, 
+        token_type="bearer",
+        user=user_resp
+    )
 
 
 @router.post("/login", response_model=Token)
@@ -59,10 +74,25 @@ def login(login_data: UserLogin, session: Session = Depends(get_session)):
     # Simple password check
     if login_data.password and user.hashed_password:
          if not verify_password(login_data.password, user.hashed_password):
-             raise HTTPException(status_code=400, detail="Incorrect email or password")
+              raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif user.hashed_password and not login_data.password:
          # User has PW but didn't provide it
          raise HTTPException(status_code=400, detail="Password required")
     
     access_token = create_access_token(subject=str(user.id))
-    return Token(access_token=access_token, token_type="bearer")
+    
+    # Map to frontend schema
+    user_resp = {
+        "id": user.id,
+        "email": user.email,
+        "fullName": user.full_name,
+        "onboardingResponses": user.profile.onboarding_responses if user.profile else {},
+        "resolution": user.profile.resolution if user.profile else "",
+        "dailyGoalMinutes": user.profile.daily_goal_minutes if user.profile else 15
+    }
+    
+    return Token(
+        access_token=access_token, 
+        token_type="bearer",
+        user=user_resp
+    )

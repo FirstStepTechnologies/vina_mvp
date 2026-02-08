@@ -41,7 +41,8 @@ def get_progress(current_user: User = Depends(get_current_user)):
         completed_lessons=p.completed_lessons or [],
         daily_goal_history=p.daily_goal_history or {},
         lesson_scores=scores,
-        current_difficulty=p.current_difficulty
+        current_difficulty=p.current_difficulty,
+        minutes_total=p.minutes_total
     )
 
 
@@ -70,6 +71,7 @@ def sync_progress(
             p.minutes_today += sync_data.minutes_added
             
         p.minutes_this_week += sync_data.minutes_added
+        p.minutes_total += sync_data.minutes_added
 
     if sync_data.diamonds_earned > 0:
         p.diamonds += sync_data.diamonds_earned

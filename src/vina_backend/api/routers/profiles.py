@@ -35,6 +35,7 @@ def _map_profile_to_response(user: User) -> UserProfileResponse:
             profession=p.profession or "Unassigned",
             industry=p.industry or "Unassigned",
             experience_level=p.experience_level or "Beginner",
+            leadership_level=p.leadership_level or "Individual Contributor",
             daily_responsibilities=p.daily_responsibilities,
             pain_points=p.pain_points,
             typical_outputs=p.typical_outputs,
@@ -51,9 +52,11 @@ def _map_profile_to_response(user: User) -> UserProfileResponse:
     return UserProfileResponse(
         profile=profile_data,
         generated_from_cache=False,
-        user_id=str(user.id),
+        id=str(user.id),
         email=user.email,
-        created_at=user.created_at.isoformat()
+        created_at=user.created_at.isoformat(),
+        resolution=profile_data.resolution,
+        dailyGoalMinutes=profile_data.daily_goal_minutes
     )
 
 
@@ -75,21 +78,22 @@ def update_profile(
         raise HTTPException(status_code=404, detail="Profile not found")
         
     # Allowed updates whitelist (simple implementation)
-    allowed_fields = {"daily_goal_minutes", "resolution", "profession", "industry"}
+    allowed_fields = {
+        "daily_goal_minutes", "resolution", "profession", "industry", 
+        "experience_level", "leadership_level", "onboarding_responses"
+    }
     
-    # Map camelCase from frontend to snake_case if needed, or assume frontend sends correct keys
-    # Frontend sends: "dailyGoalMinutes" -> backend "daily_goal_minutes"
-    # We should handle this key mapping or ask frontend to send snake_case.
-    # PROPOSAL: Handle mapping here for robustness.
+    # Map camelCase from frontend to snake_case if needed
     key_map = {
         "dailyGoalMinutes": "daily_goal_minutes",
-        "role": "profession" # Frontend uses 'role' sometimes
+        "role": "profession",
+        "experience": "experience_level",
+        "level": "leadership_level"
     }
     
     for key, value in updates.items():
         db_key = key_map.get(key, key)
-        if hasattr(profile, db_key):
-             # Basic type validation could go here
+        if db_key in allowed_fields and hasattr(profile, db_key):
              setattr(profile, db_key, value)
     
     session.add(profile)

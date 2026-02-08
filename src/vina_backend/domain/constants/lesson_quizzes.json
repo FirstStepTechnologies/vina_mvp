@@ -84,6 +84,261 @@
         }
       ],
       "passThreshold": 2
+    },
+    "Clinical Researcher": {
+      "lessonId": "l01_what_llms_are",
+      "profession": "Clinical Researcher",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask an LLM to explain a specific exclusion criterion regarding 'uncontrolled hypertension' from a protocol you haven't uploaded. The tool generates a very convincing paragraph citing a generic ICH-GCP guideline that doesn't actually exist. Why did the model do this?",
+          "options": [
+            {
+              "text": "The model accessed an outdated version of the ICH-GCP guidelines from its training database.",
+              "is_correct": false
+            },
+            {
+              "text": "The model found a similar exclusion criterion in a different trial's protocol on the internet and copied it.",
+              "is_correct": false
+            },
+            {
+              "text": "The model predicted a statistically likely sequence of words that sounded like regulatory language, without 'knowing' the facts.",
+              "is_correct": true
+            },
+            {
+              "text": "The model experienced a software bug that corrupted the correct regulatory citation.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "LLMs are not knowledge databases; they are statistical engines that predict the next likely word. Because regulatory language follows very specific patterns, the model can easily generate text that *sounds* compliant and authoritative but is factually fabricated\u2014a phenomenon often called a 'hallucination.'",
+          "conceptTested": "llm_mechanism_prediction",
+          "rationale": "Tests understanding of the fundamental mechanism (statistical prediction vs. database retrieval) using a regulatory context."
+        },
+        {
+          "id": "q2",
+          "text": "You are drafting a query for a site investigator regarding a missing concomitant medication date. You ask an LLM to 'write a polite query based on the patient's history.' The LLM includes a specific date (Jan 12th) that appears nowhere in the source data. What is the primary risk here?",
+          "options": [
+            {
+              "text": "The LLM has violated patient privacy by accessing external medical records to find the date.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM has generated a plausible-sounding hallucination that could lead to a data integrity issue if you paste it without verification.",
+              "is_correct": true
+            },
+            {
+              "text": "The LLM is biased against the site investigator and is trying to make the query more aggressive.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM is confusing the date format (DD/MM/YYYY) with the US format, causing a transcription error.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "This is a classic example of an LLM functioning as 'autocomplete on steroids.' It filled in the blank with a likely-looking date to complete the sentence pattern. For a Clinical Researcher, the danger is that this hallucinated detail looks like a fact, threatening the integrity of the query resolution log.",
+          "conceptTested": "hallucination_application_risk",
+          "rationale": "Tests the ability to recognize how the 'plausible but wrong' nature of LLMs manifests in daily tasks like query generation."
+        },
+        {
+          "id": "q3",
+          "text": "You want to use an LLM to help summarize a Site Monitoring Visit Report (SVR) to highlight pending action items. Given that LLMs work by predicting text patterns rather than verifying facts, what is the safest workflow?",
+          "options": [
+            {
+              "text": "Ask the LLM to draft the SVR from scratch based on its training data of standard monitoring reports.",
+              "is_correct": false
+            },
+            {
+              "text": "Input the raw notes, have the LLM format them, and assume accuracy since you provided the source text.",
+              "is_correct": false
+            },
+            {
+              "text": "Use the LLM to draft the summary, then manually cross-reference every claim against your source notes and the EDC system.",
+              "is_correct": true
+            },
+            {
+              "text": "Only use the LLM for checking spelling and grammar, as it cannot understand clinical context at all.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Because LLMs generate text based on probability, they can inadvertently change a 'Yes' to a 'No' or alter a timeline if that pattern seems statistically stronger. You must treat the LLM output as a draft requiring verification against source data (EDC/EMR) to ensure GCP compliance.",
+          "conceptTested": "mitigation_strategy",
+          "rationale": "Tests the ability to choose a safe workflow that mitigates the risk of hallucinations in critical documentation."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Project Manager": {
+      "lessonId": "l01_what_llms_are",
+      "profession": "Project Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask an LLM to explain 'Velocity Tracking' to a non-technical stakeholder. It produces a clear definition but invents a formula for calculating velocity that doesn't exist in standard Scrum methodology. Why did this error occur?",
+          "options": [
+            {
+              "text": "The LLM accessed an outdated Agile database that contained deprecated formulas.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM predicted a sequence of words that looked statistically probable based on math-like patterns, rather than verifying the factual formula.",
+              "is_correct": true
+            },
+            {
+              "text": "The LLM intentionally simplified the formula to make it easier for the non-technical stakeholder to understand.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM experienced a software bug in its calculation module while processing the request.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs do not 'know' formulas or access databases; they are statistical engines that predict the next likely word. Because math formulas follow specific structural patterns, the LLM generated a sequence that *looked* like a formula but was factually meaningless\u2014a classic hallucination.",
+          "conceptTested": "llm_mechanism_prediction",
+          "rationale": "Tests if the PM understands that LLMs generate content based on probability, not factual knowledge retrieval."
+        },
+        {
+          "id": "q2",
+          "text": "You are drafting a risk assessment for an upcoming Executive Status Deck. You ask an AI tool to list 'common risks for API integration projects.' The output looks professional and confident, listing five risks. However, one of the risks cites a specific outage event at a competitor that never actually happened. What is the specific danger here for a Project Manager?",
+          "options": [
+            {
+              "text": "The AI is biased against the competitor and is trying to damage their reputation.",
+              "is_correct": false
+            },
+            {
+              "text": "The AI has confused two different real-world events due to poor prompt engineering.",
+              "is_correct": false
+            },
+            {
+              "text": "The text sounds so plausible and authoritative that you might include it in the executive deck without verifying, damaging your credibility.",
+              "is_correct": true
+            },
+            {
+              "text": "The AI is programmed to prioritize dramatic scenarios over realistic ones to make the report more engaging.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Because LLMs are trained on massive amounts of text, they excel at adopting a professional, authoritative tone. This 'plausibility trap' is dangerous for PMs because false information (hallucinations) can easily sneak into high-stakes executive communications if not rigorously fact-checked.",
+          "conceptTested": "plausibility_risk",
+          "rationale": "Tests if the PM recognizes the specific danger of 'sounding right' versus 'being right' in a high-stakes reporting context."
+        },
+        {
+          "id": "q3",
+          "text": "You want to use an LLM to help convert a complex technical engineering update into a user-friendly update for a Product Owner. Given how LLMs work, which approach minimizes the risk of the AI misrepresenting the technical constraints?",
+          "options": [
+            {
+              "text": "Ask the LLM to research the engineering terms online first, then write the update based on what it finds.",
+              "is_correct": false
+            },
+            {
+              "text": "Paste the engineer's raw notes into the prompt and ask the LLM to 'rewrite this for a non-technical audience' while verifying the output against the original notes.",
+              "is_correct": true
+            },
+            {
+              "text": "Ask the LLM to predict what the engineering team likely achieved based on the Sprint Goal and write the update from scratch.",
+              "is_correct": false
+            },
+            {
+              "text": "Trust the LLM to generate the update without input data, as it has likely been trained on similar project management scenarios.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs are 'autocomplete on steroids'\u2014they are best at transforming existing text rather than generating facts from thin air. By providing the source material (the engineer's notes) and treating the LLM as a translator rather than a researcher, you constrain its statistical predictions to the content you provided, significantly reducing the chance of fabrication.",
+          "conceptTested": "mitigation_strategy",
+          "rationale": "Tests if the PM can apply knowledge of LLM limitations to choose a safe workflow for stakeholder communication."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Marketing Manager": {
+      "lessonId": "l01_what_llms_are",
+      "profession": "Marketing Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are experimenting with an LLM to draft copy for a new product launch email campaign. You ask it to \"write a catchy subject line based on our brand voice.\" How is the AI actually generating this subject line?",
+          "options": [
+            {
+              "text": "It is accessing a live database of current email marketing trends to find the highest-converting subject lines from the last 24 hours.",
+              "is_correct": false
+            },
+            {
+              "text": "It is predicting the next most statistically likely word one by one, based on patterns it learned during its training on massive amounts of text.",
+              "is_correct": true
+            },
+            {
+              "text": "It is understanding the semantic meaning of 'catchy' and 'brand voice' like a human copywriter would, and creating a unique idea from scratch.",
+              "is_correct": false
+            },
+            {
+              "text": "It is searching Google for your competitors' recent emails and slightly modifying their text to avoid plagiarism.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs function like 'autocomplete on steroids.' They don't 'know' your brand or access live databases; they simply predict which words typically follow each other based on statistical patterns. This helps you understand why the output might sound generic or clich\u00e9 without specific prompting.",
+          "conceptTested": "llm_definition_prediction",
+          "rationale": "Tests if the learner understands the fundamental mechanism (next-word prediction) versus common misconceptions (live search, human understanding)."
+        },
+        {
+          "id": "q2",
+          "text": "You ask an AI tool to generate a report summarizing the 'pros and cons' of a competitor's new SaaS product for a quarterly strategy deck. The output looks very professional, but it mentions a 'severe data breach' the competitor suffered last year. You've never heard of this breach. What is the most likely explanation?",
+          "options": [
+            {
+              "text": "The LLM has access to insider information or dark web data that hasn't hit mainstream news outlets yet.",
+              "is_correct": false
+            },
+            {
+              "text": "The competitor likely scrubbed the internet of the news story, but the AI remembers the cached version from before it was deleted.",
+              "is_correct": false
+            },
+            {
+              "text": "The model has hallucinated the breach because the words 'competitor' and 'data breach' frequently appear together in its training data, creating a plausible but false narrative.",
+              "is_correct": true
+            },
+            {
+              "text": "The AI is confusing this competitor with another company that has a similar name, pulling facts from the wrong database entry.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Because LLMs prioritize plausible-sounding sentences over factual accuracy, they can confidently invent events (hallucinations). The model isn't retrieving a fact; it's completing a pattern where 'tech company analysis' often leads to 'discussion of security flaws,' regardless of truth.",
+          "conceptTested": "hallucination_recognition_application",
+          "rationale": "Tests if the learner can recognize a specific work scenario (competitor analysis) where an LLM might generate a 'hallucination'\u2014a plausible but false statement."
+        },
+        {
+          "id": "q3",
+          "text": "Your team is using an LLM to generate SEO-optimized blog posts at scale to improve organic traffic. Given what you now know about how LLMs work (predicting patterns, not checking facts), what is the most critical strategic step to add to your workflow?",
+          "options": [
+            {
+              "text": "Require a human subject matter expert to review every post for factual accuracy and brand alignment before publishing.",
+              "is_correct": true
+            },
+            {
+              "text": "Instruct the prompt to 'only use 100% verified facts' to force the model to switch off its creative mode.",
+              "is_correct": false
+            },
+            {
+              "text": "Run the content through a grammar checker to ensure the statistical predictions formed complete sentences.",
+              "is_correct": false
+            },
+            {
+              "text": "Use the LLM only for internal brainstorming, as it is technically impossible for an LLM to write content that ranks on Google.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "Since LLMs generate text based on probability rather than knowledge, they can write convincing but factually incorrect advice. You cannot 'turn off' this behavior with a prompt alone. Human-in-the-loop verification is essential to protect brand reputation and ensuring the content provides real value.",
+          "conceptTested": "mitigation_strategy",
+          "rationale": "Tests if the learner can apply their knowledge of LLM limitations to create a safe workflow for high-volume content generation."
+        }
+      ],
+      "passThreshold": 2
     }
   },
   "l02_tokens_context": {
@@ -171,6 +426,261 @@
         }
       ],
       "passThreshold": 2
+    },
+    "Clinical Researcher": {
+      "lessonId": "l02_tokens_context",
+      "profession": "Clinical Researcher",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are attempting to upload a massive master protocol document (400 pages) into a standard LLM to ask it to verify specific inclusion criteria. However, the model returns an error saying the input is too long. What is the fundamental technical reason for this?",
+          "options": [
+            {
+              "text": "The file size in megabytes exceeds the model's server storage capacity.",
+              "is_correct": false
+            },
+            {
+              "text": "The document exceeds the model's context window, which is measured in tokens (chunks of text), not pages.",
+              "is_correct": true
+            },
+            {
+              "text": "The model is hallucinating an error because it cannot read PDF formatting correctly.",
+              "is_correct": false
+            },
+            {
+              "text": "The document contains confidential patient data, triggering an automatic privacy block.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs do not process text by 'pages' or 'files,' but by tokens (roughly 3/4 of a word). Every model has a hard limit on how many tokens it can process at once\u2014its 'context window.' A 400-page protocol likely exceeds the token limit of many standard models.",
+          "conceptTested": "token_definition",
+          "rationale": "Tests if the learner understands that 'length' to an LLM is defined by tokens and context windows, not file size or page count."
+        },
+        {
+          "id": "q2",
+          "text": "You have been using an LLM thread for three weeks to help draft responses to a Site Monitoring Visit Report. In the beginning, you pasted the specific protocol deviations. Now, when you ask the model to 'summarize the deviations mentioned earlier,' it invents new deviations that weren't in your original text. Why is this happening?",
+          "options": [
+            {
+              "text": "The conversation has exceeded the model's context window, causing the earliest information (the deviations) to be pushed out of its 'memory.'",
+              "is_correct": true
+            },
+            {
+              "text": "The model has learned from other clinical trials online and is confusing your study with a similar one.",
+              "is_correct": false
+            },
+            {
+              "text": "The model has become biased because you asked too many questions about non-compliance.",
+              "is_correct": false
+            },
+            {
+              "text": "The LLM servers are down for maintenance, causing it to generate random placeholder text.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "Context windows act like a sliding window of short-term memory. Once a conversation thread gets too long (in tokens), the model literally drops the oldest parts of the conversation to make room for new text. It is 'hallucinating' new deviations because it has forgotten the real ones you pasted weeks ago.",
+          "conceptTested": "context_window_forgetting",
+          "rationale": "Tests the learner's understanding that long conversations eventually cause data loss (forgetting) due to context window limits."
+        },
+        {
+          "id": "q3",
+          "text": "You need to analyze 50 individual Serious Adverse Event (SAE) reports to identify common trends for a safety update, but the total text count is 150,000 words\u2014far exceeding your LLM's 8,000 token limit. What is the most effective strategy to get an accurate summary?",
+          "options": [
+            {
+              "text": "Upload the documents one by one and ask the model to 'learn' them permanently for future use.",
+              "is_correct": false
+            },
+            {
+              "text": "Ask the model to increase its context window for this specific session.",
+              "is_correct": false
+            },
+            {
+              "text": "Paste only the first 10 reports, assuming they are representative of the whole study population.",
+              "is_correct": false
+            },
+            {
+              "text": "Chunk the reports into smaller batches (e.g., 5 at a time), summarize each batch, and then ask the LLM to summarize those summaries.",
+              "is_correct": true
+            }
+          ],
+          "correctAnswer": "D",
+          "explanation": "Since you cannot fit 150,000 words into an 8k token window, you must manually 'chunk' the data. By summarizing small batches first, you reduce the token count to a manageable size, allowing the final summary to fit within the context window while retaining the key safety signals.",
+          "conceptTested": "chunking_strategy",
+          "rationale": "Tests if the learner can apply a mitigation strategy (chunking) when faced with a context window limitation in a real-world workflow."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Project Manager": {
+      "lessonId": "l02_tokens_context",
+      "profession": "Project Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are drafting a complex Status Update Deck for leadership and decide to paste your entire 20-page backlog, 15 pages of meeting minutes, and 30 pages of technical specs into an LLM to generate a summary. The model returns an error or simply cuts off mid-sentence. What is the most likely technical reason for this failure?",
+          "options": [
+            {
+              "text": "The LLM has a 'Context Window' limit, and your combined input text exceeded the number of tokens it can hold in memory at one time.",
+              "is_correct": true
+            },
+            {
+              "text": "The LLM is hallucinating because the technical specs contain engineering jargon that the model was never trained on.",
+              "is_correct": false
+            },
+            {
+              "text": "The input text was formatted incorrectly; LLMs can only process text that is structured as JSON or markdown tables.",
+              "is_correct": false
+            },
+            {
+              "text": "The internet connection timed out because the file size of the text was too large for the bandwidth.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "LLMs have a fixed 'context window'\u2014a maximum limit on the amount of text (measured in tokens) they can process in a single interaction. Just like a sprint has a limited capacity for story points, an LLM has a limited capacity for information. If you exceed this, the model 'overflows' and fails.",
+          "conceptTested": "context_window_definition",
+          "rationale": "Tests if the learner understands the fundamental constraint of the context window using a realistic documentation-heavy scenario."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an LLM to help groom the backlog. You paste in a User Story about 'Login Authentication' at the start of the chat. After 40 minutes of back-and-forth conversation discussing 15 other complex features, you ask the model to 'update the acceptance criteria for that first login story.' The model hallucinates or gives generic advice unrelated to your specific project. Why did this happen?",
+          "options": [
+            {
+              "text": "The model has updated its training data during your chat and replaced your specific story with general internet knowledge.",
+              "is_correct": false
+            },
+            {
+              "text": "The conversation grew too long, pushing the initial 'Login Authentication' prompt out of the context window (working memory).",
+              "is_correct": true
+            },
+            {
+              "text": "You didn't use the specific keyword 'Jira' in your prompt, so the model forgot it was acting as a Project Manager.",
+              "is_correct": false
+            },
+            {
+              "text": "LLMs are designed to prioritize the most recent 500 words and intentionally delete anything older to save server costs.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "When a conversation exceeds the context window, the model starts 'forgetting' the earliest parts of the chat to make room for new messages\u2014a First-In-First-Out mechanic. In a long grooming session, critical details provided at the start may simply 'fall off' the edge of its memory.",
+          "conceptTested": "context_window_sliding_nature",
+          "rationale": "Tests application of the concept in a workflow scenario (backlog grooming) showing how length of conversation impacts retrieval."
+        },
+        {
+          "id": "q3",
+          "text": "Your VP of Engineering wants a cost estimate for using an LLM API to automatically generate release notes from all Jira tickets in the last quarter. She asks, 'How do we calculate the cost based on the volume of text?' Based on your knowledge of how LLMs process data, what is the correct metric to use?",
+          "options": [
+            {
+              "text": "We calculate cost based on the total number of sentences, regardless of length.",
+              "is_correct": false
+            },
+            {
+              "text": "We calculate cost based on the total number of characters (letters and spaces), similar to a tweet.",
+              "is_correct": false
+            },
+            {
+              "text": "We calculate cost based on 'tokens,' where 1,000 tokens is roughly equivalent to 750 words.",
+              "is_correct": true
+            },
+            {
+              "text": "We calculate cost based on the number of distinct user queries sent to the API.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "LLMs process text in chunks called 'tokens,' not words or characters. For budgeting purposes, a standard rule of thumb is that 1,000 tokens equal about 750 words. Understanding this conversion is crucial for estimating API costs or usage limits for project budgets.",
+          "conceptTested": "token_definition_calculation",
+          "rationale": "Tests strategy and practical knowledge regarding resource estimation, a key PM responsibility."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Marketing Manager": {
+      "lessonId": "l02_tokens_context",
+      "profession": "Marketing Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are drafting copy for an upcoming holiday email campaign using an AI tool. You have a strict character limit for the subject line. How should you estimate the 'cost' of your prompt and the AI's output in terms of processing usage?",
+          "options": [
+            {
+              "text": "By counting every single character, including spaces, as exactly one unit of processing.",
+              "is_correct": false
+            },
+            {
+              "text": "By understanding that the AI processes text in 'tokens,' where 1,000 tokens is roughly equivalent to 750 words.",
+              "is_correct": true
+            },
+            {
+              "text": "By counting the number of sentences, as AI processes text one full sentence at a time.",
+              "is_correct": false
+            },
+            {
+              "text": "By assuming the input is free and you are only charged for the words the AI generates.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs measure text in tokens, not strict word or character counts. A good rule of thumb for budgeting and usage estimation is that 1,000 tokens equal about 750 words (or 1 token is roughly 0.75 words).",
+          "conceptTested": "token_definition",
+          "rationale": "Tests basic understanding of the fundamental unit (tokens) relevant to budgeting and usage limits."
+        },
+        {
+          "id": "q2",
+          "text": "You are feeding an LLM a massive CSV file containing 12 months of customer journey data from Google Analytics to generate a quarterly performance report. Midway through the analysis, the AI stops referencing data from Q1 and only discusses Q3 and Q4. What is likely happening?",
+          "options": [
+            {
+              "text": "The AI has determined that the Q1 data is statistically insignificant compared to Q4 trends.",
+              "is_correct": false
+            },
+            {
+              "text": "The CSV file format is incompatible with the AI's internal database structure.",
+              "is_correct": false
+            },
+            {
+              "text": "The conversation or file size exceeded the 'context window,' causing the model to 'forget' the earliest data (Q1) to make room for new information.",
+              "is_correct": true
+            },
+            {
+              "text": "The AI is hallucinating new data because it prefers recency over historical accuracy.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "Every LLM has a 'context window' limit. If your input (the full year of data) exceeds this limit (e.g., 8k or 32k tokens), the model drops the earliest information (Q1) to process the later parts, effectively 'forgetting' the start of your document.",
+          "conceptTested": "context_window_limit",
+          "rationale": "Tests application of the context window concept in a realistic data analysis scenario."
+        },
+        {
+          "id": "q3",
+          "text": "You are using an AI assistant to refine the SEO strategy for a new product line. The strategy document is 80 pages long. How should you approach feeding this into an LLM to ensure the final output considers the *entire* strategy?",
+          "options": [
+            {
+              "text": "Copy and paste the entire 80-page document into a single prompt to ensure the model sees the 'big picture' all at once.",
+              "is_correct": false
+            },
+            {
+              "text": "Break the document into smaller, thematic chunks (e.g., 'Competitor Analysis,' 'Keywords,' 'Content Plan') and process them sequentially or in separate threads.",
+              "is_correct": true
+            },
+            {
+              "text": "Ask the AI to access your company's private SharePoint server directly to read the file, bypassing the context window entirely.",
+              "is_correct": false
+            },
+            {
+              "text": "Summarize the document into three bullet points yourself, as LLMs cannot handle more than a few paragraphs of context.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "Since an 80-page document likely exceeds standard context windows, the best strategy is chunking. By breaking the strategy deck into logical sections, you ensure the LLM processes each part accurately without 'forgetting' previous sections due to memory constraints.",
+          "conceptTested": "chunking_strategy",
+          "rationale": "Tests strategic mitigation for exceeding context windows when handling large marketing documents."
+        }
+      ],
+      "passThreshold": 2
     }
   },
   "l03_why_outputs_vary": {
@@ -255,6 +765,261 @@
           "explanation": "When you need diversity of thought or creative brainstorming, higher temperature settings allow the model to take more 'risks' in its word prediction. This moves the output away from the most statistically probable (boring) answers and towards novel, creative ideas.",
           "conceptTested": "temperature_application_high",
           "rationale": "Tests the strategy of using high temperature for creative tasks specifically relevant to employee engagement and culture."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Clinical Researcher": {
+      "lessonId": "l03_why_outputs_vary",
+      "profession": "Clinical Researcher",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You are using an LLM to draft a Site Monitoring Visit Report (SVR) based on your raw notes. You run the exact same prompt twice and notice the second version uses different phrasing and highlights a minor protocol deviation you didn't emphasize in the first draft. Why did this happen?",
+          "options": [
+            {
+              "text": "The LLM's underlying medical database was updated between your two requests.",
+              "is_correct": false
+            },
+            {
+              "text": "LLMs are designed with inherent randomness to produce more natural, varied language, unless specific settings are locked down.",
+              "is_correct": true
+            },
+            {
+              "text": "The system encountered a bug in the clinical trial management system (CTMS) integration.",
+              "is_correct": false
+            },
+            {
+              "text": "The model 'learned' from your first prompt and tried to correct its mistakes in the second attempt.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs predict the next word based on probability, not rigid rules. By design, they introduce small amounts of randomness so they sound less robotic. This means the same prompt can yield different outputs, which is a feature, not a bug.",
+          "conceptTested": "randomness_by_design",
+          "rationale": "Tests understanding of the fundamental nature of LLM generation (probabilistic/random) vs. deterministic software."
+        },
+        {
+          "id": "q2",
+          "text": "You are automating the extraction of data from 50 scanned Case Report Forms (CRFs) to verify accuracy against source data. You need the output to be strictly identical every time you run the script to ensure data integrity. Which 'Temperature' setting should you use?",
+          "options": [
+            {
+              "text": "Temperature 1.0 (High)",
+              "is_correct": false
+            },
+            {
+              "text": "Temperature 0.5 (Medium)",
+              "is_correct": false
+            },
+            {
+              "text": "Temperature 0 (Low/None)",
+              "is_correct": true
+            },
+            {
+              "text": "Temperature does not affect data extraction tasks.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "C",
+          "explanation": "A Temperature of 0 eliminates randomness, forcing the model to choose the most probable word every single time. For data verification and regulatory compliance tasks where consistency is critical, you always want the lowest temperature possible.",
+          "conceptTested": "temperature_application_consistency",
+          "rationale": "Tests application of the Temperature setting specifically for a high-stakes, precision-based task common in clinical research."
+        },
+        {
+          "id": "q3",
+          "text": "You are struggling to get a Site Investigator to respond to a query regarding an Adverse Event (AE). You want to use an LLM to brainstorm five different diplomatic email subject lines to grab their attention. How should you configure the model?",
+          "options": [
+            {
+              "text": "Set Temperature to 0 to ensure the emails adhere strictly to GCP guidelines.",
+              "is_correct": false
+            },
+            {
+              "text": "Use a higher Temperature (e.g., 0.8 or 1.0) to encourage creative variations and diverse phrasing.",
+              "is_correct": true
+            },
+            {
+              "text": "Feed the model the exact protocol deviation codes to limit its creativity.",
+              "is_correct": false
+            },
+            {
+              "text": "Run the prompt five separate times at Temperature 0 to get five different results.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "Brainstorming is a creative task. By raising the temperature, you allow the model to take 'risks' with language, resulting in a wider variety of tone and phrasing options. If you kept the temperature at 0, the model would likely give you the same, dry subject line five times.",
+          "conceptTested": "temperature_strategy_creativity",
+          "rationale": "Tests the strategic decision to use higher variance/creativity for soft-skill tasks (communication/brainstorming) vs. technical tasks."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Project Manager": {
+      "lessonId": "l03_why_outputs_vary",
+      "profession": "Project Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask an LLM to \"Generate a list of 5 potential risks for our upcoming mobile app launch.\" You run the prompt once, then run it again immediately without changing any settings. The second list is different from the first. Why is this happening?",
+          "options": [
+            {
+              "text": "The model learned from your first query and is trying to offer new information to avoid repetition.",
+              "is_correct": false
+            },
+            {
+              "text": "LLMs are designed with inherent randomness to make outputs feel more natural and less robotic.",
+              "is_correct": true
+            },
+            {
+              "text": "The model is accessing real-time market data that shifted between your two requests.",
+              "is_correct": false
+            },
+            {
+              "text": "There is a bug in the LLM's caching system causing it to lose the original answer.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "LLMs predict the next word based on probabilities, not fixed rigid rules. By design, they introduce a degree of randomness so that answers don't sound repetitive or mechanical. This isn't a bug or a sign of learning in real-time; it's a core feature of how they generate language.",
+          "conceptTested": "randomness_by_design",
+          "rationale": "Tests if the PM understands that variation is a feature, not a bug, distinguishing it from misconceptions about real-time learning or technical errors."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an LLM to extract action items from a transcript of a messy Sprint Retrospective. You need the output to be strictly factual based only on what was said, with zero 'creative' interpretation. Which setting should you adjust?",
+          "options": [
+            {
+              "text": "Set the Temperature to 0 to minimize randomness and force the model to pick the most probable words.",
+              "is_correct": true
+            },
+            {
+              "text": "Increase the Temperature to 1.0 so the model thinks harder about the accuracy of the transcript.",
+              "is_correct": false
+            },
+            {
+              "text": "Add a prompt instruction asking the model to \"be creative\" so it can infer missing context.",
+              "is_correct": false
+            },
+            {
+              "text": "Use a specialized plugin, as standard LLMs cannot handle data extraction tasks consistently.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "Temperature controls the 'creativity' or randomness of the output. For tasks requiring high precision and consistency\u2014like extracting data or code\u2014a Temperature of 0 ensures the model always chooses the most likely next token, reducing variance and potential hallucinations.",
+          "conceptTested": "temperature_application_consistency",
+          "rationale": "Tests the PM's ability to apply the temperature setting to a common, high-stakes task (data extraction) where variance is undesirable."
+        },
+        {
+          "id": "q3",
+          "text": "Your team is facing severe scope creep, and you need to brainstorm diplomatic ways to say 'no' to a stakeholder without damaging the relationship. You want the LLM to give you a wide variety of unique, out-of-the-box phrasing options. What is the best strategy?",
+          "options": [
+            {
+              "text": "Set the Temperature to 0 to ensure the responses are professional and standardized.",
+              "is_correct": false
+            },
+            {
+              "text": "Ask the same question multiple times with a higher Temperature setting (e.g., 0.7 or higher).",
+              "is_correct": true
+            },
+            {
+              "text": "Provide a strict template in the prompt and ask the model to fill in the blanks only.",
+              "is_correct": false
+            },
+            {
+              "text": "Limit the output length to 50 words to force the model to be concise.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "When the goal is brainstorming or creative generation, a higher temperature allows the model to explore less probable (but more interesting) word choices. Running the prompt multiple times with high temperature will yield the widest variety of distinct approaches for your communication strategy.",
+          "conceptTested": "temperature_strategy_creativity",
+          "rationale": "Tests if the PM knows when and how to leverage higher variance for soft-skill tasks like communication strategy and brainstorming."
+        }
+      ],
+      "passThreshold": 2
+    },
+    "Marketing Manager": {
+      "lessonId": "l03_why_outputs_vary",
+      "profession": "Marketing Manager",
+      "questions": [
+        {
+          "id": "q1",
+          "text": "You ask an AI tool to draft five different subject lines for a Black Friday email campaign. You run the exact same prompt again immediately after, but the tool generates five completely different options. Why did this happen?",
+          "options": [
+            {
+              "text": "The AI tool is malfunctioning and failing to retrieve the previous session's cache.",
+              "is_correct": false
+            },
+            {
+              "text": "LLMs are designed with inherent randomness to produce varied, natural-sounding language rather than robotic repetition.",
+              "is_correct": true
+            },
+            {
+              "text": "The AI is A/B testing you in real-time to see which set of outputs you prefer.",
+              "is_correct": false
+            },
+            {
+              "text": "The underlying model was updated by the developer in the few seconds between your requests.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "This variability is a feature, not a bug. LLMs predict the next word based on probability, not a fixed script. This design choice ensures that language generation feels creative and human-like, which is particularly useful when you need fresh angles for ad copy or subject lines.",
+          "conceptTested": "randomness_by_design",
+          "rationale": "Tests if the learner understands that output variability is an intentional architectural feature of LLMs, debunking the common misconception that it indicates a bug or error."
+        },
+        {
+          "id": "q2",
+          "text": "You are using an LLM to extract specific conversion rate percentages from a messy CSV dump of Google Analytics data to populate a quarterly report. You notice the AI keeps slightly changing the numbers every time you run the prompt. Which setting should you adjust to fix this?",
+          "options": [
+            {
+              "text": "Increase the Temperature setting to allow the model more 'brainstorming' power to find the right numbers.",
+              "is_correct": false
+            },
+            {
+              "text": "Lower the Temperature setting to 0 (or near zero) to force the model to be deterministic and consistent.",
+              "is_correct": true
+            },
+            {
+              "text": "Edit the prompt to include more emotional adjectives so the AI understands the importance of the task.",
+              "is_correct": false
+            },
+            {
+              "text": "Switch to a different LLM entirely, as no LLM can ever handle numerical data reliably.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "B",
+          "explanation": "For tasks requiring precision and reproducibility\u2014like data extraction or code generation\u2014you want to remove randomness. Lowering the temperature forces the model to always choose the most probable next token, ensuring that your extracted metrics match the source data every time.",
+          "conceptTested": "temperature_application_consistency",
+          "rationale": "Tests the practical application of the 'Temperature' setting specifically for high-stakes, data-driven tasks common in marketing reporting."
+        },
+        {
+          "id": "q3",
+          "text": "Your team is feeling stuck on a new product launch. You want to use AI to brainstorm 50 wild, out-of-the-box campaign concepts to break the creative block. How should you configure the model for this specific task?",
+          "options": [
+            {
+              "text": "Set the Temperature to high (e.g., 0.8 or 1.0) to encourage diverse, creative, and less predictable outputs.",
+              "is_correct": true
+            },
+            {
+              "text": "Set the Temperature to 0 to ensure the ideas are strictly based on historical best practices.",
+              "is_correct": false
+            },
+            {
+              "text": "Restrict the prompt length to under 10 words to force the AI to be concise.",
+              "is_correct": false
+            },
+            {
+              "text": "Feed the AI your previous year's campaign reports and ask it to replicate them exactly.",
+              "is_correct": false
+            }
+          ],
+          "correctAnswer": "A",
+          "explanation": "When the goal is ideation and divergence, you want the model to take risks. A higher temperature setting increases the probability of the model selecting 'less likely' words and concepts, which often results in more creative, novel, and varied marketing angles.",
+          "conceptTested": "temperature_application_creativity",
+          "rationale": "Tests the strategic use of temperature settings for creative workflows, differentiating it from the analytical workflows tested in Q2."
         }
       ],
       "passThreshold": 2

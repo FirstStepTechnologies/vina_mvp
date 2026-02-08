@@ -28,6 +28,7 @@ class UserProfile(SQLModel, table=True):
     profession: Optional[str] = Field(default=None, index=True)
     industry: Optional[str] = Field(default=None, index=True)
     experience_level: Optional[str] = Field(default=None, index=True)
+    leadership_level: Optional[str] = Field(default=None, index=True)
     
     # Profile data (stored as JSON arrays)
     daily_responsibilities: List[str] = Field(default=[], sa_column=Column(JSON))
@@ -65,6 +66,7 @@ class UserProgress(SQLModel, table=True):
     streak: int = Field(default=0)
     minutes_today: int = Field(default=0)
     minutes_this_week: int = Field(default=0)
+    minutes_total: int = Field(default=0)
     last_active_date: str = Field(default_factory=lambda: date.today().isoformat())
     
     # Tour Status

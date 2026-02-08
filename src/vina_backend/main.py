@@ -27,7 +27,11 @@ app = FastAPI(
 # Set all CORS enabled origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development, allow all
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173", # Vite default
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +47,7 @@ app.include_router(courses.router, prefix="/api/v1", tags=["course"])
 app.include_router(progress.router, prefix="/api/v1", tags=["progress"])
 app.include_router(lessons.router, prefix="/api/v1/lessons", tags=["lessons"]) # Overlays with lesson_quizzes
 app.include_router(assessment.router, prefix="/api/v1", tags=["assessment"])
-app.include_router(lesson_quizzes.router, prefix="/api/v1/lessons", tags=["lessons"])
+app.include_router(lesson_quizzes.router, prefix="/api/v1", tags=["lessons"])
 app.include_router(practice.router, prefix="/api/v1/practice", tags=["practice"])
 
 @app.get("/")

@@ -15,6 +15,10 @@ Features:
 
 Usage Example:
 python scripts/demo_complete_pipeline.py --prof "HR Manager" --diff 3 --lesson-num 1
+
+Video Storage Locations:
+- cache/demo_videos/        : Named demo videos (e.g., hr_manager_... d3_... .mp4)
+- cache/global_assets/videos/ : Master cached videos named by content hash.
 """
 
 import sys

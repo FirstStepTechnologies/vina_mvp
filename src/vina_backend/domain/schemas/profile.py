@@ -1,7 +1,7 @@
 """
 Pydantic schemas for user profiles.
 """
-from typing import List, Literal
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
@@ -10,24 +10,23 @@ class UserProfileData(BaseModel):
     
     profession: str = Field(..., description="User's profession")
     industry: str = Field(..., description="User's industry sector")
-    experience_level: Literal["Beginner", "Intermediate", "Advanced"] = Field(
-        ..., description="Experience level"
-    )
+    experience_level: Optional[str] = Field(None, description="Experience level")
+    leadership_level: Optional[str] = Field(None, description="Leadership/Management level")
     daily_responsibilities: List[str] = Field(
-        ..., description="Day-to-day responsibilities"
+        default=[], description="Day-to-day responsibilities"
     )
     pain_points: List[str] = Field(
-        ..., description="Professional pain points and challenges"
+        default=[], description="Professional pain points and challenges"
     )
     typical_outputs: List[str] = Field(
-        ..., 
+        default=[], 
         description="Documents, deliverables, or artifacts this person creates in their work"
     )
-    technical_comfort_level: Literal["Low", "Medium", "High"] = Field(
-        ..., description="Technical proficiency level"
+    technical_comfort_level: Optional[str] = Field(
+        None, description="Technical proficiency level"
     )
     learning_style_notes: str = Field(
-        ..., description="How this person prefers to learn"
+        default="", description="How this person prefers to learn"
     )
     professional_goals: List[str] = Field(
         ..., description="Career and skill development goals"
@@ -72,6 +71,8 @@ class UserProfileResponse(BaseModel):
         default=False,
         description="Whether this profile was retrieved from cache/database"
     )
-    user_id: str = Field(..., description="The UUID of the user")
+    id: str = Field(..., description="The UUID of the user")
     email: str = Field(..., description="User email")
     created_at: str = Field(..., description="ISO timestamp")
+    resolution: Optional[str] = None
+    dailyGoalMinutes: Optional[int] = None

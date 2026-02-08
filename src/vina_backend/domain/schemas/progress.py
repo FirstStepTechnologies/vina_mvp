@@ -17,6 +17,7 @@ class VinaProgress(BaseModel):
     streak: int = Field(default=0, description="Current daily streak")
     minutes_today: int = Field(default=0, description="Minutes spent learning today")
     minutes_this_week: int = Field(default=0, description="Minutes spent this week")
+    minutes_total: int = Field(default=0, description="Total minutes spent learning")
     last_active_date: str = Field(
         default_factory=lambda: date.today().isoformat(),
         description="YYYY-MM-DD of last activity"
