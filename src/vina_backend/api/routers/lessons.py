@@ -34,7 +34,7 @@ def _load_manifest() -> dict:
 def get_lesson_detail(
     lesson_id: str,
     difficulty: int = Query(3, ge=1, le=5),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = None,  # Made optional for hackathon demo
     db: Session = Depends(get_db)
 ):
     """
@@ -48,7 +48,7 @@ def get_lesson_detail(
     cached = False
     title = lesson_id.replace("_", " ").title()
     
-    if current_user.profile:
+    if current_user and current_user.profile:
         cache_service = LessonCacheService(db)
         # Try to find cached entry
         # Note: We need the model name to query specific cache, but here we query by profile/lesson
@@ -86,7 +86,7 @@ def get_lesson_detail(
         manifest = _load_manifest()
         
         # Normalize profile values
-        prof = current_user.profile
+        prof = current_user.profile if current_user else None
         profession = ""
         if prof and prof.profession:
             profession = prof.profession.lower().replace(" ", "_").replace("/", "_")
