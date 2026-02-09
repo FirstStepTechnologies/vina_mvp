@@ -19,3 +19,17 @@ Vina is an **Adaptive, Agentic Learning Platform** that turns generic goals into
 - ** Agentic Evaluation**: Every lesson is critiqued and improved by a "Reviewer Agent" before you ever see it, ensuring high pedagogical quality.
 
 
+## 📄 License
+This project is licensed under the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)**. 
+
+What this means:
+- You may **NOT** use it for commercial purposes.
+- You may **NOT** distribute modified versions (remixes/transformations).
+- Attribution Requirements: You must give appropriate credit.
+
+See the [LICENSE] file for more details.
+
+
+
+
+
