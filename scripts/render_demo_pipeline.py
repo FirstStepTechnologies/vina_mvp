@@ -144,6 +144,27 @@ async def run_render_pipeline(profession: str, industry: str, level_str: str, di
     logger.info("[PHASE 3] Video Generation & Cloud Upload...")
     s3 = time.time()
     try:
+        # Check cache for existing video URL to save time/cost
+        # We need to re-instantiate session/service to check
+        with Session(engine) as session:
+            cache_service = LessonCacheService(db_session=session)
+            model_name = generated_lesson.generation_metadata.llm_model or "unknown"
+            
+            cached_entry = cache_service.get(
+                course_id=COURSE_ID,
+                lesson_id=lesson_id,
+                difficulty_level=difficulty_level,
+                user_profile=user_profile,
+                llm_model=model_name,
+                adaptation_context=adaptation_context
+            )
+            
+            if cached_entry and cached_entry.get("video_url"):
+                logger.info(f"✅ FOUND CACHED VIDEO URL: {cached_entry['video_url']}")
+                logger.info("⏩ Skipping Video Generation & Upload")
+                metrics["3. Asset Generation"] = 0
+                return
+
         # Prepare deterministic filename
         model_name = "unknown"
         if generated_lesson.generation_metadata.llm_model:
