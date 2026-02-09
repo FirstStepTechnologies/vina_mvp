@@ -26,6 +26,7 @@ class LessonCache(SQLModel, table=True):
     llm_model: str = Field(index=True)
     difficulty_level: int
     adaptation_context: Optional[str] = Field(default=None, index=True)  # Added for adaptation caching
+    video_url: Optional[str] = Field(default=None)  # Cloudinary URL
     profile_hash: str
     
     # Traceability for QA - Snapshots
@@ -94,6 +95,7 @@ class LessonCacheService:
             
             return {
                 "lesson_content": json.loads(cached_entry.lesson_json),
+                "video_url": cached_entry.video_url,
                 "audit_trail": {
                     "gen_prompt": cached_entry.gen_prompt,
                     "gen_output": json.loads(cached_entry.initial_lesson_json) if cached_entry.initial_lesson_json else None,
@@ -115,6 +117,7 @@ class LessonCacheService:
         llm_model: str,
         lesson_content: Dict,
         adaptation_context: Optional[str] = None,
+        video_url: Optional[str] = None,
         initial_lesson: Optional[Dict] = None,
         review_result: Optional[Dict] = None,
         gen_prompt: Optional[str] = None,
@@ -141,6 +144,8 @@ class LessonCacheService:
             existing.gen_prompt = gen_prompt
             existing.rev_prompt = rev_prompt
             existing.rew_prompt = rew_prompt
+            if video_url:
+                existing.video_url = video_url
             existing.accessed_at = datetime.utcnow()
             self.db_session.add(existing)
         else:
@@ -151,6 +156,7 @@ class LessonCacheService:
                 llm_model=llm_model,
                 difficulty_level=difficulty_level,
                 adaptation_context=adaptation_context,
+                video_url=video_url,
                 profile_hash=profile_hash,
                 lesson_json=lesson_json,
                 initial_lesson_json=initial_json,
@@ -160,6 +166,32 @@ class LessonCacheService:
                 rew_prompt=rew_prompt
             )
             self.db_session.add(cache_entry)
+    
+    def update_video_url(
+        self,
+        course_id: str,
+        lesson_id: str,
+        difficulty_level: int,
+        user_profile: UserProfileData,
+        llm_model: str,
+        video_url: str,
+        adaptation_context: Optional[str] = None
+    ) -> bool:
+        """Update the video URL for an existing cached lesson."""
+        profile_hash = self.generate_profile_hash(user_profile)
+        cache_key = self.generate_cache_key(
+            course_id, lesson_id, difficulty_level, profile_hash, llm_model, adaptation_context
+        )
+        
+        statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
+        existing = self.db_session.exec(statement).first()
+        
+        if existing:
+            existing.video_url = video_url
+            self.db_session.add(existing)
+            self.db_session.commit()
+            return True
+        return False
         
         self.db_session.commit()
         
