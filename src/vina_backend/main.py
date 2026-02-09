@@ -31,6 +31,8 @@ app.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:5173", # Vite default
+        "https://vina-frontend.vercel.app",  # Vercel production
+        "https://*.vercel.app",  # Vercel preview deployments
     ],
     allow_credentials=True,
     allow_methods=["*"],
