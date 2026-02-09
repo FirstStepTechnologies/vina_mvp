@@ -25,15 +25,10 @@ app = FastAPI(
 )
 
 # Set all CORS enabled origins
+# Set all CORS enabled origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173", # Vite default
-        "https://vina-frontend.vercel.app",  # Vercel production
-        "https://*.vercel.app",  # Vercel preview deployments
-    ],
+    allow_origins=["*"], # Allow all for Hackathon/Demo to prevent any CORS issues
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
