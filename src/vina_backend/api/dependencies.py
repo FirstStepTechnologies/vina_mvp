@@ -10,6 +10,9 @@ from vina_backend.integrations.db.models.user import User
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 settings = get_settings()
 
+# Alias for compatibility
+get_db = get_session
+
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)) -> User:
     """Validate JWT token and retrieve current user."""
