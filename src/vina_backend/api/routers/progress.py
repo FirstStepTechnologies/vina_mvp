@@ -11,12 +11,34 @@ router = APIRouter(prefix="/user/progress", tags=["progress"])
 
 
 @router.get("", response_model=VinaProgress)
-def get_progress(current_user: User = Depends(get_current_user)):
+def get_progress(
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session)
+):
     """Get the current user's progress summary."""
     p = current_user.progress
     if not p:
         # Should have been created at register
         raise HTTPException(status_code=404, detail="Progress not initialized")
+
+    # AUTO-HEAL: Fix for legacy demo data (vina.learner@example.com)
+    # If this specific user has lessons marked as 'complete' but no quiz scores,
+    # it means it's the corrupt seed state. We reset it.
+    if current_user.email == "vina.learner@example.com":
+        has_completed_lessons = len(p.completed_lessons or []) > 0
+        has_quiz_scores = len(p.lesson_scores or {}) > 0
+        
+        # If we have completed lessons but NO quiz scores, assume corrupt state
+        if has_completed_lessons and not has_quiz_scores:
+            print(f"⚠️ AUTO-HEAL: Resetting corrupt progress for {current_user.email}")
+            p.completed_lessons = []
+            p.lesson_scores = {}
+            # Reset current lesson to L01
+            # Note: UserProgress doesn't have current_lesson_id stored, frontend uses completed list.
+            
+            session.add(p)
+            session.commit()
+            session.refresh(p)
 
     # Create LessonScore objects from JSON dicts
     scores = {}
