@@ -25,7 +25,7 @@ class UserProfileData(BaseModel):
     technical_comfort_level: Optional[str] = Field(
         None, description="Technical proficiency level"
     )
-    learning_style_notes: str = Field(
+    learning_style_notes: Optional[str] = Field(
         default="", description="How this person prefers to learn"
     )
     professional_goals: List[str] = Field(
@@ -40,7 +40,7 @@ class UserProfileData(BaseModel):
         description="Specific work outputs or decisions where errors have serious consequences"
     )
     # Gamification & Onboarding Fields (New)
-    resolution: str = Field(
+    resolution: Optional[str] = Field(
         default="", 
         description="User's learning resolution (e.g. 'Master AI Strategy')"
     )
