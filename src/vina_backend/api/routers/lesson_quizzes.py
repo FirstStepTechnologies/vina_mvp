@@ -17,38 +17,40 @@ router = APIRouter()
 @router.get("/quizzes/{lesson_id}", response_model=LessonQuiz)
 async def get_quiz(
     lesson_id: str, 
-    userId: str = Query(..., description="User ID to determine profession"),
+    userId: Optional[str] = Query(None, description="User ID to determine profession"),
+    profession: Optional[str] = Query(None, description="Direct profession override for unauthenticated users"),
     session: Session = Depends(get_session)
 ):
     """
     Get quiz for a lesson based on user's profession.
     """
     try:
-        # userId from frontend is the User UUID
-        statement = select(UserProfile).where(UserProfile.user_id == userId)
-        user_profile = session.exec(statement).first()
+        profession_str = profession  # Use direct profession if provided
         
-        if user_profile:
-            profession = user_profile.profession
-        else:
-            # Fallback: maybe userId IS the profession (for some tests)
-            profession = userId
+        # If no direct profession, try to look up from userId
+        if not profession_str and userId:
+            statement = select(UserProfile).where(UserProfile.user_id == userId)
+            user_profile = session.exec(statement).first()
+            
+            if user_profile:
+                profession_str = user_profile.profession
+            else:
+                # Fallback: maybe userId IS the profession (for some tests)
+                profession_str = userId
 
-        if not profession:
-             raise HTTPException(
-                status_code=400, 
-                detail="User profession not set. Complete onboarding first."
-            )
+        if not profession_str:
+            # Default to a generic profession for hackathon demo
+            profession_str = "HR Manager"
         
         # Fetch quiz (from database or JSON file)
-        quiz = await get_lesson_quiz(lesson_id, profession)
+        quiz = await get_lesson_quiz(lesson_id, profession_str)
         
         if not quiz:
             # Fallback to a default if specific profession quiz is missing?
             # Or strict 404? PRD implies 404.
              raise HTTPException(
                 status_code=404,
-                detail=f"Quiz not found for lesson {lesson_id} and profession {profession}"
+                detail=f"Quiz not found for lesson {lesson_id} and profession {profession_str}"
             )
         
         return quiz

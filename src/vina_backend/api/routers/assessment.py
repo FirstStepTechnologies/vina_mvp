@@ -86,14 +86,14 @@ class AssessmentSubmission(BaseModel):
     answers: List[AssessmentAnswer]
 
 @router.get("/pre-quiz")
-def get_pre_assessment(current_user: User = Depends(get_current_user)):
+def get_pre_assessment(current_user: Optional[User] = None):
     """Get placement quiz questions."""
     return {"questions": PRE_ASSESSMENT_QUESTIONS}
 
 @router.post("/submit")
 def submit_assessment(
     submission: AssessmentSubmission,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = None,
     session: Session = Depends(get_session)
 ):
     """
@@ -140,7 +140,7 @@ def submit_assessment(
         ]
         
     # Update User Progress
-    if current_user.progress:
+    if current_user and current_user.progress:
         # Avoid duplicates
         current_completed = set(current_user.progress.completed_lessons or [])
         new_completed = list(current_completed.union(set(lessons_to_skip)))
