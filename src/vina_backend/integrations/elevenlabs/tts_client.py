@@ -14,6 +14,7 @@ from tenacity import (
 )
 
 from vina_backend.core.config import get_settings
+from vina_backend.integrations.opik_tracker import track_cost
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -70,6 +71,7 @@ class TTSClient:
         retry=retry_if_exception_type((Exception,)),
         reraise=True
     )
+    @track_cost("generate_audio", "eleven_labs")
     async def generate_audio_async(
         self,
         text: str,

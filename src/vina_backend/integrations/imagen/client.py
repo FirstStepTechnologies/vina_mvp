@@ -16,6 +16,7 @@ from tenacity import (
 )
 
 from vina_backend.core.config import get_settings
+from vina_backend.integrations.opik_tracker import track_cost
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -70,6 +71,7 @@ class ImagenClient:
         retry=retry_if_exception_type((Exception,)),
         reraise=True
     )
+    @track_cost("generate_image", "imagen")
     async def generate_image_async(
         self,
         prompt: str,

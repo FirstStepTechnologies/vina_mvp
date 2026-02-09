@@ -28,6 +28,7 @@ from vina_backend.services.course_loader import (
 )
 from vina_backend.services.lesson_cache import LessonCacheService
 from vina_backend.integrations.llm.client import get_llm_client, LLMClient
+from vina_backend.integrations.opik_tracker import track_llm_call
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,7 @@ class LessonGenerator:
         with open(template_path, 'r') as f:
             return Template(f.read())
     
+    @track_llm_call("generate_lesson", "gemini-2.0-flash-exp")
     def generate_lesson(
         self,
         lesson_id: str,
@@ -240,6 +242,7 @@ class LessonGenerator:
             )
         )
     
+    @track_llm_call("generate_draft", "gemini-2.0-flash-exp")
     def _generate_with_retry(
         self,
         lesson_spec: Dict,
@@ -285,6 +288,7 @@ class LessonGenerator:
         
         return {}, False, generator_prompt
     
+    @track_llm_call("review_draft", "gemini-2.0-flash-exp")
     def _review_lesson(
         self,
         lesson_json: Dict,
@@ -338,6 +342,7 @@ class LessonGenerator:
                 summary="Review agent error - regeneration required"
             ), reviewer_prompt
     
+    @track_llm_call("refine_draft", "gemini-2.0-flash-exp")
     def _rewrite_lesson(
         self,
         lesson_json: Dict,

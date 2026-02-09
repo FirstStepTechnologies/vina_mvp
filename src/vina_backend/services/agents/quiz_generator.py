@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, Any
 from jinja2 import Template
 from vina_backend.integrations.llm.client import get_llm_client
+from vina_backend.integrations.opik_tracker import track_llm_call
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,7 @@ class QuizGeneratorAgent:
         with open(path, "r") as f:
             return Template(f.read())
     
+    @track_llm_call("generate_quiz_draft", "gemini-2.0-flash-exp")
     def generate(self, profession: str, course_name: str, curriculum_guidance: str, difficulty_mapping: str) -> Dict[str, Any]:
         """
         Generate initial quiz for a profession.

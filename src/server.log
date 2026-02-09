@@ -1,0 +1,15 @@
+2026-02-09 05:25:40 [INFO] root: Logging initialized at level: INFO
+INFO:     Started server process [67450]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57177 - "POST /api/v1/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:57179 - "POST /api/v1/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57181 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57183 - "GET /api/v1/course/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57185 - "POST /api/v1/user/progress/lesson/l01_what_llms_are/complete HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57187 - "GET /api/v1/course/map HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [67450]
