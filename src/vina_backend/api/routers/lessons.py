@@ -34,6 +34,7 @@ def _load_manifest() -> dict:
 def get_lesson_detail(
     lesson_id: str,
     difficulty: int = Query(3, ge=1, le=5),
+    profession: Optional[str] = Query(None, description="User profession for video personalization"),  # NEW: For unauthenticated users
     current_user: Optional[User] = None,  # Made optional for hackathon demo
     db: Session = Depends(get_db)
 ):
@@ -85,11 +86,13 @@ def get_lesson_detail(
     if not video_url:
         manifest = _load_manifest()
         
-        # Normalize profile values
+        # Normalize profile values - use query param if no authenticated user
         prof = current_user.profile if current_user else None
-        profession = ""
+        profession_str = ""
         if prof and prof.profession:
-            profession = prof.profession.lower().replace(" ", "_").replace("/", "_")
+            profession_str = prof.profession.lower().replace(" ", "_").replace("/", "_")
+        elif profession:  # Use query parameter
+            profession_str = profession.lower().replace(" ", "_").replace("/", "_")
         
         target_diff = f"d{difficulty}"
         
@@ -102,7 +105,7 @@ def get_lesson_detail(
             if lesson_id in key:
                 score = 0
                 # Higher score for matching profession
-                if profession and profession in key.lower():
+                if profession_str and profession_str in key.lower():
                     score += 3
                 # Higher score for matching difficulty
                 if target_diff in key:
