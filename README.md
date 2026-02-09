@@ -20,14 +20,10 @@ Vina is an **Adaptive, Agentic Learning Platform** that turns generic goals into
 
 
 ## 📄 License
-This project is licensed under the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)**. 
+All rights reserved.
+This repository is public for viewing purposes only.
+No licence is granted to use, modify, or distribute this code.
 
-What this means:
-- You may **NOT** use it for commercial purposes.
-- You may **NOT** distribute modified versions (remixes/transformations).
-- Attribution Requirements: You must give appropriate credit.
-
-See the [LICENSE] file for more details.
 
 
 
