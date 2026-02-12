@@ -35,6 +35,7 @@ def get_lesson_detail(
     lesson_id: str,
     difficulty: int = Query(3, ge=1, le=5),
     profession: Optional[str] = Query(None, description="User profession for video personalization"),  # NEW: For unauthenticated users
+    adaptation: Optional[str] = Query(None, description="Adaptation context (e.g. more_examples)"), # NEW: Fix for adaptation bug
     current_user: Optional[User] = None,  # Made optional for hackathon demo
     db: Session = Depends(get_db)
 ):
@@ -48,6 +49,10 @@ def get_lesson_detail(
     captions_url = None
     cached = False
     title = lesson_id.replace("_", " ").title()
+    
+    # HACKATHON RULE: "More Examples" is ONLY available at Difficulty 3
+    if adaptation and adaptation in ["examples", "more_examples"]:
+        difficulty = 3
     
     if current_user and current_user.profile:
         cache_service = LessonCacheService(db)
@@ -69,7 +74,8 @@ def get_lesson_detail(
             LessonCache.course_id == "c_llm_foundations", # Defaulting for now
             LessonCache.lesson_id == lesson_id,
             LessonCache.difficulty_level == difficulty,
-            LessonCache.profile_hash == profile_hash
+            LessonCache.profile_hash == profile_hash,
+            LessonCache.adaptation_context == adaptation  # Filter by adaptation context
         ).order_by(LessonCache.created_at.desc())
         
         entry = db.exec(statement).first()

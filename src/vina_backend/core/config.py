@@ -2,26 +2,31 @@
 Application configuration using environment variables.
 """
 from functools import lru_cache
-from typing import Literal, Optional
-from pydantic_settings import BaseSettings
+from typing import Literal, Optional, Tuple, Type
+from pathlib import Path
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+
+# Calculate DB Path at module level
+_project_root = Path(__file__).resolve().parent.parent.parent.parent
+_db_path = _project_root / "data" / "vina.db"
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     # Environment
-    env: str = "dev"
-    log_level: str = "INFO"
+    env: str
+    log_level: str
     
     # Database
-    database_url: str = "sqlite:///./data/vina.db"
+    database_url: str = f"sqlite:///{_db_path}"
     
     # LLM Configuration
-    llm_provider: Literal["anthropic", "openai", "gemini"] = "gemini"
-    llm_model: str = "gemini-3-flash"
+    llm_provider: Literal["anthropic", "openai", "gemini"]
+    llm_model: str
     llm_reasoning_model: Optional[str] = None
-    llm_max_tokens: int = 10000
-    llm_temperature: float = 1.0
+    llm_max_tokens: int
+    llm_temperature: float
     
     # Provider-specific API Keys
     anthropic_api_key: Optional[str] = None
@@ -29,28 +34,45 @@ class Settings(BaseSettings):
     gemini_api_key: Optional[str] = None
     
     # Text-to-Speech (ElevenLabs)
-    elevenlabs_api_key: str = ""
-    elevenlabs_voice_id: str = "pFZP5JQG7iQjIQuC4Bku"  # Default: Narrator voice
-    elevenlabs_model: str = "eleven_multilingual_v2"  # Options: eleven_multilingual_v2, eleven_turbo_v2, eleven_turbo_v2_5
+    elevenlabs_api_key: str
+    elevenlabs_voice_id: str
+    elevenlabs_model: str
     
     # Cloudinary (Video Storage)
-    cloudinary_cloud_name: str = ""
-    cloudinary_api_key: str = ""
-    cloudinary_api_secret: str = ""
+    cloudinary_cloud_name: str
+    cloudinary_api_key: str
+    cloudinary_api_secret: str
     
     # Opik (Observability)
-    opik_api_key: str = ""
-    opik_workspace: str = "vina-hackathon"
+    opik_api_key: str
+    opik_workspace: str
     
     # Auth
-    secret_key: str = "change-me-in-production"
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 10080  # 1 week for hackathon
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
-        extra = "ignore"
+    jwt_jwt_secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore"
+    )
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: Type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> Tuple[PydanticBaseSettingsSource, ...]:
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        )
     
     def get_active_api_key(self) -> str:
         """

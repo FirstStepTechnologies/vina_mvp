@@ -13,8 +13,9 @@ from vina_backend.services.course_loader import (
     get_difficulty_knobs,
     get_pedagogical_stage
 )
-from vina_backend.services.profile_builder import generate_user_profile
+from vina_backend.services.profile_builder import get_or_create_user_profile
 from vina_backend.utils.logging import setup_logging
+from vina_backend.integrations.db.engine import init_db
 
 def validate_configs():
     """Validate all configurations load correctly."""
@@ -78,7 +79,8 @@ def validate_profile_generation():
     print("\n🔍 Validating Profile Generation...")
     
     try:
-        profile = generate_user_profile(
+        # Use get_or_create to utilize cached profiles
+        profile = get_or_create_user_profile(
             "Clinical Researcher",
             "Pharma/Biotech",
             "Intermediate"
@@ -88,7 +90,7 @@ def validate_profile_generation():
         assert len(profile.safety_priorities) >= 2
         assert len(profile.high_stakes_areas) >= 2
         
-        print("  ✅ Profile generated with safety fields")
+        print("  ✅ Profile generated (or retrieved) with safety fields")
         print(f"     Safety priorities: {len(profile.safety_priorities)}")
         print(f"     High-stakes areas: {len(profile.high_stakes_areas)}")
         
@@ -105,6 +107,14 @@ if __name__ == "__main__":
     print("="*80)
     print("🧪 Pre-Learner State Validation")
     print("="*80)
+    
+    # Ensure DB is initialized for get_or_create_user_profile
+    try:
+        init_db()
+        print("  ✅ Database initialized")
+    except Exception as e:
+        print(f"  ❌ Database initialization failed: {e}")
+        sys.exit(1)
     
     config_ok = validate_configs()
     profile_ok = validate_profile_generation()

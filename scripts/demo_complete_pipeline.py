@@ -57,6 +57,14 @@ COURSE_ID = "c_llm_foundations"
 DEFAULT_LESSON_ID = "l01_what_llms_are"
 # Difficulty mapping is now explicit in TEST_CASES or via --diff flag
 
+from vina_backend.core.config import get_settings
+import vina_backend.core.config
+import os
+
+print(f"DEBUG: os.environ['DATABASE_URL'] = {os.environ.get('DATABASE_URL')}")
+print(f"DEBUG: config file location = {vina_backend.core.config.__file__}")
+print(f"DEBUG: DB URL in pipeline = {get_settings().database_url}")
+
 TEST_CASES = [
     # Format: (Profession, Industry, Experience_Level_String, Difficulty_Int)
     ("HR Manager", "Tech Company", "Beginner", 3),
@@ -254,11 +262,56 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
         print(f"✅ Video Assembled: {pipeline_result.video_path}")
         print(f"   File Size: {pipeline_result.video_path.stat().st_size / 1024 / 1024:.2f} MB")
         
+        # --- PHASE 4: CLOUDINARY UPLOAD & DB UPDATE ---
+        print("\n[PHASE 4: DEPLOYMENT] Uploading to Cloudinary & Updating Cache...")
+        try:
+            from vina_backend.integrations.cloudinary.client import CloudinaryClient
+            cloudinary_client = CloudinaryClient()
+            if not cloudinary_client.settings.cloudinary_cloud_name:
+                print("⚠️ Cloudinary not configured. Skipping upload.")
+            else:
+                s4 = time.time()
+                # Upload
+                secure_url = await asyncio.to_thread(
+                    cloudinary_client.upload_video,
+                    file_path=pipeline_result.video_path,
+                    folder="vina_lessons_adapted" if adaptation_context else "vina_lessons"
+                )
+                print(f"✅ Uploaded to Cloudinary: {secure_url}")
+                
+                # Update DB Cache
+                with Session(engine) as session:
+                    cache_service = LessonCacheService(db_session=session)
+                    updated = cache_service.update_video_url(
+                        course_id=COURSE_ID,
+                        lesson_id=lesson_id,
+                        difficulty_level=difficulty_level,
+                        user_profile=user_profile,
+                        llm_model=model_name,
+                        video_url=secure_url,
+                        adaptation_context=adaptation_context
+                    )
+                    
+                    if updated:
+                        print(f"✅ Database updated with video URL (Adaptation: {adaptation_context})")
+                    else:
+                        print(f"❌ Failed to update Database with video URL (Cache key mismatch?)")
+                        
+                e4 = time.time()
+                metrics["4. Upload & DB Update"] = e4 - s4
+
+        except Exception as e:
+            print(f"❌ Upload Phase failed: {e}")
+            import traceback
+            traceback.print_exc() 
+
     except Exception as e:
         print(f"❌ Video Phase failed: {e}")
         import traceback
         traceback.print_exc()
         return
+        
+
 
     # --- FINAL REPORT ---
     master_end = time.time()
@@ -336,7 +389,7 @@ async def main():
         
         # HACKATHON OVERRIDE: If generating "more_examples", FORCE difficulty to 3 (Practical)
         # This prevents generating separate example videos for every difficulty level.
-        if adaptation_context == "more_examples":
+        if adaptation_context in ["examples", "more_examples"]:
             print("⚡ OVERRIDE: Forcing Difficulty to 3 for 'more_examples' variant")
             case[3] = 3
             
@@ -352,3 +405,5 @@ if __name__ == "__main__":
         print("\nDemo stopped by user.")
     except Exception as e:
         print(f"\nFATAL ERROR: {e}")
+        import traceback
+        traceback.print_exc()
