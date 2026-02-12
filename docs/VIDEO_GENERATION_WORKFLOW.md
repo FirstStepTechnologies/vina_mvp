@@ -50,3 +50,22 @@ Once the code is deployed to Render:
 ## 4. Troubleshooting
 - **Missing JSON:** Ensure `data/content_export.json` is committed and not ignored by `.gitignore`.
 - **Cloudinary:** Generation requires valid Cloudinary credentials in `.env` to host the video files.
+
+## 5. Production Troubleshooting & Quirks
+If videos play locally but fail in production, check these known issues:
+
+### Lesson ID Mismatch
+- **Symptom:** API returns 404 or falls back to default video.
+- **Cause:** Frontend uses long IDs (e.g., `c_llm_foundations:l01...`) while the DB stores short IDs (`l01...`).
+- **Fix:** The backend `lessons.py` automatically strips the `c_llm_foundations:` prefix. Ensure this logic remains in place.
+
+### Adaptation Parameter Missing
+- **Symptom:** "More Examples" (or other adaptations) load the default video instead of the adapted version.
+- **Cause:** The Frontend `getLesson` call might be missing the `adaptation` query parameter.
+- **Fix:** Ensure `src/lib/api/service.ts` correctly appends `&adaptation=...` to the URL. Debug with `console.log` in `ApiService`.
+
+### "More Examples" Mapping
+- **Symptom:** "More Examples" returns no video, even if generated.
+- **Cause:** Frontend requests `more_examples`, but the generator saves content under the `examples` context.
+- **Fix:** The backend `lessons.py` maps `more_examples` -> `examples` before querying the database.
+
