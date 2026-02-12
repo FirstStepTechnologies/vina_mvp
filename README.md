@@ -19,6 +19,8 @@ Vina is an **Adaptive, Agentic Learning Platform** that turns generic goals into
 - ** Agentic Evaluation**: Every lesson is critiqued and improved by a "Reviewer Agent" before you ever see it, ensuring high pedagogical quality.
 
 
+The frontend code is available at https://github.com/FirstStepTechnologies/vina_frontend/ 
+
 ## 📄 License
 All rights reserved.
 This repository is public for viewing purposes only.
