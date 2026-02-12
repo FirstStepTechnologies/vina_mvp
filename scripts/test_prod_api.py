@@ -57,7 +57,8 @@ def test_adaptation(base_url, email="demo@vina.ai", password="password123"):
     profile_data = {
         "profession": "HR Manager",
         "industry": "Tech Company",
-        "experience": "Beginner",
+        "experience": "Beginner", 
+        "experience_level": "Beginner", # Covering both bases
         "bio": "Test User Bio"
     }
     print(f"👤 Updating Profile to matches 'HR Manager'...")
@@ -80,35 +81,31 @@ def test_adaptation(base_url, email="demo@vina.ai", password="password123"):
     else:
         print(f"⚠️ Could not verify profile: {get_prof_resp.status_code}")
 
-    # 3. Request Lesson with Adaptation
-    # Targeting Lesson 1, Examples
+    # 3. Test Adaptation Variations
     lesson_id = "c_llm_foundations:l01_what_llms_are"
-    params = {
-        "difficulty": 3,
-        "adaptation": "examples" 
-    }
-    
-    print(f"🚀 Requesting Lesson: {lesson_id} with params={params}")
-    
-    url = f"{base_url}/api/v1/lessons/{lesson_id}"
-    resp = requests.get(url, headers=headers, params=params)
-    
-    if resp.status_code == 200:
-        data = resp.json()
-        print("\n📊 Response:")
-        print(f"Title: {data.get('title')}")
-        print(f"Video URL: {data.get('videoUrl')}")
-        print(f"Cached: {data.get('cached')}")
+    for adapt_type in ["examples", "more_examples"]:
+        print(f"\n🚀 Testing Adaptation: '{adapt_type}'")
+        params = {
+            "difficulty": 3,
+            "adaptation": adapt_type 
+        }
         
-        if not data.get('videoUrl'):
-            print("\n❌ ISSUE DETECTED: Video URL is missing/null.")
-        elif "cloudinary" not in data.get('videoUrl', ''):
-            print(f"\n⚠️ WARNING: Video URL does not look like Cloudinary: {data.get('videoUrl')}")
-        else:
-            print("\n✅ SUCCESS: Cloudinary URL returned.")
+        url = f"{base_url}/api/v1/lessons/{lesson_id}"
+        resp = requests.get(url, headers=headers, params=params)
+        
+        if resp.status_code == 200:
+            data = resp.json()
+            print(f"📊 Response for {adapt_type}:")
+            v_url = data.get('videoUrl')
+            print(f"   Video URL: {v_url}")
+            print(f"   Cached: {data.get('cached')}")
             
-    else:
-        print(f"❌ Request Failed: {resp.status_code} - {resp.text}")
+            if v_url and "cloudinary" in v_url:
+                print(f"   ✅ SUCCESS for {adapt_type}")
+            else:
+                print(f"   ❌ FAILURE for {adapt_type} (Got default/null)")
+        else:
+            print(f"❌ Request Failed: {resp.status_code}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

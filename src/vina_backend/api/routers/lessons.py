@@ -68,6 +68,8 @@ def get_lesson_detail(
             # If adaptation is None, we want adaptation_context to be None
             
             adaptation_val = adaptation if adaptation else None
+            if adaptation_val == "more_examples":
+                adaptation_val = "examples"
             
             # DEBUG LOGGING - Using print for immediate visibility
             statement = select(LessonCache).where(
