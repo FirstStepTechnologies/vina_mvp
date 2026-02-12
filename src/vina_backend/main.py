@@ -16,6 +16,52 @@ logger = logging.getLogger(__name__)
 # Initialize database
 init_db()
 
+# --- AUTO MIGRATION FOR PRODUCTION ---
+def _ensure_schema_migrations():
+    """
+    Hack to ensure new columns exist in production SQLite without full Alembic setup.
+    Runs on startup.
+    """
+    import sqlite3
+    from vina_backend.core.config import get_settings
+    
+    settings = get_settings()
+    db_url = settings.database_url
+    
+    if "sqlite" not in db_url:
+        return
+        
+    try:
+        # Extract path
+        db_path = db_url.replace("sqlite:///", "")
+        if db_path.startswith("/"):
+             pass 
+             
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Check lesson_cache
+        cursor.execute("PRAGMA table_info(lesson_cache)")
+        columns = [row[1] for row in cursor.fetchall()]
+        
+        migrations = [
+            ("video_url", "TEXT"),
+            ("adaptation_context", "TEXT")
+        ]
+        
+        for col, col_type in migrations:
+            if col not in columns:
+                logger.info(f"Adding missing column to lesson_cache: {col}")
+                cursor.execute(f"ALTER TABLE lesson_cache ADD COLUMN {col} {col_type}")
+                
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning(f"Auto-migration failed (might be harmless if DB valid): {e}")
+
+_ensure_schema_migrations()
+# -------------------------------------
+
 settings = get_settings()
 
 app = FastAPI(
