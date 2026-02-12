@@ -55,38 +55,42 @@ def get_lesson_detail(
         difficulty = 3
     
     if current_user and current_user.profile:
-        # Import moved up to avoid UnboundLocalError
-        from vina_backend.services.lesson_cache import LessonCache, LessonCacheService
-        
-        cache_service = LessonCacheService(db)
-        
-        profile_hash = LessonCacheService.generate_profile_hash(current_user.profile)
-        
-        # Query for any model
-        # IMPORTANT: adaptation_context must match exactly what was requested (e.g. "examples")
-        # If adaptation is None, we want adaptation_context to be None
-        
-        adaptation_val = adaptation if adaptation else None
-        
-        # DEBUG LOGGING - Using print for immediate visibility
-        statement = select(LessonCache).where(
-            LessonCache.course_id == "c_llm_foundations", # Defaulting for now
-            LessonCache.lesson_id == lesson_id,
-            LessonCache.difficulty_level == difficulty,
-            LessonCache.profile_hash == profile_hash,
-            LessonCache.adaptation_context == adaptation_val  # Exact match (including None)
-        ).order_by(LessonCache.created_at.desc())
-        
-        entry = db.exec(statement).first()
-        if entry and entry.video_url:
-            video_url = entry.video_url
-            cached = True
-        else:
-            try:
-                content = json.loads(entry.lesson_json)
-                title = content.get("lesson_title", title)
-            except:
-                pass
+        try:
+            # Import moved up to avoid UnboundLocalError
+            from vina_backend.services.lesson_cache import LessonCache, LessonCacheService
+            
+            cache_service = LessonCacheService(db)
+            
+            profile_hash = LessonCacheService.generate_profile_hash(current_user.profile)
+            
+            # Query for any model
+            # IMPORTANT: adaptation_context must match exactly what was requested (e.g. "examples")
+            # If adaptation is None, we want adaptation_context to be None
+            
+            adaptation_val = adaptation if adaptation else None
+            
+            # DEBUG LOGGING - Using print for immediate visibility
+            statement = select(LessonCache).where(
+                LessonCache.course_id == "c_llm_foundations", # Defaulting for now
+                LessonCache.lesson_id == lesson_id,
+                LessonCache.difficulty_level == difficulty,
+                LessonCache.profile_hash == profile_hash,
+                LessonCache.adaptation_context == adaptation_val  # Exact match (including None)
+            ).order_by(LessonCache.created_at.desc())
+            
+            entry = db.exec(statement).first()
+            if entry and entry.video_url:
+                video_url = entry.video_url
+                cached = True
+            else:
+                try:
+                    content = json.loads(entry.lesson_json)
+                    title = content.get("lesson_title", title)
+                except:
+                    pass
+        except Exception as e:
+            # DEBUG: Expose error to client
+            raise HTTPException(status_code=500, detail=f"Lesson Logic Error: {str(e)}")
 
     # 2. Fallback to Manifest
     if not video_url:
