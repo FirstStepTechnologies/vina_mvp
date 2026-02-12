@@ -232,3 +232,16 @@ Developed a robust utility to handle database schema changes without losing expe
 
 **Prepared By:** AI Coding Assistant
 **Date:** February 8, 2026
+
+## 🛡️ Phase 8: Adaptation & Authentication Reliability (February 12, 2026)
+
+**Status:** Fully Deployed
+
+### 1. Adaptation Context Persistence
+Fixed a critical issue where the "More Examples" adaptation was not playing the correct video:
+- **Root Cause:** The `lessons` router was failing to resolve `current_user` for authenticated requests, causing it to fall back to an unauthenticated path that ignored the user's profile hash and adaptation context.
+- **Fix:** Introduced `get_current_user_optional` in `dependencies.py` to gracefully handle optional authentication without raising 401 errors, ensuring the user's profile is correctly used for cache lookups.
+- **Verification:** Verified cache hits for `adaptation="examples"` with correct video URLs.
+
+**Prepared By:** AI Coding Assistant
+**Date:** February 12, 2026

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from pydantic import BaseModel
 from sqlmodel import Session, select
 from vina_backend.integrations.db.models.user import User
-from vina_backend.api.dependencies import get_current_user, get_db
+from vina_backend.api.dependencies import get_current_user, get_db, get_current_user_optional
 
 router = APIRouter()
 
@@ -36,7 +36,7 @@ def get_lesson_detail(
     difficulty: int = Query(3, ge=1, le=5),
     profession: Optional[str] = Query(None, description="User profession for video personalization"),  # NEW: For unauthenticated users
     adaptation: Optional[str] = Query(None, description="Adaptation context (e.g. more_examples)"), # NEW: Fix for adaptation bug
-    current_user: Optional[User] = None,  # Made optional for hackathon demo
+    current_user: Optional[User] = Depends(get_current_user_optional),  # Fixed dependency
     db: Session = Depends(get_db)
 ):
     """
@@ -55,33 +55,33 @@ def get_lesson_detail(
         difficulty = 3
     
     if current_user and current_user.profile:
-        cache_service = LessonCacheService(db)
-        # Try to find cached entry
-        # Note: We need the model name to query specific cache, but here we query by profile/lesson
-        # effectively we want *any* valid video for this user/lesson/difficulty
-        # The cache structure requires LLM model name.
-        # Strict retrieval might be hard without knowing the model.
-        # However, we can use a simpler query or just iterate reasonable defaults if needed.
-        # OR: We can add a method to CacheService to get *any* entry for this lesson/profile/diff.
-        
-        # Let's try to query directly:
-        # We need to import LessonCache model to query
+        # Import moved up to avoid UnboundLocalError
         from vina_backend.services.lesson_cache import LessonCache, LessonCacheService
         
+        cache_service = LessonCacheService(db)
+        
         profile_hash = LessonCacheService.generate_profile_hash(current_user.profile)
+        
         # Query for any model
+        # IMPORTANT: adaptation_context must match exactly what was requested (e.g. "examples")
+        # If adaptation is None, we want adaptation_context to be None
+        
+        adaptation_val = adaptation if adaptation else None
+        
+        # DEBUG LOGGING - Using print for immediate visibility
         statement = select(LessonCache).where(
             LessonCache.course_id == "c_llm_foundations", # Defaulting for now
             LessonCache.lesson_id == lesson_id,
             LessonCache.difficulty_level == difficulty,
             LessonCache.profile_hash == profile_hash,
-            LessonCache.adaptation_context == adaptation  # Filter by adaptation context
+            LessonCache.adaptation_context == adaptation_val  # Exact match (including None)
         ).order_by(LessonCache.created_at.desc())
         
         entry = db.exec(statement).first()
         if entry and entry.video_url:
             video_url = entry.video_url
             cached = True
+        else:
             try:
                 content = json.loads(entry.lesson_json)
                 title = content.get("lesson_title", title)

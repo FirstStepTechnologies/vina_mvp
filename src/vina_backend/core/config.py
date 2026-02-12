@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     opik_workspace: str
     
     # Auth
-    jwt_jwt_secret_key: str
+    jwt_secret_key: str
     algorithm: str
     access_token_expire_minutes: int
 

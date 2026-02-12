@@ -166,6 +166,8 @@ class LessonCacheService:
                 rew_prompt=rew_prompt
             )
             self.db_session.add(cache_entry)
+        
+        self.db_session.commit()
     
     def update_video_url(
         self,

@@ -145,6 +145,16 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
             cache_service = LessonCacheService(db_session=session)
             lesson_generator = LessonGenerator(cache_service=cache_service)
             
+            # Explicitly check cache to inform user
+            model_name = lesson_generator.llm_client.model
+            cached = cache_service.get(
+                COURSE_ID, lesson_id, difficulty_level, user_profile, model_name, adaptation_context
+            )
+            if cached:
+                print(f"✅ Found CACHED lesson for {lesson_id} (Model: {model_name}, Diff: {difficulty_level}, Adapt: {adaptation_context})")
+            else:
+                print(f"⚠️ Cache MISS for {lesson_id} (Model: {model_name}, Diff: {difficulty_level}, Adapt: {adaptation_context}). Generating new lesson...")
+            
             # generate_lesson handles the Generator -> Reviewer -> Refiner loop
             generated_lesson = await asyncio.to_thread(
                 lesson_generator.generate_lesson,
@@ -287,7 +297,7 @@ async def run_full_pipeline(profession: str, industry: str, level_str: str, diff
                         lesson_id=lesson_id,
                         difficulty_level=difficulty_level,
                         user_profile=user_profile,
-                        llm_model=model_name,
+                        llm_model=generated_lesson.generation_metadata.llm_model,
                         video_url=secure_url,
                         adaptation_context=adaptation_context
                     )

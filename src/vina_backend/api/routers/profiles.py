@@ -66,6 +66,10 @@ def get_profile(current_user: User = Depends(get_current_user)):
     return _map_profile_to_response(current_user)
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 @router.patch("", response_model=UserProfileResponse)
 def update_profile(
     updates: Dict[str, Any] = Body(...),
@@ -73,8 +77,12 @@ def update_profile(
     session: Session = Depends(get_session)
 ):
     """Update specific profile fields (e.g., dailyGoalMinutes, resolution)."""
+    logger.info(f"Attempting to update profile for user_id: {current_user.id}")
+    logger.debug(f"Update payload: {updates}")
+    
     profile = current_user.profile
     if not profile:
+        logger.error(f"Profile not found for user_id: {current_user.id}")
         raise HTTPException(status_code=404, detail="Profile not found")
         
     # Allowed updates whitelist (simple implementation)
