@@ -76,7 +76,7 @@ def get_lesson_detail(
                 LessonCache.difficulty_level == difficulty,
                 LessonCache.profile_hash == profile_hash,
                 LessonCache.adaptation_context == adaptation_val  # Exact match (including None)
-            ).order_by(LessonCache.created_at.desc())
+            ).order_by(LessonCache.video_url.desc(), LessonCache.created_at.desc())
             
             entry = db.exec(statement).first()
             if entry and entry.video_url:

@@ -57,7 +57,7 @@ def test_adaptation(base_url, email="demo@vina.ai", password="password123"):
     profile_data = {
         "profession": "HR Manager",
         "industry": "Tech Company",
-        "experienceLevel": "Beginner",
+        "experience": "Beginner",
         "bio": "Test User Bio"
     }
     print(f"👤 Updating Profile to matches 'HR Manager'...")
@@ -67,6 +67,18 @@ def test_adaptation(base_url, email="demo@vina.ai", password="password123"):
         print("Continuing anyway, but cache lookup may fail...")
     else:
         print("✅ Profile Updated")
+
+    # Verify Profile State
+    get_prof_resp = requests.get(profile_url, headers=headers)
+    if get_prof_resp.status_code == 200:
+        p_data = get_prof_resp.json().get("profile", {})
+        print(f"🧐 Current Profile on Server:")
+        print(f"   Profession: {p_data.get('profession')}")
+        print(f"   Industry: {p_data.get('industry')}")
+        print(f"   Level: {p_data.get('experienceLevel')}")
+        print(f"   Daily Goal: {p_data.get('dailyGoalMinutes')}")
+    else:
+        print(f"⚠️ Could not verify profile: {get_prof_resp.status_code}")
 
     # 3. Request Lesson with Adaptation
     # Targeting Lesson 1, Examples
