@@ -69,9 +69,54 @@ def export_content():
         logger.info(f"✅ Exported {len(export_data)} entries to {EXPORT_FILE}")
         logger.info("👉 Check this file into git!")
 
+def check_and_migrate_schema():
+    """Ensure the database has all required columns before importing."""
+    import sqlite3
+    from urllib.parse import urlparse
+    
+    settings = get_settings()
+    db_url = settings.database_url
+    
+    # Extract file path from sqlite:///
+    if db_url.startswith("sqlite:///"):
+        db_path = db_url.replace("sqlite:///", "")
+        # Remove any leading fourth slash (common in Render paths)
+        if db_path.startswith("/"):
+             pass # Absolute path is fine
+    else:
+        logger.warning(f"Not a local SQLite DB, skipping auto-migration: {db_url}")
+        return
+
+    logger.info(f"Checking schema for {db_path}...")
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("PRAGMA table_info(lesson_cache)")
+        columns = [row[1] for row in cursor.fetchall()]
+        
+        required_migrations = [
+            ("video_url", "TEXT"),
+            ("adaptation_context", "TEXT")
+        ]
+        
+        for col_name, col_type in required_migrations:
+            if col_name not in columns:
+                logger.info(f"➕ Adding missing column: {col_name}")
+                cursor.execute(f"ALTER TABLE lesson_cache ADD COLUMN {col_name} {col_type}")
+        
+        conn.commit()
+        conn.close()
+        logger.info("✅ Schema check complete.")
+    except Exception as e:
+        logger.error(f"❌ Migration failed: {e}")
+
 def import_content():
     """Import content from JSON to DB (Upsert)."""
     logger.info("🚀 Starting Content Import...")
+    
+    # --- NEW: Auto-Migrate Schema ---
+    check_and_migrate_schema()
     
     if not EXPORT_FILE.exists():
         logger.error(f"❌ Export file not found: {EXPORT_FILE}")
@@ -96,8 +141,12 @@ def import_content():
             cache_key = item["cache_key"]
             
             # Check if exists
-            statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
-            existing = session.exec(statement).first()
+            try:
+                statement = select(LessonCache).where(LessonCache.cache_key == cache_key)
+                existing = session.exec(statement).first()
+            except Exception as e:
+                logger.error(f"❌ Error querying cache_key {cache_key}: {e}")
+                continue
             
             # Convert ISO formatted strings back to datetime objects if needed
             # (SQLModel often handles this automatically, but explicitly safe)
