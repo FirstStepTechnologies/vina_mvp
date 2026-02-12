@@ -77,6 +77,14 @@ def get_lesson_detail(
                 adaptation_val = "examples"
             
             # DEBUG LOGGING - Using print for immediate visibility
+            print(f"🔍 DEBUG LESSON LOOKUP:")
+            print(f"   Requested Lesson ID: {lesson_id}")
+            print(f"   Stripped DB Lesson ID: {db_lesson_id}")
+            print(f"   Profile Hash: {profile_hash}")
+            print(f"   Adaptation Raw: {adaptation}")
+            print(f"   Adaptation Normalized: {adaptation_val}")
+            print(f"   Difficulty: {difficulty}")
+
             statement = select(LessonCache).where(
                 LessonCache.course_id == "c_llm_foundations", # Defaulting for now
                 LessonCache.lesson_id == db_lesson_id,
@@ -86,6 +94,11 @@ def get_lesson_detail(
             ).order_by(LessonCache.video_url.desc(), LessonCache.created_at.desc())
             
             entry = db.exec(statement).first()
+            
+            if entry:
+                print(f"✅ FOUND ENTRY: ID={entry.id}, VideoURL={entry.video_url}")
+            else:
+                print(f"❌ NO ENTRY FOUND")
             if entry and entry.video_url:
                 video_url = entry.video_url
                 cached = True
