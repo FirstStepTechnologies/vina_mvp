@@ -54,6 +54,11 @@ def get_lesson_detail(
     if adaptation and adaptation in ["examples", "more_examples"]:
         difficulty = 3
     
+    # Prefix Strip Hack: The DB stores 'l01_what_llms_are' but frontend sends 'c_llm_foundations:l01_what_llms_are'
+    db_lesson_id = lesson_id
+    if ":" in lesson_id:
+        db_lesson_id = lesson_id.split(":")[-1]
+
     if current_user and current_user.profile:
         try:
             # Import moved up to avoid UnboundLocalError
@@ -74,7 +79,7 @@ def get_lesson_detail(
             # DEBUG LOGGING - Using print for immediate visibility
             statement = select(LessonCache).where(
                 LessonCache.course_id == "c_llm_foundations", # Defaulting for now
-                LessonCache.lesson_id == lesson_id,
+                LessonCache.lesson_id == db_lesson_id,
                 LessonCache.difficulty_level == difficulty,
                 LessonCache.profile_hash == profile_hash,
                 LessonCache.adaptation_context == adaptation_val  # Exact match (including None)
