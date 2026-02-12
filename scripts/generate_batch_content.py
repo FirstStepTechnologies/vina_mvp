@@ -8,11 +8,13 @@ import logging
 import time
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Add the project root to sys.path
+# This allows us to import from 'src' and 'scripts'
+root_path = Path(__file__).parent.parent
+sys.path.insert(0, str(root_path))
+sys.path.insert(0, str(root_path / "src"))
 
 # Import the pipeline from the demo script
-# Note: We import inside the function to ensure sys.path is updated
 from scripts.demo_complete_pipeline import run_full_pipeline
 
 # Setup logging
